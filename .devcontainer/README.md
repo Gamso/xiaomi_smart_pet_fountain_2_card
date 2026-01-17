@@ -7,13 +7,12 @@ This project includes a DevContainer configuration to facilitate the development
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Docker](https://www.docker.com/get-started)
 - VS Code Extension: [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- [Node.js](https://nodejs.org/) (on your host machine, to build the card)
 
 ## Setup
 
 ### Build the Card (Required)
 
-**Before launching the DevContainer**, build the card on your host machine:
+Build the card into the DevContainer:
 
 ```bash
 npm install
@@ -22,29 +21,24 @@ npm run build
 
 Verify that `dist/xiaomi-smart-pet-fountain-2-card.js` exists.
 
-> **Note:** The DevContainer only contains Home Assistant. Node.js must be installed on your host machine to build the card.
-
 ## Quick Start
 
-1. **Build the card** (on your host machine):
+1. **Open in Container**:
+   - Press `F1` → "Dev Containers: Reopen in Container"
+   - Wait for setup (~5 minutes first time, ~30 seconds subsequently)
+
+2. **Build the card** :
 
    ```bash
    npm install
    npm run build
    ```
 
-2. **Open in Container**:
-
-   - Press `F1` → "Dev Containers: Reopen in Container"
-   - Wait for setup (~5 minutes first time, ~30 seconds subsequently)
-
 3. **Wait for Home Assistant**:
-
    - Look for: `Home Assistant initialized in XXs` in the Terminal
    - First time: 1-2 minutes after "Setup complete!"
 
 4. **Access Home Assistant**:
-
    - Open: http://localhost:8123
    - Create an account and complete initial setup
 
