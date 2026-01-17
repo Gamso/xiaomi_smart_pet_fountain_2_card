@@ -13,7 +13,7 @@ import { localize } from "../localize";
 import "./editor";
 
 console.info(
-  `%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.0.0  `,
+  `%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.1.0  `,
   "color: orange; font-weight: bold; background: black",
   "color: white; font-weight: bold; background: dimgray",
 );
@@ -579,10 +579,10 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         align-items: center;
         padding: 0;
         margin: 0 auto;
-        min-height: 280px;
-        height: auto;
-        width: 100%;
-        max-width: 400px;
+        width: min(100%, 320px);
+        height: 280px;
+        flex-shrink: 0;
+        container-type: size;
       }
 
       .gauge-svg {
@@ -616,7 +616,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       /* Status Icons Row - Positioned above percentage, between gauge and center */
       .status-icons-row {
         position: absolute;
-        top: 16%;
+        top: 45px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
@@ -683,10 +683,9 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       /* Center Percentage Value */
       .gauge-center {
         position: absolute;
-        top: 28%;
-        bottom: 44%;
+        top: 43%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%);
         width: 100%;
         display: flex;
         align-items: center;
@@ -704,7 +703,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       /* Horizontal Separator Line */
       .separator-line {
         position: absolute;
-        top: 55%;
+        top: 154px;
         left: 50%;
         transform: translateX(-50%);
         width: min(200px, 60%);
@@ -729,8 +728,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Additional Control Buttons (No Disturb, Physical Lock) */
       .additional-controls {
-        top: 57%;
-        bottom: 25%;
+        top: 170px;
       }
 
       .control-button {
@@ -773,7 +771,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Controls in Bottom Quarter */
       .gauge-controls {
-        top: 78%;
+        top: 225px;
       }
 
       .pill-select {
