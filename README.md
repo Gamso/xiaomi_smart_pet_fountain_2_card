@@ -4,6 +4,8 @@
 
 A custom Home Assistant card to visualize and control the Xiaomi Smart Pet Fountain 2 (xiaomi.pet_waterer.iv02).
 
+![Card Preview](assets/card_preview.png)
+
 ## Installation
 
 ### Via HACS (Recommended)

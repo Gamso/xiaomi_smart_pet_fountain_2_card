@@ -17,11 +17,11 @@
     "operating_mode": "Mode de fonctionnement",
     "battery": "Batterie",
     "charging": "En charge",
-    "charge_full": "Charge complète",
+    "charge_full": "Sur secteur",
     "no_charge": "Sur batterie",
-    "no_pump": "Pompe à eau non fonctionnelle",
     "water_shortage": "Manque d'eau !",
-    "entity_not_found": "Entité non trouvée"
+    "entity_not_found": "Entité non trouvée",
+    "days_left": "${days} jours restants"
   },
   "dialog": {
     "reset_filter_message": "Voulez-vous réinitialiser la durée d'utilisation du filtre ?",

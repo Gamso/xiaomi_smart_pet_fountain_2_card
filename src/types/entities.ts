@@ -5,7 +5,6 @@ export interface RelatedEntities {
   filterLeftTime?: string;
   batteryLevel?: string;
   chargingState?: string;
-  status?: string;
   waterShortage?: string;
   physicalControlLock?: string;
   noDisturb?: string;

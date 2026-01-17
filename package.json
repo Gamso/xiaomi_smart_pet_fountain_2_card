@@ -1,6 +1,6 @@
 {
   "name": "xiaomi-smart-pet-fountain-2-card",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Custom card for Xiaomi Smart Pet Fountain 2 in Home Assistant",
   "type": "module",
   "main": "dist/xiaomi-smart-pet-fountain-2-card.js",
@@ -17,18 +17,18 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.0.8",
-    "rollup": "^3.29.4",
+    "rollup": "^4.55.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "custom-card-helpers": "^1.9.0",
-    "lit": "^2.8.0"
+    "lit": "^3.3.2"
   }
 }

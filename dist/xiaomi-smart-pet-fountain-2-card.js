@@ -1,48 +1,42 @@
-function t(t,e,i,o){var s,n=arguments.length,r=n<3?e:null===o?o=Object.getOwnPropertyDescriptor(e,i):o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)r=Reflect.decorate(t,e,i,o);else for(var a=t.length-1;a>=0;a--)(s=t[a])&&(r=(n<3?s(r):n>3?s(e,i,r):s(e,i))||r);return n>3&&r&&Object.defineProperty(e,i,r),r}"function"==typeof SuppressedError&&SuppressedError;
+function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)n=Reflect.decorate(t,e,i,s);else for(var a=t.length-1;a>=0;a--)(o=t[a])&&(n=(r<3?o(n):r>3?o(e,i,n):o(e,i))||n);return r>3&&n&&Object.defineProperty(e,i,n),n}"function"==typeof SuppressedError&&SuppressedError;
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const e=window,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,o=Symbol(),s=new WeakMap;let n=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==o)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=s.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&s.set(e,t))}return t}toString(){return this.cssText}};const r=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,o)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[o+1],t[0]);return new n(i,t,o)},a=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new n("string"==typeof t?t:t+"",void 0,o))(e)})(t):t;
+const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s=Symbol(),o=new WeakMap;let r=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==s)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=o.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&o.set(e,t))}return t}toString(){return this.cssText}};const n=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new r(i,t,s)},a=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new r("string"==typeof t?t:t+"",void 0,s))(e)})(t):t,{is:l,defineProperty:c,getOwnPropertyDescriptor:h,getOwnPropertyNames:d,getOwnPropertySymbols:u,getPrototypeOf:p}=Object,f=globalThis,g=f.trustedTypes,_=g?g.emptyScript:"",m=f.reactiveElementPolyfillSupport,y=(t,e)=>t,$={toAttribute(t,e){switch(e){case Boolean:t=t?_:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},v=(t,e)=>!l(t,e),b={attribute:!0,type:String,converter:$,reflect:!1,useDefault:!1,hasChanged:v};
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var l;const c=window,d=c.trustedTypes,h=d?d.emptyScript:"",u=c.reactiveElementPolyfillSupport,p={toAttribute(t,e){switch(e){case Boolean:t=t?h:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},g=(t,e)=>e!==t&&(e==e||t==t),f={attribute:!0,type:String,converter:p,reflect:!1,hasChanged:g},_="finalized";let v=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(t){var e;this.finalize(),(null!==(e=this.h)&&void 0!==e?e:this.h=[]).push(t)}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach((e,i)=>{const o=this._$Ep(i,e);void 0!==o&&(this._$Ev.set(o,i),t.push(o))}),t}static createProperty(t,e=f){if(e.state&&(e.attribute=!1),this.finalize(),this.elementProperties.set(t,e),!e.noAccessor&&!this.prototype.hasOwnProperty(t)){const i="symbol"==typeof t?Symbol():"__"+t,o=this.getPropertyDescriptor(t,i,e);void 0!==o&&Object.defineProperty(this.prototype,t,o)}}static getPropertyDescriptor(t,e,i){return{get(){return this[e]},set(o){const s=this[t];this[e]=o,this.requestUpdate(t,s,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||f}static finalize(){if(this.hasOwnProperty(_))return!1;this[_]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,e=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const i of e)this.createProperty(i,t[i])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(a(t))}else void 0!==t&&e.push(a(t));return e}static _$Ep(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach(t=>t(this))}addController(t){var e,i;(null!==(e=this._$ES)&&void 0!==e?e:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(i=t.hostConnected)||void 0===i||i.call(t))}removeController(t){var e;null===(e=this._$ES)||void 0===e||e.splice(this._$ES.indexOf(t)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((t,e)=>{this.hasOwnProperty(e)&&(this._$Ei.set(e,this[e]),delete this[e])})}createRenderRoot(){var t;const o=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return((t,o)=>{i?t.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):o.forEach(i=>{const o=document.createElement("style"),s=e.litNonce;void 0!==s&&o.setAttribute("nonce",s),o.textContent=i.cssText,t.appendChild(o)})})(o,this.constructor.elementStyles),o}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostConnected)||void 0===e?void 0:e.call(t)})}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostDisconnected)||void 0===e?void 0:e.call(t)})}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$EO(t,e,i=f){var o;const s=this.constructor._$Ep(t,i);if(void 0!==s&&!0===i.reflect){const n=(void 0!==(null===(o=i.converter)||void 0===o?void 0:o.toAttribute)?i.converter:p).toAttribute(e,i.type);this._$El=t,null==n?this.removeAttribute(s):this.setAttribute(s,n),this._$El=null}}_$AK(t,e){var i;const o=this.constructor,s=o._$Ev.get(t);if(void 0!==s&&this._$El!==s){const t=o.getPropertyOptions(s),n="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(i=t.converter)||void 0===i?void 0:i.fromAttribute)?t.converter:p;this._$El=s,this[s]=n.fromAttribute(e,t.type),this._$El=null}}requestUpdate(t,e,i){let o=!0;void 0!==t&&(((i=i||this.constructor.getPropertyOptions(t)).hasChanged||g)(this[t],e)?(this._$AL.has(t)||this._$AL.set(t,e),!0===i.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,i))):o=!1),!this.isUpdatePending&&o&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((t,e)=>this[e]=t),this._$Ei=void 0);let e=!1;const i=this._$AL;try{e=this.shouldUpdate(i),e?(this.willUpdate(i),null===(t=this._$ES)||void 0===t||t.forEach(t=>{var e;return null===(e=t.hostUpdate)||void 0===e?void 0:e.call(t)}),this.update(i)):this._$Ek()}catch(t){throw e=!1,this._$Ek(),t}e&&this._$AE(i)}willUpdate(t){}_$AE(t){var e;null===(e=this._$ES)||void 0===e||e.forEach(t=>{var e;return null===(e=t.hostUpdated)||void 0===e?void 0:e.call(t)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return!0}update(t){void 0!==this._$EC&&(this._$EC.forEach((t,e)=>this._$EO(e,this[e],t)),this._$EC=void 0),this._$Ek()}updated(t){}firstUpdated(t){}};
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-var m;v[_]=!0,v.elementProperties=new Map,v.elementStyles=[],v.shadowRootOptions={mode:"open"},null==u||u({ReactiveElement:v}),(null!==(l=c.reactiveElementVersions)&&void 0!==l?l:c.reactiveElementVersions=[]).push("1.6.3");const y=window,$=y.trustedTypes,b=$?$.createPolicy("lit-html",{createHTML:t=>t}):void 0,w="$lit$",A=`lit$${(Math.random()+"").slice(9)}$`,x="?"+A,S=`<${x}>`,E=document,C=()=>E.createComment(""),k=t=>null===t||"object"!=typeof t&&"function"!=typeof t,P=Array.isArray,R="[ \t\n\f\r]",O=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,U=/-->/g,L=/>/g,z=RegExp(`>|${R}(?:([^\\s"'>=/]+)(${R}*=${R}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),H=/'/g,M=/"/g,N=/^(?:script|style|textarea|title)$/i,T=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),D=Symbol.for("lit-noChange"),j=Symbol.for("lit-nothing"),I=new WeakMap,B=E.createTreeWalker(E,129,null,!1);function W(t,e){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==b?b.createHTML(e):e}const F=(t,e)=>{const i=t.length-1,o=[];let s,n=2===e?"<svg>":"",r=O;for(let e=0;e<i;e++){const i=t[e];let a,l,c=-1,d=0;for(;d<i.length&&(r.lastIndex=d,l=r.exec(i),null!==l);)d=r.lastIndex,r===O?"!--"===l[1]?r=U:void 0!==l[1]?r=L:void 0!==l[2]?(N.test(l[2])&&(s=RegExp("</"+l[2],"g")),r=z):void 0!==l[3]&&(r=z):r===z?">"===l[0]?(r=null!=s?s:O,c=-1):void 0===l[1]?c=-2:(c=r.lastIndex-l[2].length,a=l[1],r=void 0===l[3]?z:'"'===l[3]?M:H):r===M||r===H?r=z:r===U||r===L?r=O:(r=z,s=void 0);const h=r===z&&t[e+1].startsWith("/>")?" ":"";n+=r===O?i+S:c>=0?(o.push(a),i.slice(0,c)+w+i.slice(c)+A+h):i+A+(-2===c?(o.push(void 0),e):h)}return[W(t,n+(t[i]||"<?>")+(2===e?"</svg>":"")),o]};class V{constructor({strings:t,_$litType$:e},i){let o;this.parts=[];let s=0,n=0;const r=t.length-1,a=this.parts,[l,c]=F(t,e);if(this.el=V.createElement(l,i),B.currentNode=this.el.content,2===e){const t=this.el.content,e=t.firstChild;e.remove(),t.append(...e.childNodes)}for(;null!==(o=B.nextNode())&&a.length<r;){if(1===o.nodeType){if(o.hasAttributes()){const t=[];for(const e of o.getAttributeNames())if(e.endsWith(w)||e.startsWith(A)){const i=c[n++];if(t.push(e),void 0!==i){const t=o.getAttribute(i.toLowerCase()+w).split(A),e=/([.?@])?(.*)/.exec(i);a.push({type:1,index:s,name:e[2],strings:t,ctor:"."===e[1]?J:"?"===e[1]?Z:"@"===e[1]?Y:G})}else a.push({type:6,index:s})}for(const e of t)o.removeAttribute(e)}if(N.test(o.tagName)){const t=o.textContent.split(A),e=t.length-1;if(e>0){o.textContent=$?$.emptyScript:"";for(let i=0;i<e;i++)o.append(t[i],C()),B.nextNode(),a.push({type:2,index:++s});o.append(t[e],C())}}}else if(8===o.nodeType)if(o.data===x)a.push({type:2,index:s});else{let t=-1;for(;-1!==(t=o.data.indexOf(A,t+1));)a.push({type:7,index:s}),t+=A.length-1}s++}}static createElement(t,e){const i=E.createElement("template");return i.innerHTML=t,i}}function X(t,e,i=t,o){var s,n,r,a;if(e===D)return e;let l=void 0!==o?null===(s=i._$Co)||void 0===s?void 0:s[o]:i._$Cl;const c=k(e)?void 0:e._$litDirective$;return(null==l?void 0:l.constructor)!==c&&(null===(n=null==l?void 0:l._$AO)||void 0===n||n.call(l,!1),void 0===c?l=void 0:(l=new c(t),l._$AT(t,i,o)),void 0!==o?(null!==(r=(a=i)._$Co)&&void 0!==r?r:a._$Co=[])[o]=l:i._$Cl=l),void 0!==l&&(e=X(t,l._$AS(t,e.values),l,o)),e}class q{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var e;const{el:{content:i},parts:o}=this._$AD,s=(null!==(e=null==t?void 0:t.creationScope)&&void 0!==e?e:E).importNode(i,!0);B.currentNode=s;let n=B.nextNode(),r=0,a=0,l=o[0];for(;void 0!==l;){if(r===l.index){let e;2===l.type?e=new K(n,n.nextSibling,this,t):1===l.type?e=new l.ctor(n,l.name,l.strings,this,t):6===l.type&&(e=new tt(n,this,t)),this._$AV.push(e),l=o[++a]}r!==(null==l?void 0:l.index)&&(n=B.nextNode(),r++)}return B.currentNode=E,s}v(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class K{constructor(t,e,i,o){var s;this.type=2,this._$AH=j,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=o,this._$Cp=null===(s=null==o?void 0:o.isConnected)||void 0===s||s}get _$AU(){var t,e;return null!==(e=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==e?e:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===(null==t?void 0:t.nodeType)&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=X(this,t,e),k(t)?t===j||null==t||""===t?(this._$AH!==j&&this._$AR(),this._$AH=j):t!==this._$AH&&t!==D&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):(t=>P(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]))(t)?this.T(t):this._(t)}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t))}_(t){this._$AH!==j&&k(this._$AH)?this._$AA.nextSibling.data=t:this.$(E.createTextNode(t)),this._$AH=t}g(t){var e;const{values:i,_$litType$:o}=t,s="number"==typeof o?this._$AC(t):(void 0===o.el&&(o.el=V.createElement(W(o.h,o.h[0]),this.options)),o);if((null===(e=this._$AH)||void 0===e?void 0:e._$AD)===s)this._$AH.v(i);else{const t=new q(s,this),e=t.u(this.options);t.v(i),this.$(e),this._$AH=t}}_$AC(t){let e=I.get(t.strings);return void 0===e&&I.set(t.strings,e=new V(t)),e}T(t){P(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,o=0;for(const s of t)o===e.length?e.push(i=new K(this.k(C()),this.k(C()),this,this.options)):i=e[o],i._$AI(s),o++;o<e.length&&(this._$AR(i&&i._$AB.nextSibling,o),e.length=o)}_$AR(t=this._$AA.nextSibling,e){var i;for(null===(i=this._$AP)||void 0===i||i.call(this,!1,!0,e);t&&t!==this._$AB;){const e=t.nextSibling;t.remove(),t=e}}setConnected(t){var e;void 0===this._$AM&&(this._$Cp=t,null===(e=this._$AP)||void 0===e||e.call(this,t))}}class G{constructor(t,e,i,o,s){this.type=1,this._$AH=j,this._$AN=void 0,this.element=t,this.name=e,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=j}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,e=this,i,o){const s=this.strings;let n=!1;if(void 0===s)t=X(this,t,e,0),n=!k(t)||t!==this._$AH&&t!==D,n&&(this._$AH=t);else{const o=t;let r,a;for(t=s[0],r=0;r<s.length-1;r++)a=X(this,o[i+r],e,r),a===D&&(a=this._$AH[r]),n||(n=!k(a)||a!==this._$AH[r]),a===j?t=j:t!==j&&(t+=(null!=a?a:"")+s[r+1]),this._$AH[r]=a}n&&!o&&this.j(t)}j(t){t===j?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"")}}class J extends G{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===j?void 0:t}}const Q=$?$.emptyScript:"";class Z extends G{constructor(){super(...arguments),this.type=4}j(t){t&&t!==j?this.element.setAttribute(this.name,Q):this.element.removeAttribute(this.name)}}class Y extends G{constructor(t,e,i,o,s){super(t,e,i,o,s),this.type=5}_$AI(t,e=this){var i;if((t=null!==(i=X(this,t,e,0))&&void 0!==i?i:j)===D)return;const o=this._$AH,s=t===j&&o!==j||t.capture!==o.capture||t.once!==o.once||t.passive!==o.passive,n=t!==j&&(o===j||s);s&&this.element.removeEventListener(this.name,this,o),n&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){var e,i;"function"==typeof this._$AH?this._$AH.call(null!==(i=null===(e=this.options)||void 0===e?void 0:e.host)&&void 0!==i?i:this.element,t):this._$AH.handleEvent(t)}}class tt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){X(this,t)}}const et=y.litHtmlPolyfillSupport;null==et||et(V,K),(null!==(m=y.litHtmlVersions)&&void 0!==m?m:y.litHtmlVersions=[]).push("2.8.0");
+ */Symbol.metadata??=Symbol("metadata"),f.litPropertyMetadata??=new WeakMap;let w=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=b){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(t,i,e);void 0!==s&&c(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){const{get:s,set:o}=h(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:s,set(e){const r=s?.call(this);o?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??b}static _$Ei(){if(this.hasOwnProperty(y("elementProperties")))return;const t=p(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(y("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(y("properties"))){const t=this.properties,e=[...d(t),...u(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(a(t))}else void 0!==t&&e.push(a(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((t,s)=>{if(i)t.adoptedStyleSheets=s.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const i of s){const s=document.createElement("style"),o=e.litNonce;void 0!==o&&s.setAttribute("nonce",o),s.textContent=i.cssText,t.appendChild(s)}})(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(void 0!==s&&!0===i.reflect){const o=(void 0!==i.converter?.toAttribute?i.converter:$).toAttribute(e,i.type);this._$Em=t,null==o?this.removeAttribute(s):this.setAttribute(s,o),this._$Em=null}}_$AK(t,e){const i=this.constructor,s=i._$Eh.get(t);if(void 0!==s&&this._$Em!==s){const t=i.getPropertyOptions(s),o="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:$;this._$Em=s;const r=o.fromAttribute(e,t.type);this[s]=r??this._$Ej?.get(s)??r,this._$Em=null}}requestUpdate(t,e,i,s=!1,o){if(void 0!==t){const r=this.constructor;if(!1===s&&(o=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??v)(o,e)||i.useDefault&&i.reflect&&o===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:o},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==o||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===s&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,s=this[e];!0!==t||this._$AL.has(e)||void 0===s||this.C(e,void 0,i,s)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};w.elementStyles=[],w.shadowRootOptions={mode:"open"},w[y("elementProperties")]=new Map,w[y("finalized")]=new Map,m?.({ReactiveElement:w}),(f.reactiveElementVersions??=[]).push("2.1.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var it,ot;class st extends v{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{var o,s;const n=null!==(o=null==i?void 0:i.renderBefore)&&void 0!==o?o:e;let r=n._$litPart$;if(void 0===r){const t=null!==(s=null==i?void 0:i.renderBefore)&&void 0!==s?s:null;n._$litPart$=r=new K(e.insertBefore(C(),t),t,void 0,null!=i?i:{})}return r._$AI(t),r})(e,this.renderRoot,this.renderOptions)}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0)}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1)}render(){return D}}st.finalized=!0,st._$litElement$=!0,null===(it=globalThis.litElementHydrateSupport)||void 0===it||it.call(globalThis,{LitElement:st});const nt=globalThis.litElementPolyfillSupport;null==nt||nt({LitElement:st}),(null!==(ot=globalThis.litElementVersions)&&void 0!==ot?ot:globalThis.litElementVersions=[]).push("3.3.3");
+const x=globalThis,A=t=>t,S=x.trustedTypes,E=S?S.createPolicy("lit-html",{createHTML:t=>t}):void 0,C="$lit$",k=`lit$${Math.random().toFixed(9).slice(2)}$`,P="?"+k,O=`<${P}>`,R=document,M=()=>R.createComment(""),U=t=>null===t||"object"!=typeof t&&"function"!=typeof t,T=Array.isArray,z="[ \t\n\f\r]",L=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,H=/-->/g,N=/>/g,j=RegExp(`>|${z}(?:([^\\s"'>=/]+)(${z}*=${z}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,I=/"/g,B=/^(?:script|style|textarea|title)$/i,W=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),F=Symbol.for("lit-noChange"),q=Symbol.for("lit-nothing"),V=new WeakMap,X=R.createTreeWalker(R,129);function G(t,e){if(!T(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(e):e}const J=(t,e)=>{const i=t.length-1,s=[];let o,r=2===e?"<svg>":3===e?"<math>":"",n=L;for(let e=0;e<i;e++){const i=t[e];let a,l,c=-1,h=0;for(;h<i.length&&(n.lastIndex=h,l=n.exec(i),null!==l);)h=n.lastIndex,n===L?"!--"===l[1]?n=H:void 0!==l[1]?n=N:void 0!==l[2]?(B.test(l[2])&&(o=RegExp("</"+l[2],"g")),n=j):void 0!==l[3]&&(n=j):n===j?">"===l[0]?(n=o??L,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,a=l[1],n=void 0===l[3]?j:'"'===l[3]?I:D):n===I||n===D?n=j:n===H||n===N?n=L:(n=j,o=void 0);const d=n===j&&t[e+1].startsWith("/>")?" ":"";r+=n===L?i+O:c>=0?(s.push(a),i.slice(0,c)+C+i.slice(c)+k+d):i+k+(-2===c?e:d)}return[G(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class K{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let o=0,r=0;const n=t.length-1,a=this.parts,[l,c]=J(t,e);if(this.el=K.createElement(l,i),X.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=X.nextNode())&&a.length<n;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(C)){const e=c[r++],i=s.getAttribute(t).split(k),n=/([.?@])?(.*)/.exec(e);a.push({type:1,index:o,name:n[2],strings:i,ctor:"."===n[1]?et:"?"===n[1]?it:"@"===n[1]?st:tt}),s.removeAttribute(t)}else t.startsWith(k)&&(a.push({type:6,index:o}),s.removeAttribute(t));if(B.test(s.tagName)){const t=s.textContent.split(k),e=t.length-1;if(e>0){s.textContent=S?S.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],M()),X.nextNode(),a.push({type:2,index:++o});s.append(t[e],M())}}}else if(8===s.nodeType)if(s.data===P)a.push({type:2,index:o});else{let t=-1;for(;-1!==(t=s.data.indexOf(k,t+1));)a.push({type:7,index:o}),t+=k.length-1}o++}}static createElement(t,e){const i=R.createElement("template");return i.innerHTML=t,i}}function Q(t,e,i=t,s){if(e===F)return e;let o=void 0!==s?i._$Co?.[s]:i._$Cl;const r=U(e)?void 0:e._$litDirective$;return o?.constructor!==r&&(o?._$AO?.(!1),void 0===r?o=void 0:(o=new r(t),o._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=o:i._$Cl=o),void 0!==o&&(e=Q(t,o._$AS(t,e.values),o,s)),e}class Z{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??R).importNode(e,!0);X.currentNode=s;let o=X.nextNode(),r=0,n=0,a=i[0];for(;void 0!==a;){if(r===a.index){let e;2===a.type?e=new Y(o,o.nextSibling,this,t):1===a.type?e=new a.ctor(o,a.name,a.strings,this,t):6===a.type&&(e=new ot(o,this,t)),this._$AV.push(e),a=i[++n]}r!==a?.index&&(o=X.nextNode(),r++)}return X.currentNode=R,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class Y{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=q,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Q(this,t,e),U(t)?t===q||null==t||""===t?(this._$AH!==q&&this._$AR(),this._$AH=q):t!==this._$AH&&t!==F&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>T(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==q&&U(this._$AH)?this._$AA.nextSibling.data=t:this.T(R.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=K.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new Z(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=V.get(t.strings);return void 0===e&&V.set(t.strings,e=new K(t)),e}k(t){T(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const o of t)s===e.length?e.push(i=new Y(this.O(M()),this.O(M()),this,this.options)):i=e[s],i._$AI(o),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=A(t).nextSibling;A(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class tt{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,o){this.type=1,this._$AH=q,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=o,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=q}_$AI(t,e=this,i,s){const o=this.strings;let r=!1;if(void 0===o)t=Q(this,t,e,0),r=!U(t)||t!==this._$AH&&t!==F,r&&(this._$AH=t);else{const s=t;let n,a;for(t=o[0],n=0;n<o.length-1;n++)a=Q(this,s[i+n],e,n),a===F&&(a=this._$AH[n]),r||=!U(a)||a!==this._$AH[n],a===q?t=q:t!==q&&(t+=(a??"")+o[n+1]),this._$AH[n]=a}r&&!s&&this.j(t)}j(t){t===q?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class et extends tt{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===q?void 0:t}}class it extends tt{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==q)}}class st extends tt{constructor(t,e,i,s,o){super(t,e,i,s,o),this.type=5}_$AI(t,e=this){if((t=Q(this,t,e,0)??q)===F)return;const i=this._$AH,s=t===q&&i!==q||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,o=t!==q&&(i===q||s);s&&this.element.removeEventListener(this.name,this,i),o&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class ot{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Q(this,t)}}const rt=x.litHtmlPolyfillSupport;rt?.(K,Y),(x.litHtmlVersions??=[]).push("3.3.2");const nt=globalThis;
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */class at extends w{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let o=s._$litPart$;if(void 0===o){const t=i?.renderBefore??null;s._$litPart$=o=new Y(e.insertBefore(M(),t),t,void 0,i??{})}return o._$AI(t),o})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return F}}at._$litElement$=!0,at.finalized=!0,nt.litElementHydrateSupport?.({LitElement:at});const lt=nt.litElementPolyfillSupport;lt?.({LitElement:at}),(nt.litElementVersions??=[]).push("4.2.2");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e):((t,e)=>{const{kind:i,elements:o}=e;return{kind:i,elements:o,finisher(e){customElements.define(t,e)}}})(t,e),at=(t,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(i){i.createProperty(e.key,t)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this))},finisher(i){i.createProperty(e.key,t)}};
+const ct=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)},ht={attribute:!0,type:String,converter:$,reflect:!1,hasChanged:v},dt=(t=ht,e,i)=>{const{kind:s,metadata:o}=i;let r=globalThis.litPropertyMetadata.get(o);if(void 0===r&&globalThis.litPropertyMetadata.set(o,r=new Map),"setter"===s&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===s){const{name:s}=i;return{set(i){const o=e.get.call(this);e.set.call(this,i),this.requestUpdate(s,o,t,!0,i)},init(e){return void 0!==e&&this.C(s,void 0,t,e),e}}}if("setter"===s){const{name:s}=i;return function(i){const o=this[s];e.call(this,i),this.requestUpdate(s,o,t,!0,i)}}throw Error("Unsupported decorator location: "+s)};
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */function lt(t){return(e,i)=>void 0!==i?((t,e,i)=>{e.constructor.createProperty(i,t)})(t,e,i):at(t,e)}
+ */function ut(t){return(e,i)=>"object"==typeof i?dt(t,e,i):((t,e,i)=>{const s=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),s?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */function ct(t){return lt({...t,state:!0})}
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */var dt;function ht(t){if(!t)return null;const e=t.split(".")[1];if(!e)return null;const i=["_pet_drinking_fountain","_filter_life_level","_filter_left_time","_battery_level","_charging_state","_status","_water_shortage_status","_physical_control_locked","_no_disturb","_out_water_interval","_out_water_interval_2","_mode","_reset_filter_life"];for(const t of i)if(e.endsWith(t))return e.slice(0,-t.length);return e}function ut(t,e){if(!t||!e)return{};const i={},o=t.states,s={powerSwitch:`switch.${e}_pet_drinking_fountain`,mode:`select.${e}_mode`,filterLifeLevel:`sensor.${e}_filter_life_level`,filterLeftTime:`sensor.${e}_filter_left_time`,batteryLevel:`sensor.${e}_battery_level`,chargingState:`sensor.${e}_charging_state`,status:`sensor.${e}_status`,waterShortage:`binary_sensor.${e}_water_shortage_status`,physicalControlLock:`switch.${e}_physical_control_locked`,noDisturb:`switch.${e}_no_disturb`,outWaterInterval:`number.${e}_out_water_interval`,outWaterInterval2:`number.${e}_out_water_interval_2`,resetFilterButton:`button.${e}_reset_filter_life`};for(const[t,e]of Object.entries(s))o[e]&&(i[t]=e);return i}null===(dt=window.HTMLSlotElement)||void 0===dt||dt.prototype.assignedElements;var pt={version:"Version",entity:"Entity"},gt={entity:"Entity (Required)",entity_helper:"Select any entity from your Xiaomi Smart Pet Fountain 2"},ft={turn_on:"Turn on",turn_off:"Turn off",no_disturb_mode:"No disturb",physical_control_lock:"Physical control lock",water_interval:"Water interval",reset_filter:"Reset filter life",operating_mode:"Operating mode",battery:"Battery",charging:"Charging",charge_full:"Charge full",no_charge:"On battery",no_pump:"Water pump not working",water_shortage:"Water shortage !",entity_not_found:"Entity not found"},_t={reset_filter_message:"Do you want to reset the filter life?",cancel:"Cancel",confirm:"Confirm"},vt={common:pt,editor:gt,card:ft,dialog:_t},mt={version:"Version",entity:"Entité"},yt={entity:"Entité (Obligatoire)",entity_helper:"Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2"},$t={turn_on:"Allumer",turn_off:"Éteindre",no_disturb_mode:"Ne pas déranger",physical_control_lock:"Verrouillage des commandes physiques",water_interval:"Intervalle d'eau",reset_filter:"Réinitialiser la durée de vie du filtre",operating_mode:"Mode de fonctionnement",battery:"Batterie",charging:"En charge",charge_full:"Charge complète",no_charge:"Sur batterie",no_pump:"Pompe à eau non fonctionnelle",water_shortage:"Manque d'eau !",entity_not_found:"Entité non trouvée"},bt={reset_filter_message:"Voulez-vous réinitialiser la durée d'utilisation du filtre ?",cancel:"Annuler",confirm:"Confirmer"},wt={common:mt,editor:yt,card:$t,dialog:bt};const At={en:Object.freeze({__proto__:null,card:ft,common:pt,default:vt,dialog:_t,editor:gt}),fr:Object.freeze({__proto__:null,card:$t,common:mt,default:wt,dialog:bt,editor:yt})},xt="en";function St(t,e,i="",o=""){const s=t?.locale?.language??xt;let n;try{n=e.split(".").reduce((t,e)=>t[e],At[s])}catch(t){n=e.split(".").reduce((t,e)=>t[e],At[xt])}return void 0===n&&(n=e.split(".").reduce((t,e)=>t[e],At[xt])),""!==i&&""!==o&&(n=n.replace(i,o)),n||e}function Et(t,e){try{return t.split(".").reduce((t,e)=>t[e],At[e])}catch(t){return}}let Ct=class extends st{constructor(){super(...arguments),this._computeLabel=t=>{const e=(i=this.hass,function(t){let e=Et(t,i?.locale?.language??xt);return e||(e=Et(t,xt)),e??t});var i;return"entity"===t.name?e("editor.entity"):"name"===t.name?e("editor.name"):t.name}}connectedCallback(){super.connectedCallback(),this.hass&&(customElements.get("ha-form")||customElements.get("hui-button-card")?.getConfigElement(),customElements.get("ha-entity-picker")||customElements.get("hui-entities-card")?.getConfigElement())}setConfig(t){this._config={...t}}render(){if(!this.hass||!this._config)return T``;const t=[{name:"entity",required:!0,selector:{entity:{include_domains:["switch","sensor","select","number","binary_sensor","button"]}}}];return T`
+ */function pt(t){return ut({...t,state:!0,attribute:!1})}function ft(t){if(!t)return null;const e=t.split(".")[1];if(!e)return null;const i=["_pet_drinking_fountain","_filter_life_level","_filter_left_time","_battery_level","_charging_state","_status","_water_shortage_status","_physical_control_locked","_no_disturb","_out_water_interval","_out_water_interval_2","_mode","_reset_filter_life"];for(const t of i)if(e.endsWith(t))return e.slice(0,-t.length);return e}function gt(t,e){if(!t||!e)return{};const i={},s=t.states,o={powerSwitch:`switch.${e}_pet_drinking_fountain`,mode:`select.${e}_mode`,filterLifeLevel:`sensor.${e}_filter_life_level`,filterLeftTime:`sensor.${e}_filter_left_time`,batteryLevel:`sensor.${e}_battery_level`,chargingState:`sensor.${e}_charging_state`,waterShortage:`binary_sensor.${e}_water_shortage_status`,physicalControlLock:`switch.${e}_physical_control_locked`,noDisturb:`switch.${e}_no_disturb`,outWaterInterval:`number.${e}_out_water_interval`,outWaterInterval2:`number.${e}_out_water_interval_2`,resetFilterButton:`button.${e}_reset_filter_life`};for(const[t,e]of Object.entries(o))s[e]&&(i[t]=e);return i}var _t={version:"Version",entity:"Entity"},mt={entity:"Entity (Required)",entity_helper:"Select any entity from your Xiaomi Smart Pet Fountain 2"},yt={turn_on:"Turn on",turn_off:"Turn off",no_disturb_mode:"No disturb",physical_control_lock:"Physical control lock",water_interval:"Water interval",reset_filter:"Reset filter life",operating_mode:"Operating mode",battery:"Battery",charging:"Charging",charge_full:"On AC power",no_charge:"On battery",water_shortage:"Water shortage !",entity_not_found:"Entity not found",days_left:"${days} days left"},$t={reset_filter_message:"Do you want to reset the filter life?",cancel:"Cancel",confirm:"Confirm"},vt={common:_t,editor:mt,card:yt,dialog:$t},bt={version:"Version",entity:"Entité"},wt={entity:"Entité (Obligatoire)",entity_helper:"Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2"},xt={turn_on:"Allumer",turn_off:"Éteindre",no_disturb_mode:"Ne pas déranger",physical_control_lock:"Verrouillage des commandes physiques",water_interval:"Intervalle d'eau",reset_filter:"Réinitialiser la durée de vie du filtre",operating_mode:"Mode de fonctionnement",battery:"Batterie",charging:"En charge",charge_full:"Sur secteur",no_charge:"Sur batterie",water_shortage:"Manque d'eau !",entity_not_found:"Entité non trouvée",days_left:"${days} jours restants"},At={reset_filter_message:"Voulez-vous réinitialiser la durée d'utilisation du filtre ?",cancel:"Annuler",confirm:"Confirmer"},St={common:bt,editor:wt,card:xt,dialog:At};const Et={en:Object.freeze({__proto__:null,card:yt,common:_t,default:vt,dialog:$t,editor:mt}),fr:Object.freeze({__proto__:null,card:xt,common:bt,default:St,dialog:At,editor:wt})},Ct="en";function kt(t,e,i="",s=""){const o=t?.locale?.language??Ct;let r;try{r=e.split(".").reduce((t,e)=>t[e],Et[o])}catch(t){r=e.split(".").reduce((t,e)=>t[e],Et[Ct])}return void 0===r&&(r=e.split(".").reduce((t,e)=>t[e],Et[Ct])),"object"==typeof i&&null!==i?Object.entries(i).forEach(([t,e])=>{r=r.replace(`\${${t}}`,String(e))}):""!==i&&""!==s&&(r=r.replace(i,s)),r||e}function Pt(t,e){try{return t.split(".").reduce((t,e)=>t[e],Et[e])}catch(t){return}}let Ot=class extends at{constructor(){super(...arguments),this._computeLabel=t=>{const e=(i=this.hass,function(t){let e=Pt(t,i?.locale?.language??Ct);return e||(e=Pt(t,Ct)),e??t});var i;return"entity"===t.name?e("editor.entity"):"name"===t.name?e("editor.name"):t.name}}connectedCallback(){super.connectedCallback(),this.hass&&(customElements.get("ha-form")||customElements.get("hui-button-card")?.getConfigElement(),customElements.get("ha-entity-picker")||customElements.get("hui-entities-card")?.getConfigElement())}setConfig(t){this._config={...t}}render(){if(!this.hass||!this._config)return W``;const t=[{name:"entity",required:!0,selector:{entity:{include_domains:["switch","sensor","select","number","binary_sensor","button"]}}}];return W`
       <ha-form
         .hass=${this.hass}
         .data=${this._config}
@@ -50,11 +44,11 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
         .computeLabel=${this._computeLabel}
         @value-changed=${this._valueChanged}
       ></ha-form>
-    `}_valueChanged(t){const e=t.detail.value,i=new CustomEvent("config-changed",{bubbles:!0,composed:!0,detail:{config:e}});this.dispatchEvent(i)}static get styles(){return r`
+    `}_valueChanged(t){const e=t.detail.value,i=new CustomEvent("config-changed",{bubbles:!0,composed:!0,detail:{config:e}});this.dispatchEvent(i)}static get styles(){return n`
       ha-form {
         width: 100%;
       }
-    `}};t([lt({attribute:!1})],Ct.prototype,"hass",void 0),t([ct()],Ct.prototype,"_config",void 0),Ct=t([rt("xiaomi-smart-pet-fountain-2-card-editor")],Ct);var kt=Object.freeze({__proto__:null,get XiaomiSmartPetFountainCardEditor(){return Ct}});console.info("%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.0.0  ","color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),function(t){const e=window;e.customCards=e.customCards||[],e.customCards.push({...t,preview:!0})}({type:"xiaomi-smart-pet-fountain-2-card",name:"Xiaomi Smart Pet Fountain 2 Card",description:"A custom card for controlling Xiaomi Smart Pet Fountain 2"});let Pt=class extends st{constructor(){super(...arguments),this._showResetDialog=!1}static async getConfigElement(){return await Promise.resolve().then(function(){return kt}),document.createElement("xiaomi-smart-pet-fountain-2-card-editor")}static async getStubConfig(t){return{type:"custom:xiaomi-smart-pet-fountain-2-card",entity:"switch.xiaomi_iv02_b820_pet_drinking_fountain"}}setConfig(t){if(!t.entity)throw new Error("You need to define an entity");this.config=t}getCardSize(){return 4}render(){if(!this.hass||!this.config)return T`
+    `}};t([ut({attribute:!1})],Ot.prototype,"hass",void 0),t([pt()],Ot.prototype,"_config",void 0),Ot=t([ct("xiaomi-smart-pet-fountain-2-card-editor")],Ot);var Rt=Object.freeze({__proto__:null,get XiaomiSmartPetFountainCardEditor(){return Ot}});console.info("%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.1.0  ","color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),function(t){const e=window;e.customCards=e.customCards||[],e.customCards.push({...t,preview:!0})}({type:"xiaomi-smart-pet-fountain-2-card",name:"Xiaomi Smart Pet Fountain 2 Card",description:"A custom card for controlling Xiaomi Smart Pet Fountain 2"});let Mt=class extends at{constructor(){super(...arguments),this._showResetDialog=!1}static async getConfigElement(){return await Promise.resolve().then(function(){return Rt}),document.createElement("xiaomi-smart-pet-fountain-2-card-editor")}static async getStubConfig(t){return{type:"custom:xiaomi-smart-pet-fountain-2-card",entity:"switch.xiaomi_iv02_b820_pet_drinking_fountain"}}setConfig(t){if(!t.entity)throw new Error("You need to define an entity");this.config=t}getCardSize(){return 4}render(){if(!this.hass||!this.config)return W`
         <ha-card>
           <div class="card-content" style="padding: 16px;">
             <div
@@ -64,7 +58,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
             </div>
           </div>
         </ha-card>
-      `;const t=this.hass.states[this.config.entity];if(!t)return T`
+      `;const t=this.hass.states[this.config.entity];if(!t)return W`
         <ha-card>
           <div class="card-content" style="padding: 16px;">
             <div style="text-align: center;">
@@ -74,7 +68,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 Xiaomi Smart Pet Fountain 2
               </div>
               <div style="color: var(--secondary-text-color); font-size: 14px;">
-                ${St(this.hass,"card.entity_not_found")}:
+                ${kt(this.hass,"card.entity_not_found")}:
                 ${this.config.entity}
               </div>
               <div
@@ -85,12 +79,16 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
             </div>
           </div>
         </ha-card>
-      `;const e=ht(this.config.entity),i=ut(this.hass,e),o=this.config.entity.startsWith("switch.")?this.config.entity:i.powerSwitch,s=o?this.hass.states[o]:t,n=i.mode,r=n?this.hass.states[n]:null,a=r?r.state:"auto",l=r&&r.attributes.options?r.attributes.options:["auto","interval","constant"],c=i.batteryLevel,d=c?this.hass.states[c]:null,h=d&&parseFloat(d.state)||0,u=i.chargingState,p=u?this.hass.states[u]:null,g=p?p.state:"no charge",f=i.status,_=f?this.hass.states[f]:null,v=_?_.state:"waterless",m=i.waterShortage,y=m?this.hass.states[m]:null,$=!!y&&"on"===y.state,b=i.filterLifeLevel,w=b?this.hass.states[b]:null,A=w&&parseFloat(w.state)||0,x=i.outWaterInterval,S=x?this.hass.states[x]:null,E=S&&parseFloat(S.state)||10,C=S?.attributes?.min??0,k=S?.attributes?.max??120,P=S?.attributes?.step??15,R=[];for(let t=Math.max(10,C);t<=k;t+=P)R.push(t);const O="on"===s.state;this.config.name||t.attributes.friendly_name;const U=170*Math.PI*(250/360);return T`
+      `;const e=ft(this.config.entity),i=gt(this.hass,e),s=this.config.entity.startsWith("switch.")?this.config.entity:i.powerSwitch,o=s?this.hass.states[s]:t,r=i.mode,n=r?this.hass.states[r]:null,a=n?n.state:"auto",l=n&&n.attributes.options?n.attributes.options:["auto","interval","constant"],c=i.batteryLevel,h=c?this.hass.states[c]:null,d=h&&parseFloat(h.state)||0,u=i.chargingState,p=u?this.hass.states[u]:null,f=p?p.state:"no charge",g=i.waterShortage,_=g?this.hass.states[g]:null,m=!!_&&"on"===_.state,y=i.filterLifeLevel,$=y?this.hass.states[y]:null,v=$&&parseFloat($.state)||0,b=i.filterLeftTime,w=b?this.hass.states[b]:null,x=w?w.state:null,A=i.outWaterInterval,S=A?this.hass.states[A]:null,E=S&&parseFloat(S.state)||10,C=S?.attributes?.min??0,k=S?.attributes?.max??120,P=S?.attributes?.step??15,O=[];for(let t=Math.max(10,C);t<=k;t+=P)O.push(t);const R="on"===o.state;this.config.name||t.attributes.friendly_name;const M=170*Math.PI*(250/360),U=v/100*M;let T="";return x&&(T=kt(this.hass,"card.days_left",{days:x})),W`
       <ha-card>
         <div class="card-content">
+          <!-- Card Title -->
+          <div class="card-title">Xiaomi Smart Pet Fountain 2</div>
+
           <!-- Filter Life Circular Gauge -->
           <div class="gauge-container">
             <svg class="gauge-svg" viewBox="0 0 200 200">
+              <title>${T}</title>
               <!-- Background arc (3/4 circle) -->
               <path
                 class="gauge-background"
@@ -102,12 +100,12 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
               />
               <!-- Progress arc (3/4 circle) -->
               <path
-                class="gauge-progress ${O?"on":"off"} ${0===A?"critical":""}"
+                class="gauge-progress ${R?"on":"off"} ${0===v?"critical":""}"
                 d="M 30 150 A 85 85 0 1 1 170 150"
                 fill="none"
                 stroke-width="12"
                 stroke-linecap="round"
-                stroke-dasharray="${0===A?U:A/100*U+" "+U}"
+                stroke-dasharray="${0===v?M:U+" "+M}"
                 stroke-dashoffset="0"
                 style="transition: stroke-dasharray 0.3s ease, stroke 0.3s ease;"
               />
@@ -118,28 +116,19 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
               <!-- Battery/Charging Icon -->
               <div class="icon-indicator">
                 <ha-icon
-                  icon="${function(t,e){if(0===e)return"mdi:battery-alert";if(!t)return"mdi:battery";const i=t.toLowerCase();return i.includes("charging")&&!i.includes("full")?"mdi:battery-charging":i.includes("full")?"mdi:power-plug":e>=90?"mdi:battery":e>=70?"mdi:battery-80":e>=50?"mdi:battery-60":e>=30?"mdi:battery-40":e>=10?"mdi:battery-20":"mdi:battery-alert"}(g,h)}"
-                  class="${function(t,e){return 0===e?"critical-icon-pulse":t&&t.toLowerCase().includes("charging")&&!t.toLowerCase().includes("full")?"charging":""}(g,h)}"
-                  title="${function(t,e,i){if(!e)return`${St(t,"card.battery")}: ${i}%`;const o=e.toLowerCase();return o.includes("charging")&&!o.includes("full")?`${St(t,"card.charging")}: ${i}%`:o.includes("full")?St(t,"card.charge_full"):`${St(t,"card.no_charge")}: ${i}%`}(this.hass,g,h)}"
-                ></ha-icon>
-              </div>
-
-              <!-- Watering Status Icon -->
-              <div class="icon-indicator">
-                <ha-icon
-                  icon="mdi:water-pump-off"
-                  class="watering-status ${v&&"waterless"===v.toLowerCase()?"critical-icon-pulse":"hidden"}"
-                  title="${St(this.hass,"card.no_pump")}"
+                  icon="${function(t,e){if(0===e)return"mdi:battery-alert";if(!t)return"mdi:battery";const i=t.toLowerCase();return i.includes("charging")&&!i.includes("full")?"mdi:battery-charging":i.includes("full")?"mdi:power-plug":e>=90?"mdi:battery":e>=70?"mdi:battery-80":e>=50?"mdi:battery-60":e>=30?"mdi:battery-40":e>=10?"mdi:battery-20":"mdi:battery-alert"}(f,d)}"
+                  class="${function(t,e){return 0===e?"critical-icon-pulse":t&&t.toLowerCase().includes("charging")&&!t.toLowerCase().includes("full")?"charging":""}(f,d)}"
+                  title="${function(t,e,i){if(!e)return`${kt(t,"card.battery")}: ${i}%`;const s=e.toLowerCase();return s.includes("charging")&&!s.includes("full")?`${kt(t,"card.charging")}: ${i}%`:s.includes("full")?kt(t,"card.charge_full"):`${kt(t,"card.no_charge")}: ${i}%`}(this.hass,f,d)}"
                 ></ha-icon>
               </div>
 
               <!-- Water Shortage Icon -->
-              ${m?T`
+              ${g?W`
                     <div class="icon-indicator">
                       <ha-icon
                         icon="mdi:water-alert"
-                        class="water-shortage ${$?"critical-icon-pulse":"hidden"}"
-                        title="${St(this.hass,"card.water_shortage")}"
+                        class="water-shortage ${m?"critical-icon-pulse":"hidden"}"
+                        title="${kt(this.hass,"card.water_shortage")}"
                       ></ha-icon>
                     </div>
                   `:""}
@@ -147,7 +136,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
 
             <!-- Center Percentage Value-->
             <div class="gauge-center">
-              <div class="gauge-value">${A}%</div>
+              <div class="gauge-value">${v}%</div>
             </div>
 
             <!-- Horizontal Line -->
@@ -159,7 +148,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 class="control-button ${"on"===this.hass.states[i.noDisturb||""]?.state?"on":"off"}"
                 @click=${()=>this._toggleSwitch(i.noDisturb)}
                 ?disabled="${!i.noDisturb}"
-                title="${St(this.hass,"card.no_disturb_mode")}"
+                title="${kt(this.hass,"card.no_disturb_mode")}"
               >
                 <ha-icon icon="mdi:bell-off"></ha-icon>
               </button>
@@ -168,7 +157,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 class="control-button ${"on"===this.hass.states[i.physicalControlLock||""]?.state?"on":"off"}"
                 @click=${()=>this._toggleSwitch(i.physicalControlLock)}
                 ?disabled="${!i.physicalControlLock}"
-                title="${St(this.hass,"card.physical_control_lock")}"
+                title="${kt(this.hass,"card.physical_control_lock")}"
               >
                 <ha-icon icon="mdi:lock"></ha-icon>
               </button>
@@ -177,10 +166,10 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 class="pill-select"
                 .value="${E}"
                 @change="${t=>this._setWaterInterval(parseInt(t.target.value))}"
-                ?disabled="${!x||"interval"!==a.toLowerCase()}"
-                title="${St(this.hass,"card.water_interval")}"
+                ?disabled="${!A||"interval"!==a.toLowerCase()}"
+                title="${kt(this.hass,"card.water_interval")}"
               >
-                ${R.map(t=>T`
+                ${O.map(t=>W`
                     <option
                       value="${t}"
                       ?selected="${t===E}"
@@ -194,9 +183,9 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
             <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
             <div class="container-controls gauge-controls">
               <button
-                class="control-button ${O?"on":"off"}"
+                class="control-button ${R?"on":"off"}"
                 @click=${()=>this._togglePower()}
-                title="${St(this.hass,O?"card.turn_off":"card.turn_on")}"
+                title="${kt(this.hass,R?"card.turn_off":"card.turn_on")}"
               >
                 <ha-icon icon="mdi:power"></ha-icon>
               </button>
@@ -205,7 +194,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 class="control-button"
                 @click=${()=>this._showResetConfirmation()}
                 ?disabled="${!i.resetFilterButton}"
-                title="${St(this.hass,"card.reset_filter")}"
+                title="${kt(this.hass,"card.reset_filter")}"
               >
                 <ha-icon icon="mdi:air-filter"></ha-icon>
               </button>
@@ -214,10 +203,10 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                 class="pill-select mode-select"
                 .value="${a}"
                 @change="${t=>this._selectMode(t.target.value)}"
-                ?disabled="${!n}"
-                title="${St(this.hass,"card.operating_mode")}"
+                ?disabled="${!r}"
+                title="${kt(this.hass,"card.operating_mode")}"
               >
-                ${l.map(t=>T`
+                ${l.map(t=>W`
                     <option value="${t}" ?selected="${t===a}">
                       ${t}
                     </option>
@@ -228,7 +217,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
         </div>
 
         <!-- Reset Confirmation Dialog -->
-        ${this._showResetDialog?T`
+        ${this._showResetDialog?W`
               <div
                 class="dialog-overlay"
                 @click=${()=>this._hideResetDialog()}
@@ -238,29 +227,42 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
                   @click=${t=>t.stopPropagation()}
                 >
                   <div class="dialog-message">
-                    ${St(this.hass,"dialog.reset_filter_message")}
+                    ${kt(this.hass,"dialog.reset_filter_message")}
                   </div>
                   <div class="dialog-buttons">
                     <button
                       class="dialog-button cancel"
                       @click=${()=>this._hideResetDialog()}
                     >
-                      ${St(this.hass,"dialog.cancel")}
+                      ${kt(this.hass,"dialog.cancel")}
                     </button>
                     <button
                       class="dialog-button confirm"
                       @click=${()=>this._confirmResetFilter()}
                     >
-                      ${St(this.hass,"dialog.confirm")}
+                      ${kt(this.hass,"dialog.confirm")}
                     </button>
                   </div>
                 </div>
               </div>
             `:""}
       </ha-card>
-    `}_togglePower(){if(!this.config||!this.hass)return;const t=ht(this.config.entity),e=ut(this.hass,t),i=this.config.entity.startsWith("switch.")?this.config.entity:e.powerSwitch;if(!i)return void console.error("Power switch entity not found");const o="on"===this.hass.states[i].state?"turn_off":"turn_on";this.hass.callService("homeassistant",o,{entity_id:i})}_selectMode(t){if(!this.config||!this.hass)return;const e=ht(this.config.entity),i=ut(this.hass,e).mode;i?this.hass.callService("select","select_option",{entity_id:i,option:t}):console.error("Mode select entity not found")}_resetFilter(){if(!this.config||!this.hass)return;const t=ht(this.config.entity),e=ut(this.hass,t).resetFilterButton;e?this.hass.callService("button","press",{entity_id:e}):console.error("Reset filter button entity not found")}_showResetConfirmation(){this._showResetDialog=!0,this.requestUpdate()}_hideResetDialog(){this._showResetDialog=!1,this.requestUpdate()}_confirmResetFilter(){this._resetFilter(),this._hideResetDialog()}_toggleSwitch(t){if(!t||!this.hass)return void console.error("Switch entity not found");const e=this.hass.states[t];if(!e)return void console.error("Entity not found:",t);const i="on"===e.state?"turn_off":"turn_on";this.hass.callService("homeassistant",i,{entity_id:t})}_setWaterInterval(t){if(!this.config||!this.hass)return;const e=ht(this.config.entity),i=ut(this.hass,e).outWaterInterval;i?this.hass.callService("number","set_value",{entity_id:i,value:t}):console.error("Water interval entity not found")}static get styles(){return r`
+    `}_togglePower(){if(!this.config||!this.hass)return;const t=ft(this.config.entity),e=gt(this.hass,t),i=this.config.entity.startsWith("switch.")?this.config.entity:e.powerSwitch;if(!i)return void console.error("Power switch entity not found");const s="on"===this.hass.states[i].state?"turn_off":"turn_on";this.hass.callService("homeassistant",s,{entity_id:i})}_selectMode(t){if(!this.config||!this.hass)return;const e=ft(this.config.entity),i=gt(this.hass,e).mode;i?this.hass.callService("select","select_option",{entity_id:i,option:t}):console.error("Mode select entity not found")}_resetFilter(){if(!this.config||!this.hass)return;const t=ft(this.config.entity),e=gt(this.hass,t).resetFilterButton;e?this.hass.callService("button","press",{entity_id:e}):console.error("Reset filter button entity not found")}_showResetConfirmation(){this._showResetDialog=!0,this.requestUpdate()}_hideResetDialog(){this._showResetDialog=!1,this.requestUpdate()}_confirmResetFilter(){this._resetFilter(),this._hideResetDialog()}_toggleSwitch(t){if(!t||!this.hass)return void console.error("Switch entity not found");const e=this.hass.states[t];if(!e)return void console.error("Entity not found:",t);const i="on"===e.state?"turn_off":"turn_on";this.hass.callService("homeassistant",i,{entity_id:t})}_setWaterInterval(t){if(!this.config||!this.hass)return;const e=ft(this.config.entity),i=gt(this.hass,e).outWaterInterval;i?this.hass.callService("number","set_value",{entity_id:i,value:t}):console.error("Water interval entity not found")}static get styles(){return n`
       ha-card {
         padding: 16px;
+      }
+
+      .card-content {
+        position: relative;
+      }
+
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-text-color);
+        text-align: center;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
       }
 
       .card-header {
@@ -275,10 +277,6 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
         padding: 16px;
       }
 
-      .card-content {
-        position: relative;
-      }
-
       /* Gauge Container - */
       .gauge-container {
         position: relative;
@@ -286,10 +284,11 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
         justify-content: center;
         align-items: center;
         padding: 0;
-        margin: 0;
-        min-height: 280px;
-        height: auto;
-        aspect-ratio: 1 / 0.875;
+        margin: 0 auto;
+        width: min(100%, 320px);
+        height: 280px;
+        flex-shrink: 0;
+        container-type: size;
       }
 
       .gauge-svg {
@@ -323,7 +322,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
       /* Status Icons Row - Positioned above percentage, between gauge and center */
       .status-icons-row {
         position: absolute;
-        top: 16%;
+        top: 45px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
@@ -363,7 +362,6 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
         animation: pulse 2s infinite;
       }
 
-      .icon-indicator ha-icon.watering-status.hidden,
       .icon-indicator ha-icon.water-shortage.hidden {
         opacity: 0 !important;
         visibility: hidden;
@@ -391,10 +389,9 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
       /* Center Percentage Value */
       .gauge-center {
         position: absolute;
-        top: 28%;
-        bottom: 44%;
+        top: 43%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%);
         width: 100%;
         display: flex;
         align-items: center;
@@ -412,7 +409,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
       /* Horizontal Separator Line */
       .separator-line {
         position: absolute;
-        top: 55%;
+        top: 154px;
         left: 50%;
         transform: translateX(-50%);
         width: min(200px, 60%);
@@ -437,8 +434,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
 
       /* Additional Control Buttons (No Disturb, Physical Lock) */
       .additional-controls {
-        top: 57%;
-        bottom: 25%;
+        top: 170px;
       }
 
       .control-button {
@@ -481,7 +477,7 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
 
       /* Controls in Bottom Quarter */
       .gauge-controls {
-        top: 78%;
+        top: 225px;
       }
 
       .pill-select {
@@ -584,5 +580,5 @@ const rt=t=>e=>"function"==typeof e?((t,e)=>(customElements.define(t,e),e))(t,e)
       .dialog-button.confirm:hover {
         opacity: 0.9;
       }
-    `}};t([lt({type:Object})],Pt.prototype,"hass",void 0),t([lt({type:Object})],Pt.prototype,"config",void 0),t([ct()],Pt.prototype,"_showResetDialog",void 0),Pt=t([rt("xiaomi-smart-pet-fountain-2-card")],Pt);export{Pt as XiaomiSmartPetFountainCard,Ct as XiaomiSmartPetFountainCardEditor};
+    `}};t([ut({type:Object})],Mt.prototype,"hass",void 0),t([ut({type:Object})],Mt.prototype,"config",void 0),t([pt()],Mt.prototype,"_showResetDialog",void 0),Mt=t([ct("xiaomi-smart-pet-fountain-2-card")],Mt);export{Mt as XiaomiSmartPetFountainCard,Ot as XiaomiSmartPetFountainCardEditor};
 //# sourceMappingURL=xiaomi-smart-pet-fountain-2-card.js.map
