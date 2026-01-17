@@ -154,11 +154,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       ? chargingStateEntity.state
       : "no charge";
 
-    // Get watering status
-    const statusId = relatedEntities.status;
-    const statusEntity = statusId ? this.hass.states[statusId] : null;
-    const wateringStatus = statusEntity ? statusEntity.state : "waterless";
-
     // Get water shortage status
     const waterShortageId = relatedEntities.waterShortage;
     const waterShortageEntity = waterShortageId
@@ -176,6 +171,15 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const filterLife = filterLifeEntity
       ? parseFloat(filterLifeEntity.state) || 0
       : 0;
+
+    // Get filter left time
+    const filterLeftTimeId = relatedEntities.filterLeftTime;
+    const filterLeftTimeEntity = filterLeftTimeId
+      ? this.hass.states[filterLeftTimeId]
+      : null;
+    const filterLeftTime = filterLeftTimeEntity
+      ? filterLeftTimeEntity.state
+      : null;
 
     // Get water interval
     const waterIntervalId = relatedEntities.outWaterInterval;
@@ -205,12 +209,25 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
     const arcLength = 85 * 2 * Math.PI * (250 / 360);
     const progressLength = (filterLife / 100) * arcLength;
+
+    // Build tooltip for filter life gauge
+    let tooltipText = "";
+    if (filterLeftTime) {
+      tooltipText = localize(this.hass, "card.days_left", {
+        days: filterLeftTime,
+      });
+    }
+
     return html`
       <ha-card>
         <div class="card-content">
+          <!-- Card Title -->
+          <div class="card-title">Xiaomi Smart Pet Fountain 2</div>
+
           <!-- Filter Life Circular Gauge -->
           <div class="gauge-container">
             <svg class="gauge-svg" viewBox="0 0 200 200">
+              <title>${tooltipText}</title>
               <!-- Background arc (3/4 circle) -->
               <path
                 class="gauge-background"
@@ -249,18 +266,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                     chargingState,
                     batteryLevel,
                   )}"
-                ></ha-icon>
-              </div>
-
-              <!-- Watering Status Icon -->
-              <div class="icon-indicator">
-                <ha-icon
-                  icon="mdi:water-pump-off"
-                  class="watering-status ${wateringStatus &&
-                  wateringStatus.toLowerCase() === "waterless"
-                    ? "critical-icon-pulse"
-                    : "hidden"}"
-                  title="${localize(this.hass, "card.no_pump")}"
                 ></ha-icon>
               </div>
 
@@ -541,6 +546,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         padding: 16px;
       }
 
+      .card-content {
+        position: relative;
+      }
+
+      .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-text-color);
+        text-align: center;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
+      }
+
       .card-header {
         font-size: 24px;
         font-weight: bold;
@@ -553,10 +571,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         padding: 16px;
       }
 
-      .card-content {
-        position: relative;
-      }
-
       /* Gauge Container - */
       .gauge-container {
         position: relative;
@@ -564,10 +578,11 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         justify-content: center;
         align-items: center;
         padding: 0;
-        margin: 0;
+        margin: 0 auto;
         min-height: 280px;
         height: auto;
-        aspect-ratio: 1 / 0.875;
+        width: 100%;
+        max-width: 400px;
       }
 
       .gauge-svg {
@@ -641,7 +656,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         animation: pulse 2s infinite;
       }
 
-      .icon-indicator ha-icon.watering-status.hidden,
       .icon-indicator ha-icon.water-shortage.hidden {
         opacity: 0 !important;
         visibility: hidden;
