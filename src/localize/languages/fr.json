@@ -1,0 +1,31 @@
+{
+  "common": {
+    "version": "Version",
+    "entity": "Entité"
+  },
+  "editor": {
+    "entity": "Entité (Obligatoire)",
+    "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2"
+  },
+  "card": {
+    "turn_on": "Allumer",
+    "turn_off": "Éteindre",
+    "no_disturb_mode": "Ne pas déranger",
+    "physical_control_lock": "Verrouillage des commandes physiques",
+    "water_interval": "Intervalle d'eau",
+    "reset_filter": "Réinitialiser la durée de vie du filtre",
+    "operating_mode": "Mode de fonctionnement",
+    "battery": "Batterie",
+    "charging": "En charge",
+    "charge_full": "Charge complète",
+    "no_charge": "Sur batterie",
+    "no_pump": "Pompe à eau non fonctionnelle",
+    "water_shortage": "Manque d'eau !",
+    "entity_not_found": "Entité non trouvée"
+  },
+  "dialog": {
+    "reset_filter_message": "Voulez-vous réinitialiser la durée d'utilisation du filtre ?",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  }
+}

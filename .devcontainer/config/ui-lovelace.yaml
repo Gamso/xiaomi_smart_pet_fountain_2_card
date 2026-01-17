@@ -1,0 +1,62 @@
+```yaml
+# Example dashboard configuration with the card
+# Uses the real entity names of the Xiaomi Smart Pet Fountain 2
+
+title: Xiaomi Fountain Test
+views:
+  - title: Home
+    path: home
+    icon: mdi:home
+    cards:
+      # Xiaomi Smart Pet Fountain card
+      - type: custom:xiaomi-smart-pet-fountain-2-card
+        entity: switch.xiaomi_iv02_b820_pet_drinking_fountain
+        name: Xiaomi Smart Pet Fountain 2
+        show_name: true
+        show_state: true
+
+      # Main fountain entities
+      - type: entities
+        title: Fountain Status
+        entities:
+          - entity: switch.xiaomi_iv02_b820_pet_drinking_fountain
+            name: Water dispenser
+          - entity: select.xiaomi_iv02_b820_mode
+            name: Operating mode
+          - entity: sensor.xiaomi_iv02_b820_status
+            name: Pump status
+          - entity: sensor.xiaomi_iv02_b820_filter_life_level
+            name: Filter life
+          - entity: sensor.xiaomi_iv02_b820_filter_left_time
+            name: Remaining filter days
+          - entity: binary_sensor.xiaomi_iv02_b820_water_shortage_status
+            name: Water shortage
+          - entity: input_boolean.simu_water_shortage
+            name: Water shortage simulation
+
+      # Battery and charging
+      - type: entities
+        title: Battery
+        entities:
+          - entity: sensor.xiaomi_iv02_b820_battery_level
+            name: Battery level
+          - entity: sensor.xiaomi_iv02_b820_charging_state
+            name: Charging state
+
+      # Settings and controls
+      - type: entities
+        title: Settings
+        entities:
+          - entity: switch.xiaomi_iv02_b820_physical_control_locked
+            name: Physical lock
+          - entity: switch.xiaomi_iv02_b820_no_disturb
+            name: Do not disturb
+          - entity: number.xiaomi_iv02_b820_out_water_interval
+            name: Interval
+
+      # Actions
+      - type: entities
+        title: Actions
+        entities:
+          - entity: button.xiaomi_iv02_b820_reset_filter_life
+            name: Reset filter

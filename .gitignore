@@ -1,0 +1,13 @@
+node_modules/
+*.log
+.DS_Store
+dist/*.map
+
+# Home Assistant DevContainer files
+.devcontainer/config/.storage/
+.devcontainer/config/home-assistant.log
+.devcontainer/config/home-assistant_v2.db
+.devcontainer/config/.uuid
+.devcontainer/config/deps/
+.devcontainer/config/tts/
+.devcontainer/config/.cloud/

@@ -1,0 +1,346 @@
+```yaml
+# Basic configuration for development
+
+homeassistant:
+  name: Dev Environment
+  latitude: 48.8566
+  longitude: 2.3522
+  elevation: 0
+  unit_system: metric
+  time_zone: Europe/Paris
+
+# Enable development mode
+logger:
+  default: info
+  logs:
+    homeassistant.components.lovelace: debug
+
+# User interface
+lovelace:
+  mode: storage
+  resources:
+    - url: /local/xiaomi_smart_pet_fountain_2_card/xiaomi-smart-pet-fountain-2-card.js
+      type: module
+
+# Creation of test entities simulating the Xiaomi Smart Pet Fountain 2
+# Names match the real entities from the Xiaomi Miot integration
+
+input_select:
+  # Operating mode (select.xiaomi_iv02_b820_mode)
+  xiaomi_iv02_b820_mode:
+    name: Operating mode
+    options:
+      - auto
+      - interval
+      - constant
+    initial: auto
+    icon: mdi:water-pump
+
+  # Water pump operating status (sensor.xiaomi_iv02_b820_status)
+  # Real values: watering / waterless
+  xiaomi_iv02_b820_status:
+    name: Water pump operating status
+    options:
+      - watering
+      - waterless
+    initial: watering
+    icon: mdi:water-pump
+
+  # Battery charging state (sensor.xiaomi_iv02_b820_charging_state)
+  # Real values: charge full / charging / no charge
+  xiaomi_iv02_b820_charging_state:
+    name: Battery charging state
+    options:
+      - charge full
+      - charging
+      - no charge
+    initial: charge full
+    icon: mdi:battery-charging
+
+input_number:
+  # Remaining filter life (sensor.xiaomi_iv02_b820_filter_life_level)
+  xiaomi_iv02_b820_filter_life_level:
+    name: Remaining filter life
+    initial: 80
+    min: 0
+    max: 100
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:air-filter
+
+  # Remaining filter time in days (sensor.xiaomi_iv02_b820_filter_left_time)
+  xiaomi_iv02_b820_filter_left_time:
+    name: Remaining filter time
+    initial: 45
+    min: 0
+    max: 180
+    step: 1
+    unit_of_measurement: "days"
+    icon: mdi:calendar-clock
+
+  # Battery level (sensor.xiaomi_iv02_b820_battery_level)
+  xiaomi_iv02_b820_battery_level:
+    name: Battery level
+    initial: 85
+    min: 0
+    max: 100
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:battery
+
+  # Interval (number.xiaomi_iv02_b820_out_water_interval)
+  xiaomi_iv02_b820_out_water_interval:
+    name: Interval
+    initial: 15
+    min: 0
+    max: 120
+    step: 5
+    unit_of_measurement: "min"
+    icon: mdi:timer
+
+  # Pet Drinking Fountain Out Water Interval 2 (number.xiaomi_iv02_b820_out_water_interval_2)
+  xiaomi_iv02_b820_out_water_interval_2:
+    name: Pet Drinking Fountain Out Water Interval
+    initial: 60
+    min: 0
+    max: 180
+    step: 5
+    unit_of_measurement: "min"
+    icon: mdi:timer
+
+input_boolean:
+  # Pet drinking fountain (switch.xiaomi_iv02_b820_pet_drinking_fountain)
+  xiaomi_iv02_b820_pet_drinking_fountain:
+    name: Pet drinking fountain
+    initial: on
+    icon: mdi:water-pump
+
+  # Physical control lock (switch.xiaomi_iv02_b820_physical_control_locked)
+  xiaomi_iv02_b820_physical_control_locked:
+    name: Physical control lock
+    initial: off
+    icon: mdi:lock
+
+  # Do not disturb (switch.xiaomi_iv02_b820_no_disturb)
+  xiaomi_iv02_b820_no_disturb:
+    name: Do not disturb
+    initial: off
+    icon: mdi:sleep
+
+  # Water shortage (binary_sensor.xiaomi_iv02_b820_water_shortage_status)
+  simu_water_shortage:
+    name: "Simulate water shortage"
+    initial: off
+    icon: mdi:water-alert
+
+# Templates to create sensors and binary sensors
+template:
+  - binary_sensor:
+      # Water shortage (binary_sensor.xiaomi_iv02_b820_water_shortage_status)
+      # Real value: off if there is water, on if water is missing
+      - name: "Xiaomi IV02 B820 Water Shortage Status"
+        unique_id: binary_sensor_xiaomi_iv02_b820_water_shortage_status
+        state: "{{ is_state('input_boolean.simu_water_shortage', 'on') }}"
+        icon: "mdi:water-alert"
+
+  - sensor:
+      # Remaining filter life
+      - name: "Xiaomi IV02 B820 Filter Life Level"
+        unique_id: sensor_xiaomi_iv02_b820_filter_life_level
+        state: "{{ states('input_number.xiaomi_iv02_b820_filter_life_level') | int }}"
+        unit_of_measurement: "%"
+        icon: "mdi:air-filter"
+
+      # Remaining filter time
+      - name: "Xiaomi IV02 B820 Filter Left Time"
+        unique_id: sensor_xiaomi_iv02_b820_filter_left_time
+        state: "{{ states('input_number.xiaomi_iv02_b820_filter_left_time') | int }}"
+        unit_of_measurement: "days"
+        icon: "mdi:calendar-clock"
+
+      # Battery level
+      - name: "Xiaomi IV02 B820 Battery Level"
+        unique_id: sensor_xiaomi_iv02_b820_battery_level
+        state: "{{ states('input_number.xiaomi_iv02_b820_battery_level') | int }}"
+        unit_of_measurement: "%"
+        icon: "mdi:battery"
+        device_class: battery
+
+      # Water pump operating status
+      - name: "Xiaomi IV02 B820 Status"
+        unique_id: sensor_xiaomi_iv02_b820_status
+        state: "{{ states('input_select.xiaomi_iv02_b820_status') }}"
+        icon: "mdi:information"
+
+      # Battery charging state
+      - name: "Xiaomi IV02 B820 Charging State"
+        unique_id: sensor_xiaomi_iv02_b820_charging_state
+        state: "{{ states('input_select.xiaomi_iv02_b820_charging_state') }}"
+        icon: "mdi:battery-charging"
+
+  - select:
+      # Operating mode
+      - name: "Xiaomi IV02 B820 Mode"
+        unique_id: select_xiaomi_iv02_b820_mode
+        state: "{{ states('input_select.xiaomi_iv02_b820_mode') }}"
+        options: "{{ state_attr('input_select.xiaomi_iv02_b820_mode', 'options') }}"
+        select_option:
+          service: input_select.select_option
+          target:
+            entity_id: input_select.xiaomi_iv02_b820_mode
+          data:
+            option: "{{ option }}"
+        icon: "mdi:water-pump"
+
+  - switch:
+      # Pet drinking fountain
+      - name: "Xiaomi IV02 B820 Pet Drinking Fountain"
+        unique_id: switch_xiaomi_iv02_b820_pet_drinking_fountain
+        state: "{{ is_state('input_boolean.xiaomi_iv02_b820_pet_drinking_fountain', 'on') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
+        icon: "mdi:water-pump"
+
+      # Physical control lock
+      - name: "Xiaomi IV02 B820 Physical Control Locked"
+        unique_id: switch_xiaomi_iv02_b820_physical_control_locked
+        state: "{{ is_state('input_boolean.xiaomi_iv02_b820_physical_control_locked', 'on') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_physical_control_locked
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_physical_control_locked
+        icon: "mdi:lock"
+
+      # Do not disturb
+      - name: "Xiaomi IV02 B820 No Disturb"
+        unique_id: switch_xiaomi_iv02_b820_no_disturb
+        state: "{{ is_state('input_boolean.xiaomi_iv02_b820_no_disturb', 'on') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_no_disturb
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.xiaomi_iv02_b820_no_disturb
+        icon: "mdi:sleep"
+
+  - number:
+      # Intervalle
+      - name: "Xiaomi IV02 B820 Out Water Interval"
+        unique_id: number_xiaomi_iv02_b820_out_water_interval
+        state: "{{ states('input_number.xiaomi_iv02_b820_out_water_interval') | int }}"
+        min: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval', 'min') }}"
+        max: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval', 'max') }}"
+        step: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval', 'step') }}"
+        set_value:
+          service: input_number.set_value
+          target:
+            entity_id: input_number.xiaomi_iv02_b820_out_water_interval
+          data:
+            value: "{{ value }}"
+        unit_of_measurement: "min"
+        icon: "mdi:timer"
+
+      # Pet Drinking Fountain Out Water Interval 2
+      - name: "Xiaomi IV02 B820 Out Water Interval 2"
+        unique_id: number_xiaomi_iv02_b820_out_water_interval_2
+        state: "{{ states('input_number.xiaomi_iv02_b820_out_water_interval_2') | int }}"
+        min: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval_2', 'min') }}"
+        max: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval_2', 'max') }}"
+        step: "{{ state_attr('input_number.xiaomi_iv02_b820_out_water_interval_2', 'step') }}"
+        set_value:
+          service: input_number.set_value
+          target:
+            entity_id: input_number.xiaomi_iv02_b820_out_water_interval_2
+          data:
+            value: "{{ value }}"
+        unit_of_measurement: "min"
+        icon: "mdi:timer"
+
+  - button:
+      # Filter reset
+      - name: "Xiaomi IV02 B820 Reset Filter Life"
+        unique_id: button_xiaomi_iv02_b820_reset_filter_life
+        icon: "mdi:restart"
+        press:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.xiaomi_iv02_b820_filter_life_level
+            data:
+              value: 100
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.xiaomi_iv02_b820_filter_left_time
+            data:
+              value: 180
+          - action: persistent_notification.create
+            data:
+              title: "Xiaomi Fountain"
+              message: "Filter life reset to 100%"
+
+# Allow calling mock services for testing
+script:
+  change_fountain_mode:
+    alias: Change Fountain Mode
+    fields:
+      mode:
+        description: Mode to set
+        example: normal
+    sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.xiaomi_iv02_b820_mode
+        data:
+          option: "{{ mode }}"
+      - service: persistent_notification.create
+        data:
+          title: "Xiaomi Fountain"
+          message: "Mode changed to {{ mode }}"
+
+automation:
+  - alias: "Sync fountain power with switch"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
+                state: "off"
+            sequence:
+              - service: persistent_notification.create
+                data:
+                  title: "Xiaomi Fountain"
+                  message: "Fountain turned off"
+        default:
+          - service: persistent_notification.create
+            data:
+              title: "Xiaomi Fountain"
+              message: "Fountain turned on"
+
+  - alias: "Simulate filter degradation"
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"
+    condition:
+      - condition: state
+        entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
+        state: "on"
+    action:
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.xiaomi_iv02_b820_filter_life_level
+        data:
+          value: "{{ [0, (states('input_number.xiaomi_iv02_b820_filter_life_level')|int - 1)]|max }}"

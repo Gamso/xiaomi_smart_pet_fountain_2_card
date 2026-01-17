@@ -1,0 +1,18 @@
+# Ensure shell scripts always have LF line endings
+*.sh text eol=lf
+
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Explicitly declare text files
+*.js text
+*.json text
+*.md text
+*.yaml text
+*.yml text
+
+# Denote binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary

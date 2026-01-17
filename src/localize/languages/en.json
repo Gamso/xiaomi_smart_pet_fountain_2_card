@@ -1,0 +1,31 @@
+{
+  "common": {
+    "version": "Version",
+    "entity": "Entity"
+  },
+  "editor": {
+    "entity": "Entity (Required)",
+    "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2"
+  },
+  "card": {
+    "turn_on": "Turn on",
+    "turn_off": "Turn off",
+    "no_disturb_mode": "No disturb",
+    "physical_control_lock": "Physical control lock",
+    "water_interval": "Water interval",
+    "reset_filter": "Reset filter life",
+    "operating_mode": "Operating mode",
+    "battery": "Battery",
+    "charging": "Charging",
+    "charge_full": "Charge full",
+    "no_charge": "On battery",
+    "no_pump": "Water pump not working",
+    "water_shortage": "Water shortage !",
+    "entity_not_found": "Entity not found"
+  },
+  "dialog": {
+    "reset_filter_message": "Do you want to reset the filter life?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}
