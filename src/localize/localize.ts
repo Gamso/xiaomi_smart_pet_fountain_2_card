@@ -14,14 +14,14 @@ const DEFAULT_LANG = 'en';
  * Localize a string key based on the current Home Assistant language
  * @param hass Home Assistant instance
  * @param string Dot-notation key (e.g., 'card.turn_on')
- * @param search Optional search string to replace
- * @param replace Optional replacement string
+ * @param search Optional search string to replace or object with replacements
+ * @param replace Optional replacement string (used only if search is a string)
  * @returns Localized string
  */
 export function localize(
   hass: HomeAssistant | undefined,
   string: string,
-  search = '',
+  search: string | Record<string, string | number> = '',
   replace = ''
 ): string {
   const lang = hass?.locale?.language ?? DEFAULT_LANG;
@@ -38,7 +38,13 @@ export function localize(
     translated = string.split('.').reduce((o, i) => o[i], languages[DEFAULT_LANG]);
   }
 
-  if (search !== '' && replace !== '') {
+  if (typeof search === 'object' && search !== null) {
+    // Handle object-based replacements
+    Object.entries(search).forEach(([key, value]) => {
+      translated = translated.replace(`\${${key}}`, String(value));
+    });
+  } else if (search !== '' && replace !== '') {
+    // Handle string-based replacements
     translated = translated.replace(search, replace);
   }
 

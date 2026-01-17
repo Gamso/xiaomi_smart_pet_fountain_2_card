@@ -1,4 +1,3 @@
-```yaml
 # Basic configuration for development
 
 homeassistant:
@@ -284,10 +283,6 @@ template:
               entity_id: input_number.xiaomi_iv02_b820_filter_left_time
             data:
               value: 180
-          - action: persistent_notification.create
-            data:
-              title: "Xiaomi Fountain"
-              message: "Filter life reset to 100%"
 
 # Allow calling mock services for testing
 script:
@@ -303,33 +298,8 @@ script:
           entity_id: input_select.xiaomi_iv02_b820_mode
         data:
           option: "{{ mode }}"
-      - service: persistent_notification.create
-        data:
-          title: "Xiaomi Fountain"
-          message: "Mode changed to {{ mode }}"
 
 automation:
-  - alias: "Sync fountain power with switch"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
-    action:
-      - choose:
-          - conditions:
-              - condition: state
-                entity_id: input_boolean.xiaomi_iv02_b820_pet_drinking_fountain
-                state: "off"
-            sequence:
-              - service: persistent_notification.create
-                data:
-                  title: "Xiaomi Fountain"
-                  message: "Fountain turned off"
-        default:
-          - service: persistent_notification.create
-            data:
-              title: "Xiaomi Fountain"
-              message: "Fountain turned on"
-
   - alias: "Simulate filter degradation"
     trigger:
       - platform: time_pattern

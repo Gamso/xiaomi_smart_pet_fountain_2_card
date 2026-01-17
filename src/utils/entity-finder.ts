@@ -1,12 +1,12 @@
-import { HomeAssistant } from '../types/hass';
-import { RelatedEntities } from '../types/entities';
+import { HomeAssistant } from "../types/hass";
+import { RelatedEntities } from "../types/entities";
 
 /**
  * Find entities related to this fountain based on base name
  */
 export function findRelatedEntities(
   hass: HomeAssistant | undefined,
-  baseName: string | null
+  baseName: string | null,
 ): RelatedEntities {
   if (!hass || !baseName) return {};
 
@@ -21,7 +21,6 @@ export function findRelatedEntities(
     filterLeftTime: `sensor.${baseName}_filter_left_time`,
     batteryLevel: `sensor.${baseName}_battery_level`,
     chargingState: `sensor.${baseName}_charging_state`,
-    status: `sensor.${baseName}_status`,
     waterShortage: `binary_sensor.${baseName}_water_shortage_status`,
     physicalControlLock: `switch.${baseName}_physical_control_locked`,
     noDisturb: `switch.${baseName}_no_disturb`,
