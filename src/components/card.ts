@@ -1,8 +1,7 @@
 import { LitElement, html, css, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { HomeAssistant, HassEntity } from "../types/hass";
+import { HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
-import { RelatedEntities } from "../types/entities";
 import { extractBaseName, findRelatedEntities } from "../utils";
 import {
   getChargingIcon,
@@ -10,10 +9,11 @@ import {
   getBatteryIconClass,
 } from "../utils/battery-utils";
 import { localize } from "../localize";
+import { version } from "../../package.json";
 import "./editor";
 
 console.info(
-  `%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.1.0  `,
+  `%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version ${version}  `,
   "color: orange; font-weight: bold; background: black",
   "color: white; font-weight: bold; background: dimgray",
 );
