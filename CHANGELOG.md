@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 1.1.1 (2026-01-18)
+
+- ✨ Improve bettery icon behavior
+
 ## Version 1.1.0 (2026-01-17)
 
 - 🎨 Add title card
