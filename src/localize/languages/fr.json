@@ -6,6 +6,7 @@
   "editor": {
     "entity": "Entité (Obligatoire)",
     "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2",
+    "name": "Nom (facultatif)",
     "entities_section": "Entités (facultatif, remplace la découverte automatique)",
     "power_entity": "Interrupteur marche/arrêt",
     "mode_entity": "Mode de fonctionnement",

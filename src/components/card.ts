@@ -47,6 +47,8 @@ registerCustomCard({
   description: "A custom card for controlling Xiaomi Smart Pet Fountain 2",
 });
 
+const DEFAULT_TITLE = "Xiaomi Smart Pet Fountain 2";
+
 @customElement("xiaomi-smart-pet-fountain-2-card")
 export class XiaomiSmartPetFountainCard extends LitElement {
   @property({ type: Object }) hass?: HomeAssistant;
@@ -115,7 +117,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               <div
                 style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"
               >
-                Xiaomi Smart Pet Fountain 2
+                ${this._title()}
               </div>
               <div style="color: var(--secondary-text-color); font-size: 14px;">
                 ${localize(this.hass, "card.entity_not_found")}:
@@ -225,7 +227,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       <ha-card>
         <div class="card-content">
           <!-- Card Title -->
-          <div class="card-title">Xiaomi Smart Pet Fountain 2</div>
+          <div class="card-title">${this._title()}</div>
 
           ${missing.length
             ? html`
@@ -446,6 +448,11 @@ export class XiaomiSmartPetFountainCard extends LitElement {
           : ""}
       </ha-card>
     `;
+  }
+
+  /** Card title: the `name` option, or the product name by default */
+  private _title(): string {
+    return this.config?.name?.trim() || DEFAULT_TITLE;
   }
 
   private _relatedEntities() {

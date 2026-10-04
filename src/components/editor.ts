@@ -27,6 +27,10 @@ const computeSchema = (customLocalize: (key: string) => string) => [
     },
   },
   {
+    name: 'name',
+    selector: { text: {} },
+  },
+  {
     // Optional overrides of the auto-discovered entities
     type: 'expandable',
     name: 'entities',
