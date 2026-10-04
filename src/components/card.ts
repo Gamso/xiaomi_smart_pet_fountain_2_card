@@ -1,6 +1,6 @@
 import { LitElement, html, svg, css, nothing, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { HomeAssistant } from "../types/hass";
+import { HassEntity, HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
 import {
   resolveEntities,
@@ -9,13 +9,14 @@ import {
   percentState,
   buildIntervalOptions,
   PET_FOUNTAIN_2_PLATFORM,
+  stateKey,
 } from "../utils";
 import {
   getChargingIcon,
   getBatteryTooltip,
   getBatteryIconClass,
 } from "../utils/battery-utils";
-import { localize } from "../localize";
+import { localize, setupCustomlocalize } from "../localize";
 import { version } from "../../package.json";
 import "./editor";
 
@@ -50,6 +51,7 @@ registerCustomCard({
 });
 
 const DEFAULT_TITLE = "Xiaomi Smart Pet Fountain 2";
+const DEFAULT_MODES = ["auto", "interval", "constant"];
 
 @customElement("xiaomi-smart-pet-fountain-2-card")
 export class XiaomiSmartPetFountainCard extends LitElement {
@@ -159,14 +161,14 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       ? this.hass.states[powerSwitchId]
       : undefined;
 
-    // Get mode from mode select entity
+    // Get mode from mode select entity. Options are the entity's own
+    // strings ("Constant" with Miot Auto, "constant" with
+    // xiaomi_pet_fountain_2), compared through stateKey().
     const modeEntityId = relatedEntities.mode;
-    const modeEntity = modeEntityId ? this.hass.states[modeEntityId] : null;
-    const mode = modeEntity ? modeEntity.state : "auto";
-    const modeOptions =
-      modeEntity && modeEntity.attributes.options
-        ? modeEntity.attributes.options
-        : ["auto", "interval", "constant"];
+    const modeEntity = modeEntityId ? this.hass.states[modeEntityId] : undefined;
+    const modeOptions = this._modeOptions(modeEntity);
+    const modeKey = stateKey(knownState(modeEntity)) ?? (modeEntity ? undefined : "auto");
+    const mode = modeOptions.find((option) => stateKey(option) === modeKey);
 
     // Get battery info
     const batteryLevelId = relatedEntities.batteryLevel;
@@ -436,8 +438,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                     this._setWaterInterval(
                       Number((e.target as HTMLSelectElement).value),
                     )}"
-                  ?disabled="${!waterIntervalId ||
-                  mode.toLowerCase() !== "interval"}"
+                  ?disabled="${!waterIntervalId || modeKey !== "interval"}"
                   title="${localize(this.hass, "card.water_interval")}"
                   aria-label="${localize(this.hass, "card.water_interval")}"
                 >
@@ -483,17 +484,20 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
                 <select
                   class="pill-select mode-select"
-                  .value="${mode}"
+                  .value="${mode ?? ""}"
                   @change="${(e: Event) =>
                     this._selectMode((e.target as HTMLSelectElement).value)}"
                   ?disabled="${!modeEntityId}"
                   title="${localize(this.hass, "card.operating_mode")}"
                   aria-label="${localize(this.hass, "card.operating_mode")}"
                 >
+                  ${mode === undefined
+                    ? html`<option value="" disabled selected>--</option>`
+                    : nothing}
                   ${modeOptions.map(
                     (option: string) => html`
                       <option value="${option}" ?selected="${option === mode}">
-                        ${option}
+                        ${this._modeLabel(modeEntity, option)}
                       </option>
                     `,
                   )}
@@ -545,6 +549,33 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
   private _relatedEntities() {
     return resolveEntities(this.hass, this.config).entities;
+  }
+
+  /** Options of the mode select entity, exactly as it expects them */
+  private _modeOptions(modeEntity: HassEntity | undefined): string[] {
+    const options = modeEntity?.attributes?.options;
+    return Array.isArray(options) && options.length
+      ? options.map(String)
+      : DEFAULT_MODES;
+  }
+
+  /**
+   * Displayed name of a mode: the entity's translated state when Home
+   * Assistant has one (hass.formatEntityState), else the card's
+   * translation, never the raw option.
+   */
+  private _modeLabel(
+    modeEntity: HassEntity | undefined,
+    option: string,
+  ): string {
+    const formatted =
+      modeEntity && typeof this.hass?.formatEntityState === "function"
+        ? this.hass.formatEntityState(modeEntity, option)
+        : undefined;
+    if (formatted && formatted !== option) return formatted;
+    const key = `card.modes.${stateKey(option)}`;
+    const own = setupCustomlocalize(this.hass)(key);
+    return own !== key ? own : formatted || option;
   }
 
   /**
@@ -616,9 +647,16 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
+    // Send the option string the entity lists (its own casing)
+    const key = stateKey(selectedMode);
+    const option =
+      this._modeOptions(this.hass.states[modeEntityId]).find(
+        (o) => stateKey(o) === key,
+      ) ?? selectedMode;
+
     this._callService("select", "select_option", {
       entity_id: modeEntityId,
-      option: selectedMode,
+      option,
     });
   }
 

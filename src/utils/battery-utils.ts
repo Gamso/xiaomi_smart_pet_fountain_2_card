@@ -1,10 +1,13 @@
 import { HomeAssistant } from "../types/hass";
 import { localize } from "../localize";
+import { stateKey } from "./state-utils";
 
 // The charging state sensor of the iv02 reports "charging", "charge full"
-// (on AC power) or "no charge" (running on battery). An undefined state or
-// level means "unknown" (entity missing, unavailable or unknown): it is never
-// treated as 0 %, so it can't raise the empty-battery alert.
+// (on AC power) or "no charge" (running on battery) with Xiaomi Miot Auto,
+// "charging", "charge_full" or "no_charge" with xiaomi_pet_fountain_2: the
+// state is compared through stateKey(). An undefined state or level means
+// "unknown" (entity missing, unavailable or unknown): it is never treated as
+// 0 %, so it can't raise the empty-battery alert.
 
 function isCharging(state: string): boolean {
   return state.includes("charging") && !state.includes("full");
@@ -15,7 +18,7 @@ function isChargeFull(state: string): boolean {
 }
 
 function isOnBattery(state: string): boolean {
-  return state.includes("no charge");
+  return state.includes("no_charge");
 }
 
 function levelIcon(batteryLevel: number): string {
@@ -34,7 +37,7 @@ export function getChargingIcon(
   chargingState: string | undefined,
   batteryLevel: number | undefined,
 ): string {
-  const state = chargingState?.toLowerCase();
+  const state = stateKey(chargingState);
 
   if (state !== undefined) {
     if (isCharging(state)) return "mdi:battery-charging";
@@ -59,7 +62,7 @@ export function getBatteryTooltip(
     batteryLevel === undefined
       ? localize(hass, "card.unknown")
       : `${Math.round(batteryLevel)}%`;
-  const state = chargingState?.toLowerCase();
+  const state = stateKey(chargingState);
 
   if (state === undefined) return `${localize(hass, "card.battery")}: ${level}`;
   if (isCharging(state)) return `${localize(hass, "card.charging")}: ${level}`;
@@ -74,7 +77,7 @@ export function getBatteryIconClass(
   chargingState: string | undefined,
   batteryLevel: number | undefined,
 ): string {
-  const state = chargingState?.toLowerCase();
+  const state = stateKey(chargingState);
   if (state === undefined) return "";
 
   // Battery really at 0 % while running on battery should blink red

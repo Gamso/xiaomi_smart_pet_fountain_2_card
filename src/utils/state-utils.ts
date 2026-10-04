@@ -42,3 +42,15 @@ export function percentState(
   const value = numericState(entity);
   return value === undefined ? undefined : Math.min(100, Math.max(0, value));
 }
+
+/**
+ * Comparable form of a state or option: lowercase, spaces and dashes as
+ * underscores. Xiaomi Miot Auto reports "no charge", "charge full",
+ * "Constant"; xiaomi_pet_fountain_2 reports "no_charge", "charge_full",
+ * "constant": both give the same key.
+ */
+export function stateKey(state: string | null | undefined): string | undefined {
+  if (typeof state !== "string") return undefined;
+  const key = state.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  return key || undefined;
+}
