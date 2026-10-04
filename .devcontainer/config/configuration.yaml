@@ -21,6 +21,16 @@ lovelace:
     - url: /local/xiaomi_smart_pet_fountain_2_card/xiaomi-smart-pet-fountain-2-card.js
       type: module
 
+# --- xiaomi_pet_fountain_2 (simulation) -----------------------------------
+# custom_components/xiaomi_pet_fountain_2 creates the device "Xiaomi Smart Pet
+# Fountain 2" with the entities of the local integration
+# (github.com/Gamso/ha-xiaomi-pet-fountain-2): same translation keys, so the
+# same *.xiaomi_smart_pet_fountain_2_* entity_ids. Nothing talks to a
+# fountain. The xiaomi_pet_fountain_2.simulate action changes its state
+# (power_cut, power_back, unavailable, battery_level, water_shortage...).
+xiaomi_pet_fountain_2:
+
+# --- Xiaomi Miot Auto (simulation) -----------------------------------------
 # Creation of test entities simulating the Xiaomi Smart Pet Fountain 2
 # Names match the real entities from the Xiaomi Miot integration
 

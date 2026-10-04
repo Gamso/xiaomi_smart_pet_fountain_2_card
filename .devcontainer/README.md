@@ -57,9 +57,41 @@ The card resource is pre-configured in `configuration.yaml`. You can also add it
 
 ## Test Entities
 
-The devcontainer creates 16 test entities simulating the Xiaomi Smart Pet Fountain 2:
+The devcontainer simulates the fountain twice, once per integration the card
+supports.
 
-### Main Entities
+### xiaomi_pet_fountain_2 (local integration)
+
+`config/custom_components/xiaomi_pet_fountain_2` is a simulation of
+[ha-xiaomi-pet-fountain-2](https://github.com/Gamso/ha-xiaomi-pet-fountain-2):
+it creates the device *Xiaomi Smart Pet Fountain 2* with the same entities
+(translation keys, device classes, options), so the same entity_ids, e.g.
+`switch.xiaomi_smart_pet_fountain_2_power`,
+`select.xiaomi_smart_pet_fountain_2_mode` (`auto` / `interval` / `constant`),
+`sensor.xiaomi_smart_pet_fountain_2_charging_state`
+(`no_charge` / `charging` / `charge_full`),
+`switch.xiaomi_smart_pet_fountain_2_keep_mode`. The do-not-disturb time
+entities are left out (the card does not use them).
+
+Change its state with the `xiaomi_pet_fountain_2.simulate` action
+(Developer tools > Actions), for example:
+
+```yaml
+action: xiaomi_pet_fountain_2.simulate
+data:
+  power_cut: true # on battery, mode back to auto
+```
+
+`power_back: true` plugs it back in and restores the preferred mode (last
+restoration sensor updated); `unavailable`, `battery_level`,
+`charging_state`, `filter_life`, `water_shortage`, `pump_blocked` and `fault`
+set the matching values.
+
+### Xiaomi Miot Auto
+
+Template entities with the Xiaomi Miot Auto entity_ids (16 entities):
+
+#### Main Entities
 
 - `select.xiaomi_iv02_b820_mode` - Operating mode (auto/interval/constant)
 - `switch.xiaomi_iv02_b820_pet_drinking_fountain` - Water dispenser (on/off)
@@ -68,7 +100,7 @@ The devcontainer creates 16 test entities simulating the Xiaomi Smart Pet Founta
 - `sensor.xiaomi_iv02_b820_status` - Pump status
 - `button.xiaomi_iv02_b820_reset_filter_life` - Reset filter
 
-### Additional Entities
+#### Additional Entities
 
 - `sensor.xiaomi_iv02_b820_filter_left_time` - Filter days remaining
 - `sensor.xiaomi_iv02_b820_charging_state` - Charging state

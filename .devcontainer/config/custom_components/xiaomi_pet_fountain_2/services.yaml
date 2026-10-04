@@ -1,0 +1,40 @@
+simulate:
+  fields:
+    power_cut:
+      example: true
+      selector:
+        boolean:
+    power_back:
+      example: true
+      selector:
+        boolean:
+    unavailable:
+      selector:
+        boolean:
+    mode:
+      selector:
+        select:
+          options: [auto, interval, constant]
+    battery_level:
+      selector:
+        number:
+          min: 0
+          max: 100
+    charging_state:
+      selector:
+        select:
+          options: [no_charge, charging, charge_full]
+    filter_life:
+      selector:
+        number:
+          min: 0
+          max: 100
+    water_shortage:
+      selector:
+        boolean:
+    pump_blocked:
+      selector:
+        boolean:
+    fault:
+      selector:
+        boolean:
