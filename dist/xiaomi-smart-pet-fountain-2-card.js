@@ -4,7 +4,7 @@ function t(t,e,i,o){var s,r=arguments.length,n=r<3?e:null===o?o=Object.getOwnPro
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,o=Symbol(),s=new WeakMap;let r=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==o)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=s.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&s.set(e,t))}return t}toString(){return this.cssText}};const n=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,o)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[o+1],t[0]);return new r(i,t,o)},a=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new r("string"==typeof t?t:t+"",void 0,o))(e)})(t):t,{is:l,defineProperty:c,getOwnPropertyDescriptor:d,getOwnPropertyNames:h,getOwnPropertySymbols:u,getPrototypeOf:p}=Object,f=globalThis,g=f.trustedTypes,_=g?g.emptyScript:"",m=f.reactiveElementPolyfillSupport,y=(t,e)=>t,v={toAttribute(t,e){switch(e){case Boolean:t=t?_:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},b=(t,e)=>!l(t,e),$={attribute:!0,type:String,converter:v,reflect:!1,useDefault:!1,hasChanged:b};
+const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,o=Symbol(),s=new WeakMap;let r=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==o)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(i&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=s.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&s.set(e,t))}return t}toString(){return this.cssText}};const n=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,o)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[o+1],t[0]);return new r(i,t,o)},a=i?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new r("string"==typeof t?t:t+"",void 0,o))(e)})(t):t,{is:l,defineProperty:c,getOwnPropertyDescriptor:d,getOwnPropertyNames:h,getOwnPropertySymbols:u,getPrototypeOf:p}=Object,f=globalThis,_=f.trustedTypes,g=_?_.emptyScript:"",m=f.reactiveElementPolyfillSupport,y=(t,e)=>t,v={toAttribute(t,e){switch(e){case Boolean:t=t?g:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},b=(t,e)=>!l(t,e),$={attribute:!0,type:String,converter:v,reflect:!1,useDefault:!1,hasChanged:b};
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -15,7 +15,7 @@ const e=globalThis,i=e.ShadowRoot&&(void 0===e.ShadyCSS||e.ShadyCSS.nativeShadow
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const x=globalThis,A=t=>t,S=x.trustedTypes,E=S?S.createPolicy("lit-html",{createHTML:t=>t}):void 0,C="$lit$",k=`lit$${Math.random().toFixed(9).slice(2)}$`,P="?"+k,O=`<${P}>`,M=document,R=()=>M.createComment(""),N=t=>null===t||"object"!=typeof t&&"function"!=typeof t,U=Array.isArray,T="[ \t\n\f\r]",j=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,H=/-->/g,L=/>/g,z=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,I=/"/g,B=/^(?:script|style|textarea|title)$/i,q=t=>(e,...i)=>({_$litType$:t,strings:e,values:i}),F=q(1),W=q(2),V=Symbol.for("lit-noChange"),X=Symbol.for("lit-nothing"),G=new WeakMap,J=M.createTreeWalker(M,129);function K(t,e){if(!U(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(e):e}const Q=(t,e)=>{const i=t.length-1,o=[];let s,r=2===e?"<svg>":3===e?"<math>":"",n=j;for(let e=0;e<i;e++){const i=t[e];let a,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===j?"!--"===l[1]?n=H:void 0!==l[1]?n=L:void 0!==l[2]?(B.test(l[2])&&(s=RegExp("</"+l[2],"g")),n=z):void 0!==l[3]&&(n=z):n===z?">"===l[0]?(n=s??j,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,a=l[1],n=void 0===l[3]?z:'"'===l[3]?I:D):n===I||n===D?n=z:n===H||n===L?n=j:(n=z,s=void 0);const h=n===z&&t[e+1].startsWith("/>")?" ":"";r+=n===j?i+O:c>=0?(o.push(a),i.slice(0,c)+C+i.slice(c)+k+h):i+k+(-2===c?e:h)}return[K(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),o]};class Z{constructor({strings:t,_$litType$:e},i){let o;this.parts=[];let s=0,r=0;const n=t.length-1,a=this.parts,[l,c]=Q(t,e);if(this.el=Z.createElement(l,i),J.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(o=J.nextNode())&&a.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const t of o.getAttributeNames())if(t.endsWith(C)){const e=c[r++],i=o.getAttribute(t).split(k),n=/([.?@])?(.*)/.exec(e);a.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ot:"?"===n[1]?st:"@"===n[1]?rt:it}),o.removeAttribute(t)}else t.startsWith(k)&&(a.push({type:6,index:s}),o.removeAttribute(t));if(B.test(o.tagName)){const t=o.textContent.split(k),e=t.length-1;if(e>0){o.textContent=S?S.emptyScript:"";for(let i=0;i<e;i++)o.append(t[i],R()),J.nextNode(),a.push({type:2,index:++s});o.append(t[e],R())}}}else if(8===o.nodeType)if(o.data===P)a.push({type:2,index:s});else{let t=-1;for(;-1!==(t=o.data.indexOf(k,t+1));)a.push({type:7,index:s}),t+=k.length-1}s++}}static createElement(t,e){const i=M.createElement("template");return i.innerHTML=t,i}}function Y(t,e,i=t,o){if(e===V)return e;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const r=N(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),void 0===r?s=void 0:(s=new r(t),s._$AT(t,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(e=Y(t,s._$AS(t,e.values),s,o)),e}class tt{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,o=(t?.creationScope??M).importNode(e,!0);J.currentNode=o;let s=J.nextNode(),r=0,n=0,a=i[0];for(;void 0!==a;){if(r===a.index){let e;2===a.type?e=new et(s,s.nextSibling,this,t):1===a.type?e=new a.ctor(s,a.name,a.strings,this,t):6===a.type&&(e=new nt(s,this,t)),this._$AV.push(e),a=i[++n]}r!==a?.index&&(s=J.nextNode(),r++)}return J.currentNode=M,o}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class et{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,o){this.type=2,this._$AH=X,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Y(this,t,e),N(t)?t===X||null==t||""===t?(this._$AH!==X&&this._$AR(),this._$AH=X):t!==this._$AH&&t!==V&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>U(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==X&&N(this._$AH)?this._$AA.nextSibling.data=t:this.T(M.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,o="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=Z.createElement(K(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(e);else{const t=new tt(o,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=G.get(t.strings);return void 0===e&&G.set(t.strings,e=new Z(t)),e}k(t){U(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,o=0;for(const s of t)o===e.length?e.push(i=new et(this.O(R()),this.O(R()),this,this.options)):i=e[o],i._$AI(s),o++;o<e.length&&(this._$AR(i&&i._$AB.nextSibling,o),e.length=o)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=A(t).nextSibling;A(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class it{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,o,s){this.type=1,this._$AH=X,this._$AN=void 0,this.element=t,this.name=e,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=X}_$AI(t,e=this,i,o){const s=this.strings;let r=!1;if(void 0===s)t=Y(this,t,e,0),r=!N(t)||t!==this._$AH&&t!==V,r&&(this._$AH=t);else{const o=t;let n,a;for(t=s[0],n=0;n<s.length-1;n++)a=Y(this,o[i+n],e,n),a===V&&(a=this._$AH[n]),r||=!N(a)||a!==this._$AH[n],a===X?t=X:t!==X&&(t+=(a??"")+s[n+1]),this._$AH[n]=a}r&&!o&&this.j(t)}j(t){t===X?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class ot extends it{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===X?void 0:t}}class st extends it{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==X)}}class rt extends it{constructor(t,e,i,o,s){super(t,e,i,o,s),this.type=5}_$AI(t,e=this){if((t=Y(this,t,e,0)??X)===V)return;const i=this._$AH,o=t===X&&i!==X||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,s=t!==X&&(i===X||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class nt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Y(this,t)}}const at=x.litHtmlPolyfillSupport;at?.(Z,et),(x.litHtmlVersions??=[]).push("3.3.2");const lt=globalThis;
+const x=globalThis,k=t=>t,A=x.trustedTypes,S=A?A.createPolicy("lit-html",{createHTML:t=>t}):void 0,E="$lit$",C=`lit$${Math.random().toFixed(9).slice(2)}$`,P="?"+C,M=`<${P}>`,O=document,R=()=>O.createComment(""),N=t=>null===t||"object"!=typeof t&&"function"!=typeof t,L=Array.isArray,T="[ \t\n\f\r]",U=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,j=/-->/g,D=/>/g,H=RegExp(`>|${T}(?:([^\\s"'>=/]+)(${T}*=${T}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),z=/'/g,I=/"/g,B=/^(?:script|style|textarea|title)$/i,q=t=>(e,...i)=>({_$litType$:t,strings:e,values:i}),W=q(1),F=q(2),V=Symbol.for("lit-noChange"),X=Symbol.for("lit-nothing"),K=new WeakMap,G=O.createTreeWalker(O,129);function J(t,e){if(!L(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==S?S.createHTML(e):e}const Q=(t,e)=>{const i=t.length-1,o=[];let s,r=2===e?"<svg>":3===e?"<math>":"",n=U;for(let e=0;e<i;e++){const i=t[e];let a,l,c=-1,d=0;for(;d<i.length&&(n.lastIndex=d,l=n.exec(i),null!==l);)d=n.lastIndex,n===U?"!--"===l[1]?n=j:void 0!==l[1]?n=D:void 0!==l[2]?(B.test(l[2])&&(s=RegExp("</"+l[2],"g")),n=H):void 0!==l[3]&&(n=H):n===H?">"===l[0]?(n=s??U,c=-1):void 0===l[1]?c=-2:(c=n.lastIndex-l[2].length,a=l[1],n=void 0===l[3]?H:'"'===l[3]?I:z):n===I||n===z?n=H:n===j||n===D?n=U:(n=H,s=void 0);const h=n===H&&t[e+1].startsWith("/>")?" ":"";r+=n===U?i+M:c>=0?(o.push(a),i.slice(0,c)+E+i.slice(c)+C+h):i+C+(-2===c?e:h)}return[J(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),o]};class Z{constructor({strings:t,_$litType$:e},i){let o;this.parts=[];let s=0,r=0;const n=t.length-1,a=this.parts,[l,c]=Q(t,e);if(this.el=Z.createElement(l,i),G.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(o=G.nextNode())&&a.length<n;){if(1===o.nodeType){if(o.hasAttributes())for(const t of o.getAttributeNames())if(t.endsWith(E)){const e=c[r++],i=o.getAttribute(t).split(C),n=/([.?@])?(.*)/.exec(e);a.push({type:1,index:s,name:n[2],strings:i,ctor:"."===n[1]?ot:"?"===n[1]?st:"@"===n[1]?rt:it}),o.removeAttribute(t)}else t.startsWith(C)&&(a.push({type:6,index:s}),o.removeAttribute(t));if(B.test(o.tagName)){const t=o.textContent.split(C),e=t.length-1;if(e>0){o.textContent=A?A.emptyScript:"";for(let i=0;i<e;i++)o.append(t[i],R()),G.nextNode(),a.push({type:2,index:++s});o.append(t[e],R())}}}else if(8===o.nodeType)if(o.data===P)a.push({type:2,index:s});else{let t=-1;for(;-1!==(t=o.data.indexOf(C,t+1));)a.push({type:7,index:s}),t+=C.length-1}s++}}static createElement(t,e){const i=O.createElement("template");return i.innerHTML=t,i}}function Y(t,e,i=t,o){if(e===V)return e;let s=void 0!==o?i._$Co?.[o]:i._$Cl;const r=N(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),void 0===r?s=void 0:(s=new r(t),s._$AT(t,i,o)),void 0!==o?(i._$Co??=[])[o]=s:i._$Cl=s),void 0!==s&&(e=Y(t,s._$AS(t,e.values),s,o)),e}class tt{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,o=(t?.creationScope??O).importNode(e,!0);G.currentNode=o;let s=G.nextNode(),r=0,n=0,a=i[0];for(;void 0!==a;){if(r===a.index){let e;2===a.type?e=new et(s,s.nextSibling,this,t):1===a.type?e=new a.ctor(s,a.name,a.strings,this,t):6===a.type&&(e=new nt(s,this,t)),this._$AV.push(e),a=i[++n]}r!==a?.index&&(s=G.nextNode(),r++)}return G.currentNode=O,o}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class et{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,o){this.type=2,this._$AH=X,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=o,this._$Cv=o?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Y(this,t,e),N(t)?t===X||null==t||""===t?(this._$AH!==X&&this._$AR(),this._$AH=X):t!==this._$AH&&t!==V&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>L(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==X&&N(this._$AH)?this._$AA.nextSibling.data=t:this.T(O.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,o="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=Z.createElement(J(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===o)this._$AH.p(e);else{const t=new tt(o,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=K.get(t.strings);return void 0===e&&K.set(t.strings,e=new Z(t)),e}k(t){L(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,o=0;for(const s of t)o===e.length?e.push(i=new et(this.O(R()),this.O(R()),this,this.options)):i=e[o],i._$AI(s),o++;o<e.length&&(this._$AR(i&&i._$AB.nextSibling,o),e.length=o)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=k(t).nextSibling;k(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class it{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,o,s){this.type=1,this._$AH=X,this._$AN=void 0,this.element=t,this.name=e,this._$AM=o,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=X}_$AI(t,e=this,i,o){const s=this.strings;let r=!1;if(void 0===s)t=Y(this,t,e,0),r=!N(t)||t!==this._$AH&&t!==V,r&&(this._$AH=t);else{const o=t;let n,a;for(t=s[0],n=0;n<s.length-1;n++)a=Y(this,o[i+n],e,n),a===V&&(a=this._$AH[n]),r||=!N(a)||a!==this._$AH[n],a===X?t=X:t!==X&&(t+=(a??"")+s[n+1]),this._$AH[n]=a}r&&!o&&this.j(t)}j(t){t===X?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class ot extends it{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===X?void 0:t}}class st extends it{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==X)}}class rt extends it{constructor(t,e,i,o,s){super(t,e,i,o,s),this.type=5}_$AI(t,e=this){if((t=Y(this,t,e,0)??X)===V)return;const i=this._$AH,o=t===X&&i!==X||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,s=t!==X&&(i===X||o);o&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class nt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Y(this,t)}}const at=x.litHtmlPolyfillSupport;at?.(Z,et),(x.litHtmlVersions??=[]).push("3.3.2");const lt=globalThis;
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -42,7 +42,7 @@ const ht=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Reflect.decorate&&"object"!=typeof e&&Object.defineProperty(t,e,i),i))(e,i,{get(){return(e=>e.renderRoot?.querySelector(t)??null)(this)}})}const _t=["_pet_drinking_fountain","_filter_life_level","_filter_left_time","_battery_level","_charging_state","_status","_event_mode","_event_water","_water_shortage_status","_physical_control_locked","_no_disturb","_out_water_interval","_out_water_interval_2","_mode","_info","_reset_filter_life"].sort((t,e)=>e.length-t.length);const mt={powerSwitch:{domain:"switch",suffix:"_pet_drinking_fountain",option:"power_entity"},mode:{domain:"select",suffix:"_mode",option:"mode_entity"},filterLifeLevel:{domain:"sensor",suffix:"_filter_life_level",option:"filter_life_entity"},filterLeftTime:{domain:"sensor",suffix:"_filter_left_time",option:"filter_left_time_entity"},batteryLevel:{domain:"sensor",suffix:"_battery_level",option:"battery_entity"},chargingState:{domain:"sensor",suffix:"_charging_state",option:"charging_state_entity"},waterShortage:{domain:"binary_sensor",suffix:"_water_shortage_status",option:"water_shortage_entity"},physicalControlLock:{domain:"switch",suffix:"_physical_control_locked",option:"physical_control_lock_entity"},noDisturb:{domain:"switch",suffix:"_no_disturb",option:"no_disturb_entity"},outWaterInterval:{domain:"number",suffix:"_out_water_interval",option:"water_interval_entity"},outWaterInterval2:{domain:"number",suffix:"_out_water_interval_2"},resetFilterButton:{domain:"button",suffix:"_reset_filter_life",option:"reset_filter_entity"}},yt=Object.keys(mt),vt=yt.map(t=>mt[t].option).filter(t=>!!t);function bt(t){const e=yt.find(e=>mt[e].option===t);return e?mt[e].domain:"sensor"}function $t(t,e){const{domain:i,suffix:o}=mt[e];return t.startsWith(`${i}.`)&&t.endsWith(o)}function wt(t,e){if(!t||!e)return{entities:{},missing:[]};const i=function(t,e){const i=t?.entities,o=e?i?.[e]?.device_id:void 0;if(!t||!i||!o)return{};const s=Object.values(i).filter(e=>e.device_id===o&&!!t.states[e.entity_id]).map(t=>t.entity_id).sort(),r={};for(const t of yt){const e=s.find(e=>$t(e,t));e&&(r[t]=e)}return r}(t,e.entity),o=function(t,e){if(!t||!e)return{};const i={};for(const o of yt){const{domain:s,suffix:r}=mt[o],n=`${s}.${e}${r}`;t.states[n]&&(i[o]=n)}return i}(t,function(t){if(!t)return null;const e=t.split(".")[1];if(!e)return null;for(const t of _t)if(e.endsWith(t)&&e.length>t.length)return e.slice(0,-t.length);return e}(e.entity)),s={};for(const t of yt){const r=mt[t].option,n=r?e[r]:void 0,a="string"==typeof n&&n?n:i[t]??o[t];a&&(s[t]=a)}s.powerSwitch||!e.entity?.startsWith("switch.")||Object.values(s).includes(e.entity)||(s.powerSwitch=e.entity);const r=[];for(const e of yt){const i=mt[e].option,o=s[e];!i||o&&t.states[o]||r.push(i)}return{entities:s,missing:r}}var xt={version:"Version",entity:"Entity"},At={entity:"Entity (Required)",entity_helper:"Select any entity from your Xiaomi Smart Pet Fountain 2",name:"Name (optional)",entities_section:"Entities (optional, override the auto-discovery)",power_entity:"Power switch",mode_entity:"Operating mode",filter_life_entity:"Filter life level",filter_left_time_entity:"Filter left time",battery_entity:"Battery level",charging_state_entity:"Charging state",water_shortage_entity:"Water shortage",physical_control_lock_entity:"Physical control lock",no_disturb_entity:"No disturb",water_interval_entity:"Water interval",reset_filter_entity:"Reset filter life button"},St={turn_on:"Turn on",turn_off:"Turn off",no_disturb_mode:"No disturb",physical_control_lock:"Physical control lock",water_interval:"Water interval",reset_filter:"Reset filter life",operating_mode:"Operating mode",battery:"Battery",charging:"Charging",charge_full:"On AC power",no_charge:"On battery",water_shortage:"Water shortage !",entity_not_found:"Entity not found",unknown:"Unknown",missing_entities:"Entities not found: ${entities}. Set them in the card options.",days_left:"${days} days left",service_error:"Action failed: ${error}",loading:"Loading...",select_entity:"Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options.",filter_life:"Filter life",power:"Power"},Et={reset_filter_message:"Do you want to reset the filter life?",cancel:"Cancel",confirm:"Confirm"},Ct={common:xt,editor:At,card:St,dialog:Et},kt={version:"Version",entity:"Entité"},Pt={entity:"Entité (Obligatoire)",entity_helper:"Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2",name:"Nom (facultatif)",entities_section:"Entités (facultatif, remplace la découverte automatique)",power_entity:"Interrupteur marche/arrêt",mode_entity:"Mode de fonctionnement",filter_life_entity:"Durée de vie du filtre",filter_left_time_entity:"Jours de filtre restants",battery_entity:"Niveau de batterie",charging_state_entity:"État de charge",water_shortage_entity:"Manque d'eau",physical_control_lock_entity:"Verrouillage des commandes physiques",no_disturb_entity:"Ne pas déranger",water_interval_entity:"Intervalle d'eau",reset_filter_entity:"Bouton de réinitialisation du filtre"},Ot={turn_on:"Allumer",turn_off:"Éteindre",no_disturb_mode:"Ne pas déranger",physical_control_lock:"Verrouillage des commandes physiques",water_interval:"Intervalle d'eau",reset_filter:"Réinitialiser la durée de vie du filtre",operating_mode:"Mode de fonctionnement",battery:"Batterie",charging:"En charge",charge_full:"Sur secteur",no_charge:"Sur batterie",water_shortage:"Manque d'eau !",entity_not_found:"Entité non trouvée",unknown:"Inconnu",missing_entities:"Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",days_left:"${days} jours restants",service_error:"Échec de l'action : ${error}",loading:"Chargement...",select_entity:"Sélectionnez une entité de votre Fontaine Xiaomi Smart Pet 2 dans les options de la carte.",filter_life:"Durée de vie du filtre",power:"Marche/arrêt"},Mt={reset_filter_message:"Voulez-vous réinitialiser la durée d'utilisation du filtre ?",cancel:"Annuler",confirm:"Confirmer"},Rt={common:kt,editor:Pt,card:Ot,dialog:Mt};const Nt={en:Object.freeze({__proto__:null,card:St,common:xt,default:Ct,dialog:Et,editor:At}),fr:Object.freeze({__proto__:null,card:Ot,common:kt,default:Rt,dialog:Mt,editor:Pt})},Ut="en";function Tt(t,e,i="",o=""){const s=t?.locale?.language??Ut;let r;try{r=e.split(".").reduce((t,e)=>t[e],Nt[s])}catch(t){r=e.split(".").reduce((t,e)=>t[e],Nt[Ut])}return void 0===r&&(r=e.split(".").reduce((t,e)=>t[e],Nt[Ut])),"object"==typeof i&&null!==i?Object.entries(i).forEach(([t,e])=>{r=r.replace(`\${${t}}`,String(e))}):""!==i&&""!==o&&(r=r.replace(i,o)),r||e}function jt(t,e){try{return t.split(".").reduce((t,e)=>t[e],Nt[e])}catch(t){return}}function Ht(t){return function(e){let i=jt(e,t?.locale?.language??Ut);return i||(i=jt(e,Ut)),i??e}}function Lt(t){return t.includes("charging")&&!t.includes("full")}function zt(t){return t.includes("full")}const Dt=new Set(["unavailable","unknown",""]);function It(t){if(t&&"string"==typeof t.state)return Dt.has(t.state.toLowerCase())?void 0:t.state}function Bt(t){const e=It(t);if(void 0===e)return;const i=Number.parseFloat(e);return Number.isFinite(i)?i:void 0}function qt(t){const e="string"==typeof t?Number.parseFloat(t):t;return"number"==typeof e&&Number.isFinite(e)?e:void 0}let Ft=class extends ct{constructor(){super(...arguments),this._computeLabel=t=>{const e=Ht(this.hass)(`editor.${t.name}`);return e===`editor.${t.name}`?t.name:e},this._computeHelper=t=>{if("entity"===t.name)return Ht(this.hass)("editor.entity_helper")}}connectedCallback(){super.connectedCallback(),this.hass&&(customElements.get("ha-form")||customElements.get("hui-button-card")?.getConfigElement(),customElements.get("ha-entity-picker")||customElements.get("hui-entities-card")?.getConfigElement())}setConfig(t){this._config={...t}}render(){if(!this.hass||!this._config)return F``;const t=[{name:"entity",required:!0,selector:{entity:{include_domains:["switch","sensor","select","number","binary_sensor","button"]}}},{name:"name",selector:{text:{}}},{type:"expandable",name:"entities",flatten:!0,title:Ht(this.hass)("editor.entities_section"),schema:vt.map(t=>({name:t,selector:{entity:{domain:bt(t)}}}))}];return F`
+function _t(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Reflect.decorate&&"object"!=typeof e&&Object.defineProperty(t,e,i),i))(e,i,{get(){return(e=>e.renderRoot?.querySelector(t)??null)(this)}})}const gt=["_pet_drinking_fountain","_filter_life_level","_filter_left_time","_battery_level","_charging_state","_status","_event_mode","_event_water","_water_shortage_status","_physical_control_locked","_no_disturb","_out_water_interval","_out_water_interval_2","_mode","_info","_reset_filter_life"].sort((t,e)=>e.length-t.length);const mt="xiaomi_pet_fountain_2",yt="xiaomi_miot",vt={powerSwitch:{domain:"switch",suffix:"_pet_drinking_fountain",option:"power_entity"},mode:{domain:"select",suffix:"_mode",option:"mode_entity"},filterLifeLevel:{domain:"sensor",suffix:"_filter_life_level",option:"filter_life_entity"},filterLeftTime:{domain:"sensor",suffix:"_filter_left_time",option:"filter_left_time_entity"},batteryLevel:{domain:"sensor",suffix:"_battery_level",option:"battery_entity"},chargingState:{domain:"sensor",suffix:"_charging_state",option:"charging_state_entity"},waterShortage:{domain:"binary_sensor",suffix:"_water_shortage_status",option:"water_shortage_entity"},physicalControlLock:{domain:"switch",suffix:"_physical_control_locked",option:"physical_control_lock_entity"},noDisturb:{domain:"switch",suffix:"_no_disturb",option:"no_disturb_entity"},outWaterInterval:{domain:"number",suffix:"_out_water_interval",option:"water_interval_entity"},outWaterInterval2:{domain:"number",suffix:"_out_water_interval_2"},resetFilterButton:{domain:"button",suffix:"_reset_filter_life",option:"reset_filter_entity"}},bt={powerSwitch:{domain:"switch",key:"power",suffix:"_power"},mode:{domain:"select",key:"mode",suffix:"_mode"},filterLifeLevel:{domain:"sensor",key:"filter_life",suffix:"_filter_life"},filterLeftTime:{domain:"sensor",key:"filter_left_time",suffix:"_filter_time_left"},batteryLevel:{domain:"sensor",deviceClass:"battery",suffix:"_battery"},chargingState:{domain:"sensor",key:"charging_state",suffix:"_charging_state"},waterShortage:{domain:"binary_sensor",key:"water_shortage",suffix:"_water_shortage"},physicalControlLock:{domain:"switch",key:"child_lock",suffix:"_child_lock"},noDisturb:{domain:"switch",key:"no_disturb",suffix:"_do_not_disturb"},outWaterInterval:{domain:"number",key:"out_water_interval",suffix:"_water_interval"},outWaterInterval2:{domain:"number",key:"out_water_interval_2",suffix:"_water_interval_5_min_steps"},resetFilterButton:{domain:"button",key:"reset_filter",suffix:"_reset_filter"},pumpBlocked:{domain:"binary_sensor",key:"pump_blocked",suffix:"_pump_blocked"},fault:{domain:"binary_sensor",key:"fault",suffix:"_fault"},keepMode:{domain:"switch",key:"keep_mode",suffix:"_keep_mode"},lastModeRestore:{domain:"sensor",key:"last_mode_restore",suffix:"_last_mode_restoration"}},$t=Object.keys(bt),wt=Object.keys(vt),xt=wt.map(t=>vt[t]?.option).filter(t=>!!t);function kt(t){const e=wt.find(e=>vt[e]?.option===t);return e&&vt[e]?.domain||"sensor"}function At(t,e){const i=vt[e];return!!i&&t.startsWith(`${i.domain}.`)&&t.endsWith(i.suffix)}function St(t,e){const i=t?.entities,o=e?i?.[e]?.device_id:void 0;if(!t||!i||!o)return{};const s=Object.values(i).filter(e=>e.device_id===o&&!!t.states[e.entity_id]).map(t=>t.entity_id).sort(),r={};for(const t of wt){const e=s.find(e=>At(e,t));e&&(r[t]=e)}return r}function Et(t,e){if(!t||!e)return{entities:{},integration:yt,missing:[]};const i=function(t,e){const i=t?.entities,o=e?i?.[e]:void 0;if(!i||!o)return yt;if(o.platform===mt)return mt;const s=o.device_id,r=!!s&&Object.values(i).some(t=>t?.device_id===s&&t.platform===mt);return r?mt:yt}(t,e.entity);let o;if(i===mt)o=function(t,e){const i=t?.entities,o=e?i?.[e]:void 0;if(!t||!i||!o)return{};const s=o.device_id,r=(s?Object.values(i).filter(t=>t?.device_id===s):[o]).filter(e=>e.platform===mt&&!!t.states[e.entity_id]).sort((t,e)=>t.entity_id.localeCompare(e.entity_id)),n={};for(const e of $t){const{domain:i,key:o,deviceClass:s,suffix:a}=bt[e],l=r.filter(t=>t.entity_id.startsWith(`${i}.`)),c=l.find(e=>o?e.translation_key===o:!e.translation_key&&t.states[e.entity_id]?.attributes?.device_class===s)??l.find(t=>!t.translation_key&&t.entity_id.endsWith(a));c&&(n[e]=c.entity_id)}return n}(t,e.entity);else{const i=function(t,e){if(!t||!e)return{};const i={};for(const o of wt){const{domain:s,suffix:r}=vt[o],n=`${s}.${e}${r}`;t.states[n]&&(i[o]=n)}return i}(t,function(t){if(!t)return null;const e=t.split(".")[1];if(!e)return null;for(const t of gt)if(e.endsWith(t)&&e.length>t.length)return e.slice(0,-t.length);return e}(e.entity));o={...i,...St(t,e.entity)}}const s={};for(const t of $t){const i=vt[t]?.option,r=i?e[i]:void 0,n="string"==typeof r&&r?r:o[t];n&&(s[t]=n)}i!==yt||s.powerSwitch||!e.entity?.startsWith("switch.")||Object.values(s).includes(e.entity)||(s.powerSwitch=e.entity);const r=[];for(const e of wt){const i=vt[e]?.option,o=s[e];!i||o&&t.states[o]||r.push(i)}return{entities:s,integration:i,missing:r}}var Ct={version:"Version",entity:"Entity"},Pt={entity:"Entity (Required)",entity_helper:"Select any entity from your Xiaomi Smart Pet Fountain 2",name:"Name (optional)",entities_section:"Entities (optional, override the auto-discovery)",power_entity:"Power switch",mode_entity:"Operating mode",filter_life_entity:"Filter life level",filter_left_time_entity:"Filter left time",battery_entity:"Battery level",charging_state_entity:"Charging state",water_shortage_entity:"Water shortage",physical_control_lock_entity:"Physical control lock",no_disturb_entity:"No disturb",water_interval_entity:"Water interval",reset_filter_entity:"Reset filter life button"},Mt={turn_on:"Turn on",turn_off:"Turn off",no_disturb_mode:"No disturb",physical_control_lock:"Physical control lock",water_interval:"Water interval",reset_filter:"Reset filter life",operating_mode:"Operating mode",modes:{auto:"Auto",interval:"Interval",constant:"Constant"},battery:"Battery",charging:"Charging",charge_full:"On AC power",no_charge:"On battery",water_shortage:"Water shortage !",pump_blocked:"Pump blocked",fault:"Device fault",keep_mode_on:"Kept mode: ${mode}",keep_mode_any:"Mode kept after power cuts",keep_mode_off:"Mode not kept after power cuts",last_restore:"Last restoration: ${time}",restore_failed:"failed",entity_not_found:"Entity not found",unknown:"Unknown",missing_entities:"Entities not found: ${entities}. Set them in the card options.",days_left:"${days} days left",service_error:"Action failed: ${error}",loading:"Loading...",select_entity:"Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options.",filter_life:"Filter life",power:"Power"},Ot={reset_filter_message:"Do you want to reset the filter life?",cancel:"Cancel",confirm:"Confirm"},Rt={common:Ct,editor:Pt,card:Mt,dialog:Ot},Nt={version:"Version",entity:"Entité"},Lt={entity:"Entité (Obligatoire)",entity_helper:"Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2",name:"Nom (facultatif)",entities_section:"Entités (facultatif, remplace la découverte automatique)",power_entity:"Interrupteur marche/arrêt",mode_entity:"Mode de fonctionnement",filter_life_entity:"Durée de vie du filtre",filter_left_time_entity:"Jours de filtre restants",battery_entity:"Niveau de batterie",charging_state_entity:"État de charge",water_shortage_entity:"Manque d'eau",physical_control_lock_entity:"Verrouillage des commandes physiques",no_disturb_entity:"Ne pas déranger",water_interval_entity:"Intervalle d'eau",reset_filter_entity:"Bouton de réinitialisation du filtre"},Tt={turn_on:"Allumer",turn_off:"Éteindre",no_disturb_mode:"Ne pas déranger",physical_control_lock:"Verrouillage des commandes physiques",water_interval:"Intervalle d'eau",reset_filter:"Réinitialiser la durée de vie du filtre",operating_mode:"Mode de fonctionnement",modes:{auto:"Auto",interval:"Intervalle",constant:"Continu"},battery:"Batterie",charging:"En charge",charge_full:"Sur secteur",no_charge:"Sur batterie",water_shortage:"Manque d'eau !",pump_blocked:"Pompe bloquée",fault:"Défaut de la fontaine",keep_mode_on:"Mode conservé : ${mode}",keep_mode_any:"Mode conservé après les coupures",keep_mode_off:"Mode non conservé après les coupures",last_restore:"Dernière restauration : ${time}",restore_failed:"échec",entity_not_found:"Entité non trouvée",unknown:"Inconnu",missing_entities:"Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",days_left:"${days} jours restants",service_error:"Échec de l'action : ${error}",loading:"Chargement...",select_entity:"Sélectionnez une entité de votre Fontaine Xiaomi Smart Pet 2 dans les options de la carte.",filter_life:"Durée de vie du filtre",power:"Marche/arrêt"},Ut={reset_filter_message:"Voulez-vous réinitialiser la durée d'utilisation du filtre ?",cancel:"Annuler",confirm:"Confirmer"},jt={common:Nt,editor:Lt,card:Tt,dialog:Ut};const Dt={en:Object.freeze({__proto__:null,card:Mt,common:Ct,default:Rt,dialog:Ot,editor:Pt}),fr:Object.freeze({__proto__:null,card:Tt,common:Nt,default:jt,dialog:Ut,editor:Lt})},Ht="en";function zt(t,e,i="",o=""){const s=t?.locale?.language??Ht;let r;try{r=e.split(".").reduce((t,e)=>t[e],Dt[s])}catch(t){r=e.split(".").reduce((t,e)=>t[e],Dt[Ht])}return void 0===r&&(r=e.split(".").reduce((t,e)=>t[e],Dt[Ht])),"object"==typeof i&&null!==i?Object.entries(i).forEach(([t,e])=>{r=r.replace(`\${${t}}`,String(e))}):""!==i&&""!==o&&(r=r.replace(i,o)),r||e}function It(t,e){try{return t.split(".").reduce((t,e)=>t[e],Dt[e])}catch(t){return}}function Bt(t){return function(e){let i=It(e,t?.locale?.language??Ht);return i||(i=It(e,Ht)),i??e}}const qt=new Set(["unavailable","unknown",""]);function Wt(t){if(t&&"string"==typeof t.state)return qt.has(t.state.toLowerCase())?void 0:t.state}function Ft(t){const e=Wt(t);if(void 0===e)return;const i=Number.parseFloat(e);return Number.isFinite(i)?i:void 0}function Vt(t){if("string"!=typeof t)return;return t.trim().toLowerCase().replace(/[\s-]+/g,"_")||void 0}function Xt(t){return t.includes("charging")&&!t.includes("full")}function Kt(t){return t.includes("full")}function Gt(t){const e="string"==typeof t?Number.parseFloat(t):t;return"number"==typeof e&&Number.isFinite(e)?e:void 0}let Jt=class extends ct{constructor(){super(...arguments),this._computeLabel=t=>{const e=Bt(this.hass)(`editor.${t.name}`);return e===`editor.${t.name}`?t.name:e},this._computeHelper=t=>{if("entity"===t.name)return Bt(this.hass)("editor.entity_helper")}}connectedCallback(){super.connectedCallback(),this.hass&&(customElements.get("ha-form")||customElements.get("hui-button-card")?.getConfigElement(),customElements.get("ha-entity-picker")||customElements.get("hui-entities-card")?.getConfigElement())}setConfig(t){this._config={...t}}render(){if(!this.hass||!this._config)return W``;const t=[{name:"entity",required:!0,selector:{entity:{include_domains:["switch","sensor","select","number","binary_sensor","button"]}}},{name:"name",selector:{text:{}}},{type:"expandable",name:"entities",flatten:!0,title:Bt(this.hass)("editor.entities_section"),schema:xt.map(t=>({name:t,selector:{entity:{domain:kt(t)}}}))}];return W`
       <ha-form
         .hass=${this.hass}
         .data=${this._config}
@@ -55,39 +55,39 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
       ha-form {
         width: 100%;
       }
-    `}};t([ft({attribute:!1})],Ft.prototype,"hass",void 0),t([function(t){return ft({...t,state:!0,attribute:!1})}
+    `}};t([ft({attribute:!1})],Jt.prototype,"hass",void 0),t([function(t){return ft({...t,state:!0,attribute:!1})}
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */()],Ft.prototype,"_config",void 0),Ft=t([ht("xiaomi-smart-pet-fountain-2-card-editor")],Ft),console.info("%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.1.1  ","color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),function(t){const e=window;e.customCards=e.customCards||[],e.customCards.push({...t,preview:!0})}({type:"xiaomi-smart-pet-fountain-2-card",name:"Xiaomi Smart Pet Fountain 2 Card",description:"A custom card for controlling Xiaomi Smart Pet Fountain 2"});let Wt=class extends ct{static getConfigElement(){return document.createElement("xiaomi-smart-pet-fountain-2-card-editor")}static getStubConfig(t){return{type:"custom:xiaomi-smart-pet-fountain-2-card",entity:Object.keys(t?.states??{}).sort().find(t=>/^switch\..+_pet_drinking_fountain$/.test(t))??""}}setConfig(t){if(!t)throw new Error("Invalid configuration");this.config=t}getCardSize(){const t=this.offsetHeight;if(t>0)return Math.ceil(t/50);return wt(this.hass,this.config).missing.length?8:7}getGridOptions(){return{columns:6,min_columns:6,rows:"auto"}}render(){if(!this.hass||!this.config)return F`
+ */()],Jt.prototype,"_config",void 0),Jt=t([ht("xiaomi-smart-pet-fountain-2-card-editor")],Jt),console.info("%c  XIAOMI-SMART-PET-FOUNTAIN-2-CARD  \n%c  Version 1.1.1  ","color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),function(t){const e=window;e.customCards=e.customCards||[],e.customCards.push({...t,preview:!0})}({type:"xiaomi-smart-pet-fountain-2-card",name:"Xiaomi Smart Pet Fountain 2 Card",description:"A custom card for controlling Xiaomi Smart Pet Fountain 2"});const Qt=["auto","interval","constant"];let Zt=class extends ct{static getConfigElement(){return document.createElement("xiaomi-smart-pet-fountain-2-card-editor")}static getStubConfig(t){const e=t?.states??{},i=Object.values(t?.entities??{}).filter(t=>t?.platform===mt&&"power"===t.translation_key&&!!e[t.entity_id]).map(t=>t.entity_id).sort()[0];return{type:"custom:xiaomi-smart-pet-fountain-2-card",entity:i??Object.keys(e).sort().find(t=>/^switch\..+_pet_drinking_fountain$/.test(t))??""}}setConfig(t){if(!t)throw new Error("Invalid configuration");this.config=t}getCardSize(){const t=this.offsetHeight;if(t>0)return Math.ceil(t/50);return Et(this.hass,this.config).missing.length?8:7}getGridOptions(){return{columns:6,min_columns:6,rows:"auto"}}render(){if(!this.hass||!this.config)return W`
         <ha-card>
           <div class="card-content message">
-            <div class="message-detail">${Tt(this.hass,"card.loading")}</div>
+            <div class="message-detail">${zt(this.hass,"card.loading")}</div>
           </div>
         </ha-card>
-      `;const{entities:t,missing:e}=wt(this.hass,this.config),i=this.hass.states[this.config.entity],o=Object.values(t).some(t=>!!t&&!!this.hass?.states[t]);if(!i&&!o)return F`
+      `;const{entities:t,missing:e}=Et(this.hass,this.config),i=this.hass.states[this.config.entity],o=Object.values(t).some(t=>!!t&&!!this.hass?.states[t]);if(!i&&!o)return W`
         <ha-card>
           <div class="card-content message">
             <div class="message-title">${this._title()}</div>
-            ${this.config.entity?F`<div class="message-detail">
-                  ${Tt(this.hass,"card.entity_not_found")}:
+            ${this.config.entity?W`<div class="message-detail">
+                  ${zt(this.hass,"card.entity_not_found")}:
                   ${this.config.entity}
                 </div>`:X}
             <div class="message-hint">
-              ${Tt(this.hass,"card.select_entity")}
+              ${zt(this.hass,"card.select_entity")}
             </div>
           </div>
         </ha-card>
-      `;const s=t.powerSwitch,r=s?this.hass.states[s]:void 0,n=t.mode,a=n?this.hass.states[n]:null,l=a?a.state:"auto",c=a&&a.attributes.options?a.attributes.options:["auto","interval","constant"],d=t.batteryLevel,h=Bt(d?this.hass.states[d]:null),u=t.chargingState,p=It(u?this.hass.states[u]:null),f=!(!d&&!u),g=t.waterShortage,_=g?this.hass.states[g]:null,m=!!_&&"on"===_.state,y=t.filterLifeLevel,v=function(t){const e=Bt(t);return void 0===e?void 0:Math.min(100,Math.max(0,e))}(y?this.hass.states[y]:null),b=t.filterLeftTime,$=Bt(b?this.hass.states[b]:null),w=t.outWaterInterval,x=w?this.hass.states[w]:null,A=Bt(x),S=function(t,e,i,o){const s=Math.max(10,qt(t)??0),r=qt(e)??120;let n=qt(i)??15;n>0||(n=1);const a=Math.floor((r-s)/n)+1;a>100&&(n*=Math.ceil(a/100));const l=[];for(let t=0;t<100;t++){const e=Math.round(1e6*(s+t*n))/1e6;if(e>r)break;l.push(e)}return void 0===o||l.includes(o)||(l.push(o),l.sort((t,e)=>t-e)),l}(x?.attributes?.min,x?.attributes?.max,x?.attributes?.step,A),E="on"===r?.state,C=170*Math.PI*(250/360),k=(v??0)/100*C;let P="";void 0!==$&&(P=Tt(this.hass,"card.days_left",{days:Math.round($)}));const O=void 0===v?Tt(this.hass,"card.unknown"):`${Math.round(v)}%`,M=[`${Tt(this.hass,"card.filter_life")}: ${O}`,P].filter(Boolean).join(", "),R="on"===this.hass.states[t.noDisturb||""]?.state,N="on"===this.hass.states[t.physicalControlLock||""]?.state,U=function(t,e,i){const o=void 0===i?Tt(t,"card.unknown"):`${Math.round(i)}%`,s=e?.toLowerCase();return void 0===s?`${Tt(t,"card.battery")}: ${o}`:Lt(s)?`${Tt(t,"card.charging")}: ${o}`:zt(s)?Tt(t,"card.charge_full"):`${Tt(t,"card.no_charge")}: ${o}`}(this.hass,p,h),T=Tt(this.hass,E?"card.turn_off":"card.turn_on");return F`
+      `;const s=t.powerSwitch,r=s?this.hass.states[s]:void 0,n=t.mode,a=n?this.hass.states[n]:void 0,l=this._modeOptions(a),c=Vt(Wt(a))??(a?void 0:"auto"),d=l.find(t=>Vt(t)===c),h=t.batteryLevel,u=Ft(h?this.hass.states[h]:null),p=t.chargingState,f=Wt(p?this.hass.states[p]:null),_=!(!h&&!p),g=t.waterShortage,m=g?this.hass.states[g]:null,y=!!m&&"on"===m.state,v=[{on:"on"===this.hass.states[t.pumpBlocked??""]?.state,icon:"mdi:pump-off",label:zt(this.hass,"card.pump_blocked")},{on:"on"===this.hass.states[t.fault??""]?.state,icon:"mdi:alert-circle",label:zt(this.hass,"card.fault")}].filter(t=>t.on),b=t.filterLifeLevel,$=function(t){const e=Ft(t);return void 0===e?void 0:Math.min(100,Math.max(0,e))}(b?this.hass.states[b]:null),w=t.filterLeftTime,x=Ft(w?this.hass.states[w]:null),k=t.outWaterInterval,A=k?this.hass.states[k]:null,S=Ft(A),E=function(t,e,i,o){const s=Gt(e)??120;let r=Gt(i)??15;r>0||(r=1);const n=Gt(t),a=void 0===n||n>=10?Math.max(10,n??0):Math.round(1e6*(n+Math.ceil((10-n)/r-1e-9)*r))/1e6,l=Math.floor((s-a)/r)+1;l>100&&(r*=Math.ceil(l/100));const c=[];for(let t=0;t<100;t++){const e=Math.round(1e6*(a+t*r))/1e6;if(e>s)break;c.push(e)}return void 0===o||c.includes(o)||(c.push(o),c.sort((t,e)=>t-e)),c}(A?.attributes?.min,A?.attributes?.max,A?.attributes?.step,S),C="on"===r?.state,P=170*Math.PI*(250/360),M=($??0)/100*P;let O="";void 0!==x&&(O=zt(this.hass,"card.days_left",{days:Math.round(x)}));const R=void 0===$?zt(this.hass,"card.unknown"):`${Math.round($)}%`,N=[`${zt(this.hass,"card.filter_life")}: ${R}`,O].filter(Boolean).join(", "),L="on"===this.hass.states[t.noDisturb||""]?.state,T="on"===this.hass.states[t.physicalControlLock||""]?.state,U=function(t,e,i){const o=void 0===i?zt(t,"card.unknown"):`${Math.round(i)}%`,s=Vt(e);return void 0===s?`${zt(t,"card.battery")}: ${o}`:Xt(s)?`${zt(t,"card.charging")}: ${o}`:Kt(s)?zt(t,"card.charge_full"):`${zt(t,"card.no_charge")}: ${o}`}(this.hass,f,u),j=zt(this.hass,C?"card.turn_off":"card.turn_on");return W`
       <ha-card>
         <div class="card-content">
           <!-- Card Title -->
           <div class="card-title">${this._title()}</div>
 
-          ${e.length?F`
+          ${e.length?W`
                 <div class="missing-banner" role="status">
-                  ${Tt(this.hass,"card.missing_entities",{entities:e.join(", ")})}
+                  ${zt(this.hass,"card.missing_entities",{entities:e.join(", ")})}
                 </div>
               `:X}
 
@@ -97,9 +97,9 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
               class="gauge-svg"
               viewBox="0 0 200 200"
               role="img"
-              aria-label="${M}"
+              aria-label="${N}"
             >
-              <title>${P}</title>
+              <title>${O}</title>
               <!-- Background arc (3/4 circle) -->
               <path
                 class="gauge-background"
@@ -110,13 +110,13 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
                 stroke-linecap="round"
               />
               <!-- Progress arc (3/4 circle), hidden while the level is unknown -->
-              ${void 0===v?X:W`<path
-                class="gauge-progress ${E?"on":"off"} ${0===v?"critical":""}"
+              ${void 0===$?X:F`<path
+                class="gauge-progress ${C?"on":"off"} ${0===$?"critical":""}"
                 d="M 30 150 A 85 85 0 1 1 170 150"
                 fill="none"
                 stroke-width="12"
                 stroke-linecap="round"
-                stroke-dasharray="${0===v?C:k+" "+C}"
+                stroke-dasharray="${0===$?P:M+" "+P}"
                 stroke-dashoffset="0"
               />`}
             </svg>
@@ -128,7 +128,7 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
               <!-- Status Icons Row (above percentage) -->
               <div class="status-icons-row">
                 <!-- Battery/Charging Icon -->
-                ${f?F`
+                ${_?W`
                       <div
                         class="icon-indicator"
                         role="img"
@@ -136,33 +136,48 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
                         title="${U}"
                       >
                         <ha-icon
-                          icon="${function(t,e){const i=t?.toLowerCase();if(void 0!==i){if(Lt(i))return"mdi:battery-charging";if(zt(i))return"mdi:power-plug"}return void 0===e?"mdi:battery-unknown":function(t){return t>=90?"mdi:battery":t>=70?"mdi:battery-80":t>=50?"mdi:battery-60":t>=30?"mdi:battery-40":t>=10?"mdi:battery-20":"mdi:battery-alert"}(e)}(p,h)}"
-                          class="${function(t,e){const i=t?.toLowerCase();return void 0===i?"":function(t){return t.includes("no charge")}(i)&&0===e?"critical-icon-pulse":Lt(i)?"charging":""}(p,h)}"
+                          icon="${function(t,e){const i=Vt(t);if(void 0!==i){if(Xt(i))return"mdi:battery-charging";if(Kt(i))return"mdi:power-plug"}return void 0===e?"mdi:battery-unknown":function(t){return t>=90?"mdi:battery":t>=70?"mdi:battery-80":t>=50?"mdi:battery-60":t>=30?"mdi:battery-40":t>=10?"mdi:battery-20":"mdi:battery-alert"}(e)}(f,u)}"
+                          class="${function(t,e){const i=Vt(t);return void 0===i?"":function(t){return t.includes("no_charge")}(i)&&0===e?"critical-icon-pulse":Xt(i)?"charging":""}(f,u)}"
                         ></ha-icon>
                       </div>
                     `:X}
 
                 <!-- Water Shortage Icon -->
-                ${g?F`
+                ${g?W`
                       <div
                         class="icon-indicator"
-                        role=${m?"img":X}
-                        aria-label=${m?Tt(this.hass,"card.water_shortage"):X}
-                        aria-hidden=${m?X:"true"}
-                        title=${m?Tt(this.hass,"card.water_shortage"):X}
+                        role=${y?"img":X}
+                        aria-label=${y?zt(this.hass,"card.water_shortage"):X}
+                        aria-hidden=${y?X:"true"}
+                        title=${y?zt(this.hass,"card.water_shortage"):X}
                       >
                         <ha-icon
                           icon="mdi:water-alert"
-                          class="water-shortage ${m?"critical-icon-pulse":"hidden"}"
+                          class="water-shortage ${y?"critical-icon-pulse":"hidden"}"
                         ></ha-icon>
                       </div>
                     `:""}
+
+                <!-- Fault Icons (pump blocked, device fault) -->
+                ${v.map(t=>W`
+                    <div
+                      class="icon-indicator"
+                      role="img"
+                      aria-label="${t.label}"
+                      title="${t.label}"
+                    >
+                      <ha-icon
+                        icon="${t.icon}"
+                        class="fault critical-icon-pulse"
+                      ></ha-icon>
+                    </div>
+                  `)}
               </div>
 
               <!-- Center Percentage Value-->
               <div class="gauge-center" aria-hidden="true">
                 <div class="gauge-value">
-                  ${void 0===v?"--":`${Math.round(v)}%`}
+                  ${void 0===$?"--":`${Math.round($)}%`}
                 </div>
               </div>
 
@@ -172,40 +187,40 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
               <!-- Additional Control Buttons -->
               <div class="container-controls additional-controls">
                 <button
-                  class="control-button ${R?"on":"off"}"
+                  class="control-button ${L?"on":"off"}"
                   @click=${()=>this._toggleSwitch(t.noDisturb)}
                   ?disabled="${!t.noDisturb}"
-                  title="${Tt(this.hass,"card.no_disturb_mode")}"
-                  aria-label="${Tt(this.hass,"card.no_disturb_mode")}"
-                  aria-pressed="${R?"true":"false"}"
+                  title="${zt(this.hass,"card.no_disturb_mode")}"
+                  aria-label="${zt(this.hass,"card.no_disturb_mode")}"
+                  aria-pressed="${L?"true":"false"}"
                 >
                   <ha-icon icon="mdi:bell-off"></ha-icon>
                 </button>
 
                 <button
-                  class="control-button ${N?"on":"off"}"
+                  class="control-button ${T?"on":"off"}"
                   @click=${()=>this._toggleSwitch(t.physicalControlLock)}
                   ?disabled="${!t.physicalControlLock}"
-                  title="${Tt(this.hass,"card.physical_control_lock")}"
-                  aria-label="${Tt(this.hass,"card.physical_control_lock")}"
-                  aria-pressed="${N?"true":"false"}"
+                  title="${zt(this.hass,"card.physical_control_lock")}"
+                  aria-label="${zt(this.hass,"card.physical_control_lock")}"
+                  aria-pressed="${T?"true":"false"}"
                 >
                   <ha-icon icon="mdi:lock"></ha-icon>
                 </button>
 
                 <select
                   class="pill-select"
-                  .value="${void 0===A?"":String(A)}"
+                  .value="${void 0===S?"":String(S)}"
                   @change="${t=>this._setWaterInterval(Number(t.target.value))}"
-                  ?disabled="${!w||"interval"!==l.toLowerCase()}"
-                  title="${Tt(this.hass,"card.water_interval")}"
-                  aria-label="${Tt(this.hass,"card.water_interval")}"
+                  ?disabled="${!k||"interval"!==c}"
+                  title="${zt(this.hass,"card.water_interval")}"
+                  aria-label="${zt(this.hass,"card.water_interval")}"
                 >
-                  ${void 0===A?F`<option value="" disabled selected>--</option>`:X}
-                  ${S.map(t=>F`
+                  ${void 0===S?W`<option value="" disabled selected>--</option>`:X}
+                  ${E.map(t=>W`
                       <option
                         value="${t}"
-                        ?selected="${t===A}"
+                        ?selected="${t===S}"
                       >
                         ${t} min
                       </option>
@@ -216,12 +231,12 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
               <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
               <div class="container-controls gauge-controls">
                 <button
-                  class="control-button ${E?"on":"off"}"
+                  class="control-button ${C?"on":"off"}"
                   @click=${()=>this._togglePower()}
                   ?disabled="${!r}"
-                  title="${T}"
-                  aria-label="${Tt(this.hass,"card.power")}"
-                  aria-pressed="${E?"true":"false"}"
+                  title="${j}"
+                  aria-label="${zt(this.hass,"card.power")}"
+                  aria-pressed="${C?"true":"false"}"
                 >
                   <ha-icon icon="mdi:power"></ha-icon>
                 </button>
@@ -230,8 +245,8 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
                   class="control-button reset-filter-button"
                   @click=${()=>this._showResetConfirmation()}
                   ?disabled="${!t.resetFilterButton}"
-                  title="${Tt(this.hass,"card.reset_filter")}"
-                  aria-label="${Tt(this.hass,"card.reset_filter")}"
+                  title="${zt(this.hass,"card.reset_filter")}"
+                  aria-label="${zt(this.hass,"card.reset_filter")}"
                   aria-haspopup="dialog"
                 >
                   <ha-icon icon="mdi:air-filter"></ha-icon>
@@ -239,21 +254,24 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
 
                 <select
                   class="pill-select mode-select"
-                  .value="${l}"
+                  .value="${d??""}"
                   @change="${t=>this._selectMode(t.target.value)}"
-                  ?disabled="${!n}"
-                  title="${Tt(this.hass,"card.operating_mode")}"
-                  aria-label="${Tt(this.hass,"card.operating_mode")}"
+                  ?disabled="${!n||void 0===d}"
+                  title="${zt(this.hass,"card.operating_mode")}"
+                  aria-label="${zt(this.hass,"card.operating_mode")}"
                 >
-                  ${c.map(t=>F`
-                      <option value="${t}" ?selected="${t===l}">
-                        ${t}
+                  ${void 0===d?W`<option value="" disabled selected>--</option>`:X}
+                  ${l.map(t=>W`
+                      <option value="${t}" ?selected="${t===d}">
+                        ${this._modeLabel(a,t)}
                       </option>
                     `)}
                 </select>
               </div>
             </div>
           </div>
+
+          ${this._renderKeepMode(t,a)}
         </div>
 
         <!-- Reset Confirmation Dialog: native modal <dialog>, so it is
@@ -266,7 +284,7 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
           @close=${()=>this._resetButton?.focus()}
         >
           <div class="dialog-message" id="reset-dialog-message">
-            ${Tt(this.hass,"dialog.reset_filter_message")}
+            ${zt(this.hass,"dialog.reset_filter_message")}
           </div>
           <div class="dialog-buttons">
             <button
@@ -274,18 +292,28 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
               autofocus
               @click=${()=>this._hideResetDialog()}
             >
-              ${Tt(this.hass,"dialog.cancel")}
+              ${zt(this.hass,"dialog.cancel")}
             </button>
             <button
               class="dialog-button confirm"
               @click=${()=>this._confirmResetFilter()}
             >
-              ${Tt(this.hass,"dialog.confirm")}
+              ${zt(this.hass,"dialog.confirm")}
             </button>
           </div>
         </dialog>
       </ha-card>
-    `}_title(){return this.config?.name?.trim()||"Xiaomi Smart Pet Fountain 2"}_relatedEntities(){return wt(this.hass,this.config).entities}async _callService(t,e,i){if(this.hass)try{await this.hass.callService(t,e,i)}catch(i){console.error(`${t}.${e} failed`,i);const o=i instanceof Error?i.message:i?.message??String(i);this.dispatchEvent(new CustomEvent("hass-notification",{bubbles:!0,composed:!0,detail:{message:Tt(this.hass,"card.service_error",{error:o})}})),this.requestUpdate()}}_togglePower(){if(!this.config||!this.hass)return;const t=this._relatedEntities().powerSwitch,e=t?this.hass.states[t]:void 0;if(!t||!e)return void console.error("Power switch entity not found");const i="on"===e.state?"turn_off":"turn_on";this._callService("homeassistant",i,{entity_id:t})}_selectMode(t){if(!this.config||!this.hass)return;const e=this._relatedEntities().mode;e?this._callService("select","select_option",{entity_id:e,option:t}):console.error("Mode select entity not found")}_resetFilter(){if(!this.config||!this.hass)return;const t=this._relatedEntities().resetFilterButton;t?this._callService("button","press",{entity_id:t}):console.error("Reset filter button entity not found")}_showResetConfirmation(){const t=this._resetDialog;t&&!t.open&&t.showModal()}_hideResetDialog(){this._resetDialog?.open&&this._resetDialog.close()}_confirmResetFilter(){this._resetFilter(),this._hideResetDialog()}_toggleSwitch(t){if(!t||!this.hass)return void console.error("Switch entity not found");const e=this.hass.states[t];if(!e)return void console.error("Entity not found:",t);const i="on"===e.state?"turn_off":"turn_on";this._callService("homeassistant",i,{entity_id:t})}_setWaterInterval(t){if(!this.config||!this.hass)return;const e=this._relatedEntities().outWaterInterval;e?this._callService("number","set_value",{entity_id:e,value:t}):console.error("Water interval entity not found")}static get styles(){return n`
+    `}_renderKeepMode(t,e){const i=this.hass,o=i?.states[t.keepMode??""],s=Wt(o);if(!i||!o||void 0===s)return X;const r=o.attributes?.preferred_mode,n="on"!==s?zt(i,"card.keep_mode_off"):"string"==typeof r&&r?zt(i,"card.keep_mode_on",{mode:this._modeLabel(e,r)}):zt(i,"card.keep_mode_any"),a=i.states[t.lastModeRestore??""],l=this._formatTimestamp(a),c="failed"===a?.attributes?.result,d=l?zt(i,"card.last_restore",{time:l})+(c?` (${zt(i,"card.restore_failed")})`:""):"";return W`
+      <div class="keep-mode">
+        <div class="keep-mode-status ${"on"===s?"on":"off"}">
+          <ha-icon icon="mdi:backup-restore"></ha-icon>
+          <span>${n}</span>
+        </div>
+        ${d?W`<div class="keep-mode-last ${c?"failed":""}">
+              ${d}
+            </div>`:X}
+      </div>
+    `}_formatTimestamp(t){const e=Wt(t);if(!t||void 0===e)return"";const i="function"==typeof this.hass?.formatEntityState?this.hass.formatEntityState(t):void 0;if(i&&i!==e)return i;const o=new Date(e);if(Number.isNaN(o.getTime()))return"";try{return o.toLocaleString(this.hass?.locale?.language,{dateStyle:"short",timeStyle:"short"})}catch{return o.toLocaleString()}}_title(){return this.config?.name?.trim()||"Xiaomi Smart Pet Fountain 2"}_relatedEntities(){return Et(this.hass,this.config).entities}_modeOptions(t){const e=t?.attributes?.options;return Array.isArray(e)&&e.length?e.map(String):Qt}_modeLabel(t,e){const i=t&&"function"==typeof this.hass?.formatEntityState?this.hass.formatEntityState(t,e):void 0;if(i&&i!==e)return i;const o=`card.modes.${Vt(e)}`,s=Bt(this.hass)(o);return s!==o?s:i||e}async _callService(t,e,i){if(this.hass)try{await this.hass.callService(t,e,i)}catch(i){console.error(`${t}.${e} failed`,i);const o=i instanceof Error?i.message:i?.message??String(i);this.dispatchEvent(new CustomEvent("hass-notification",{bubbles:!0,composed:!0,detail:{message:zt(this.hass,"card.service_error",{error:o})}})),this.requestUpdate()}}_togglePower(){if(!this.config||!this.hass)return;const t=this._relatedEntities().powerSwitch,e=t?this.hass.states[t]:void 0;if(!t||!e)return void console.error("Power switch entity not found");const i="on"===e.state?"turn_off":"turn_on";this._callService("homeassistant",i,{entity_id:t})}_selectMode(t){if(!this.config||!this.hass)return;const e=this._relatedEntities().mode;if(!e)return void console.error("Mode select entity not found");const i=Vt(t),o=this._modeOptions(this.hass.states[e]).find(t=>Vt(t)===i)??t;this._callService("select","select_option",{entity_id:e,option:o})}_resetFilter(){if(!this.config||!this.hass)return;const t=this._relatedEntities().resetFilterButton;t?this._callService("button","press",{entity_id:t}):console.error("Reset filter button entity not found")}_showResetConfirmation(){const t=this._resetDialog;t&&!t.open&&t.showModal()}_hideResetDialog(){this._resetDialog?.open&&this._resetDialog.close()}_confirmResetFilter(){this._resetFilter(),this._hideResetDialog()}_toggleSwitch(t){if(!t||!this.hass)return void console.error("Switch entity not found");const e=this.hass.states[t];if(!e)return void console.error("Entity not found:",t);const i="on"===e.state?"turn_off":"turn_on";this._callService("homeassistant",i,{entity_id:t})}_setWaterInterval(t){if(!this.config||!this.hass)return;const e=this._relatedEntities().outWaterInterval;e?this._callService("number","set_value",{entity_id:e,value:t}):console.error("Water interval entity not found")}static get styles(){return n`
       ha-card {
         padding: 16px;
       }
@@ -563,8 +591,37 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
         opacity: 0.5;
       }
 
+      /* Room for the translated mode names ("Constant", "Intervalle") */
       .mode-select {
+        width: clamp(76px, 38cqw, 104px);
         text-transform: capitalize;
+      }
+
+      /* Mode keeping (xiaomi_pet_fountain_2): discreet, under the gauge */
+      .keep-mode {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--secondary-text-color);
+        text-align: center;
+      }
+
+      .keep-mode-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .keep-mode-status ha-icon {
+        --mdc-icon-size: 16px;
+      }
+
+      .keep-mode-status.off {
+        opacity: 0.7;
+      }
+
+      .keep-mode-last.failed {
+        color: var(--error-color);
       }
 
       /* Reset Confirmation Dialog */
@@ -645,4 +702,4 @@ function gt(t,e){return(e,i,o)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Ref
           transform: none;
         }
       }
-    `}};t([ft({type:Object})],Wt.prototype,"hass",void 0),t([ft({type:Object})],Wt.prototype,"config",void 0),t([gt("dialog.reset-dialog")],Wt.prototype,"_resetDialog",void 0),t([gt("button.reset-filter-button")],Wt.prototype,"_resetButton",void 0),Wt=t([ht("xiaomi-smart-pet-fountain-2-card")],Wt);export{Wt as XiaomiSmartPetFountainCard,Ft as XiaomiSmartPetFountainCardEditor};
+    `}};t([ft({type:Object})],Zt.prototype,"hass",void 0),t([ft({type:Object})],Zt.prototype,"config",void 0),t([_t("dialog.reset-dialog")],Zt.prototype,"_resetDialog",void 0),t([_t("button.reset-filter-button")],Zt.prototype,"_resetButton",void 0),Zt=t([ht("xiaomi-smart-pet-fountain-2-card")],Zt);export{Zt as XiaomiSmartPetFountainCard,Jt as XiaomiSmartPetFountainCardEditor};
