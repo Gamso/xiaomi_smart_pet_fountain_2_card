@@ -37,7 +37,9 @@
     "unknown": "Unknown",
     "missing_entities": "Entities not found: ${entities}. Set them in the card options.",
     "days_left": "${days} days left",
-    "service_error": "Action failed: ${error}"
+    "service_error": "Action failed: ${error}",
+    "loading": "Loading...",
+    "select_entity": "Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options."
   },
   "dialog": {
     "reset_filter_message": "Do you want to reset the filter life?",
