@@ -487,7 +487,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                   .value="${mode ?? ""}"
                   @change="${(e: Event) =>
                     this._selectMode((e.target as HTMLSelectElement).value)}"
-                  ?disabled="${!modeEntityId}"
+                  ?disabled="${!modeEntityId || mode === undefined}"
                   title="${localize(this.hass, "card.operating_mode")}"
                   aria-label="${localize(this.hass, "card.operating_mode")}"
                 >
@@ -1079,7 +1079,9 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         opacity: 0.5;
       }
 
+      /* Room for the translated mode names ("Constant", "Intervalle") */
       .mode-select {
+        width: clamp(76px, 38cqw, 104px);
         text-transform: capitalize;
       }
 
