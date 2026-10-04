@@ -36,7 +36,8 @@
     "entity_not_found": "Entity not found",
     "unknown": "Unknown",
     "missing_entities": "Entities not found: ${entities}. Set them in the card options.",
-    "days_left": "${days} days left"
+    "days_left": "${days} days left",
+    "service_error": "Action failed: ${error}"
   },
   "dialog": {
     "reset_filter_message": "Do you want to reset the filter life?",
