@@ -56,8 +56,8 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   @property({ type: Object }) config?: XiaomiSmartPetFountainCardConfig;
   @state() private _showResetDialog = false;
 
-  static async getConfigElement(): Promise<HTMLElement> {
-    await import("./editor");
+  // The editor is bundled with the card (static import above): no lazy load
+  static getConfigElement(): HTMLElement {
     return document.createElement("xiaomi-smart-pet-fountain-2-card-editor");
   }
 
@@ -90,12 +90,8 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     if (!this.hass || !this.config) {
       return html`
         <ha-card>
-          <div class="card-content" style="padding: 16px;">
-            <div
-              style="text-align: center; color: var(--secondary-text-color);"
-            >
-              Loading...
-            </div>
+          <div class="card-content message">
+            <div class="message-detail">${localize(this.hass, "card.loading")}</div>
           </div>
         </ha-card>
       `;
@@ -110,25 +106,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       (id) => !!id && !!this.hass?.states[id],
     );
     if (!entity && !anyEntityFound) {
-      // For preview mode, show a demo card instead of error
+      // No fountain entity at all (none configured, or a wrong entity_id)
       return html`
         <ha-card>
-          <div class="card-content" style="padding: 16px;">
-            <div style="text-align: center;">
-              <div
-                style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"
-              >
-                ${this._title()}
-              </div>
-              <div style="color: var(--secondary-text-color); font-size: 14px;">
-                ${localize(this.hass, "card.entity_not_found")}:
-                ${this.config.entity}
-              </div>
-              <div
-                style="color: var(--secondary-text-color); font-size: 12px; margin-top: 8px;"
-              >
-                Please select a valid entity in the configuration
-              </div>
+          <div class="card-content message">
+            <div class="message-title">${this._title()}</div>
+            ${this.config.entity
+              ? html`<div class="message-detail">
+                  ${localize(this.hass, "card.entity_not_found")}:
+                  ${this.config.entity}
+                </div>`
+              : nothing}
+            <div class="message-hint">
+              ${localize(this.hass, "card.select_entity")}
             </div>
           </div>
         </ha-card>
@@ -550,14 +540,13 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     });
   }
 
+  // _showResetDialog is a @state: assigning it already schedules a render
   private _showResetConfirmation(): void {
     this._showResetDialog = true;
-    this.requestUpdate();
   }
 
   private _hideResetDialog(): void {
     this._showResetDialog = false;
-    this.requestUpdate();
   }
 
   private _confirmResetFilter(): void {
@@ -633,16 +622,28 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         overflow-wrap: anywhere;
       }
 
-      .card-header {
-        font-size: 24px;
-        font-weight: bold;
-        padding-bottom: 16px;
+      .message {
+        padding: 16px;
+        text-align: center;
       }
 
-      .warning {
-        display: block;
-        color: red;
-        padding: 16px;
+      .message-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--primary-text-color);
+      }
+
+      .message-detail {
+        color: var(--secondary-text-color);
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+
+      .message-hint {
+        color: var(--secondary-text-color);
+        font-size: 12px;
+        margin-top: 8px;
       }
 
       /* Gauge Container - */
@@ -712,14 +713,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         font-size: 24px;
       }
 
-      .icon-indicator ha-icon.active {
-        color: var(--primary-color);
-      }
-
-      .icon-indicator ha-icon.inactive {
-        color: var(--disabled-text-color);
-      }
-
       .icon-indicator ha-icon.charging {
         color: var(--success-color);
         animation: pulse 2s infinite;
@@ -745,13 +738,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         50% {
           opacity: 0.6;
         }
-      }
-
-      .icon-label {
-        font-size: 11px;
-        color: var(--secondary-text-color);
-        text-align: center;
-        white-space: nowrap;
       }
 
       /* Center Percentage Value */
