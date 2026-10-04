@@ -39,7 +39,9 @@
     "days_left": "${days} days left",
     "service_error": "Action failed: ${error}",
     "loading": "Loading...",
-    "select_entity": "Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options."
+    "select_entity": "Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options.",
+    "filter_life": "Filter life",
+    "power": "Power"
   },
   "dialog": {
     "reset_filter_message": "Do you want to reset the filter life?",
