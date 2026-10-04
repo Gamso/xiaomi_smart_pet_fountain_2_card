@@ -33,6 +33,8 @@
     "charge_full": "Sur secteur",
     "no_charge": "Sur batterie",
     "water_shortage": "Manque d'eau !",
+    "pump_blocked": "Pompe bloquée",
+    "fault": "Défaut de la fontaine",
     "entity_not_found": "Entité non trouvée",
     "unknown": "Inconnu",
     "missing_entities": "Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",

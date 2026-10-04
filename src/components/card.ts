@@ -8,6 +8,7 @@ import {
   knownState,
   percentState,
   buildIntervalOptions,
+  PET_FOUNTAIN_2_PLATFORM,
 } from "../utils";
 import {
   getChargingIcon,
@@ -66,10 +67,23 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     hass?: HomeAssistant,
   ): XiaomiSmartPetFountainCardConfig {
     // Default configuration for the card picker preview: the first fountain
-    // power switch of this Home Assistant, if any.
-    const fountain = Object.keys(hass?.states ?? {})
-      .sort()
-      .find((id) => /^switch\..+_pet_drinking_fountain$/.test(id));
+    // power switch of this Home Assistant, if any (xiaomi_pet_fountain_2
+    // first, then Xiaomi Miot Auto).
+    const states = hass?.states ?? {};
+    const local = Object.values(hass?.entities ?? {})
+      .filter(
+        (e) =>
+          e?.platform === PET_FOUNTAIN_2_PLATFORM &&
+          e.translation_key === "power" &&
+          !!states[e.entity_id],
+      )
+      .map((e) => e.entity_id)
+      .sort()[0];
+    const fountain =
+      local ??
+      Object.keys(states)
+        .sort()
+        .find((id) => /^switch\..+_pet_drinking_fountain$/.test(id));
     return {
       type: "custom:xiaomi-smart-pet-fountain-2-card",
       entity: fountain ?? "",
@@ -178,6 +192,20 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const waterShortage = waterShortageEntity
       ? waterShortageEntity.state === "on"
       : false;
+
+    // Faults (xiaomi_pet_fountain_2 only): shown only while on
+    const faults = [
+      {
+        on: this.hass.states[relatedEntities.pumpBlocked ?? ""]?.state === "on",
+        icon: "mdi:pump-off",
+        label: localize(this.hass, "card.pump_blocked"),
+      },
+      {
+        on: this.hass.states[relatedEntities.fault ?? ""]?.state === "on",
+        icon: "mdi:alert-circle",
+        label: localize(this.hass, "card.fault"),
+      },
+    ].filter((f) => f.on);
 
     // Get filter life
     const filterLifeId = relatedEntities.filterLifeLevel;
@@ -347,6 +375,23 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                       </div>
                     `
                   : ""}
+
+                <!-- Fault Icons (pump blocked, device fault) -->
+                ${faults.map(
+                  (f) => html`
+                    <div
+                      class="icon-indicator"
+                      role="img"
+                      aria-label="${f.label}"
+                      title="${f.label}"
+                    >
+                      <ha-icon
+                        icon="${f.icon}"
+                        class="fault critical-icon-pulse"
+                      ></ha-icon>
+                    </div>
+                  `,
+                )}
               </div>
 
               <!-- Center Percentage Value-->

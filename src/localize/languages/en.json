@@ -33,6 +33,8 @@
     "charge_full": "On AC power",
     "no_charge": "On battery",
     "water_shortage": "Water shortage !",
+    "pump_blocked": "Pump blocked",
+    "fault": "Device fault",
     "entity_not_found": "Entity not found",
     "unknown": "Unknown",
     "missing_entities": "Entities not found: ${entities}. Set them in the card options.",
