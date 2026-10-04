@@ -21,6 +21,7 @@
     "no_charge": "Sur batterie",
     "water_shortage": "Manque d'eau !",
     "entity_not_found": "Entité non trouvée",
+    "unknown": "Inconnu",
     "days_left": "${days} jours restants"
   },
   "dialog": {
