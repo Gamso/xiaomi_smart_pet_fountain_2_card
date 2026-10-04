@@ -83,8 +83,21 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     this.config = config;
   }
 
+  /**
+   * Height in 50 px units for the masonry view: the rendered height once laid
+   * out, otherwise an estimate (title + gauge ~ 350 px, banner ~ 50 px).
+   */
   getCardSize(): number {
-    return 4;
+    const height = this.offsetHeight;
+    if (height > 0) return Math.ceil(height / 50);
+    const missing = resolveEntities(this.hass, this.config).missing.length;
+    return missing ? 8 : 7;
+  }
+
+  /** Sections view: half width by default (the gauge is ~280 px wide), never
+   * narrower, height follows the content. */
+  getGridOptions(): { columns: number; min_columns: number; rows: "auto" } {
+    return { columns: 6, min_columns: 6, rows: "auto" };
   }
 
   protected render(): TemplateResult {
@@ -285,157 +298,162 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               />`}
             </svg>
 
-            <!-- Status Icons Row (above percentage) -->
-            <div class="status-icons-row">
-              <!-- Battery/Charging Icon -->
-              ${showBattery
-                ? html`
-                    <div
-                      class="icon-indicator"
-                      role="img"
-                      aria-label="${batteryText}"
-                      title="${batteryText}"
-                    >
-                      <ha-icon
-                        icon="${getChargingIcon(chargingState, batteryLevel)}"
-                        class="${getBatteryIconClass(
-                          chargingState,
-                          batteryLevel,
-                        )}"
-                      ></ha-icon>
-                    </div>
-                  `
-                : nothing}
-
-              <!-- Water Shortage Icon -->
-              ${waterShortageId
-                ? html`
-                    <div
-                      class="icon-indicator"
-                      role=${waterShortage ? "img" : nothing}
-                      aria-label=${waterShortage
-                        ? localize(this.hass, "card.water_shortage")
-                        : nothing}
-                      aria-hidden=${waterShortage ? nothing : "true"}
-                      title=${waterShortage
-                        ? localize(this.hass, "card.water_shortage")
-                        : nothing}
-                    >
-                      <ha-icon
-                        icon="mdi:water-alert"
-                        class="water-shortage ${waterShortage
-                          ? "critical-icon-pulse"
-                          : "hidden"}"
-                      ></ha-icon>
-                    </div>
-                  `
-                : ""}
-            </div>
-
-            <!-- Center Percentage Value-->
-            <div class="gauge-center" aria-hidden="true">
-              <div class="gauge-value">
-                ${filterLife === undefined ? "--" : `${Math.round(filterLife)}%`}
-              </div>
-            </div>
-
-            <!-- Horizontal Line -->
-            <div class="separator-line"></div>
-
-            <!-- Additional Control Buttons -->
-            <div class="container-controls additional-controls">
-              <button
-                class="control-button ${noDisturbOn ? "on" : "off"}"
-                @click=${() => this._toggleSwitch(relatedEntities.noDisturb)}
-                ?disabled="${!relatedEntities.noDisturb}"
-                title="${localize(this.hass, "card.no_disturb_mode")}"
-                aria-label="${localize(this.hass, "card.no_disturb_mode")}"
-                aria-pressed="${noDisturbOn ? "true" : "false"}"
-              >
-                <ha-icon icon="mdi:bell-off"></ha-icon>
-              </button>
-
-              <button
-                class="control-button ${lockOn ? "on" : "off"}"
-                @click=${() =>
-                  this._toggleSwitch(relatedEntities.physicalControlLock)}
-                ?disabled="${!relatedEntities.physicalControlLock}"
-                title="${localize(this.hass, "card.physical_control_lock")}"
-                aria-label="${localize(this.hass, "card.physical_control_lock")}"
-                aria-pressed="${lockOn ? "true" : "false"}"
-              >
-                <ha-icon icon="mdi:lock"></ha-icon>
-              </button>
-
-              <select
-                class="pill-select"
-                .value="${waterInterval === undefined ? "" : String(waterInterval)}"
-                @change="${(e: Event) =>
-                  this._setWaterInterval(
-                    Number((e.target as HTMLSelectElement).value),
-                  )}"
-                ?disabled="${!waterIntervalId ||
-                mode.toLowerCase() !== "interval"}"
-                title="${localize(this.hass, "card.water_interval")}"
-                aria-label="${localize(this.hass, "card.water_interval")}"
-              >
-                ${waterInterval === undefined
-                  ? html`<option value="" disabled selected>--</option>`
+            <!-- Content over the gauge: a vertical flow, not absolute pixel
+                 positions, so larger text pushes items down instead of
+                 overlapping them -->
+            <div class="gauge-overlay">
+              <!-- Status Icons Row (above percentage) -->
+              <div class="status-icons-row">
+                <!-- Battery/Charging Icon -->
+                ${showBattery
+                  ? html`
+                      <div
+                        class="icon-indicator"
+                        role="img"
+                        aria-label="${batteryText}"
+                        title="${batteryText}"
+                      >
+                        <ha-icon
+                          icon="${getChargingIcon(chargingState, batteryLevel)}"
+                          class="${getBatteryIconClass(
+                            chargingState,
+                            batteryLevel,
+                          )}"
+                        ></ha-icon>
+                      </div>
+                    `
                   : nothing}
-                ${waterIntervalOptions.map(
-                  (option) => html`
-                    <option
-                      value="${option}"
-                      ?selected="${option === waterInterval}"
-                    >
-                      ${option} min
-                    </option>
-                  `,
-                )}
-              </select>
-            </div>
 
-            <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
-            <div class="container-controls gauge-controls">
-              <button
-                class="control-button ${isOn ? "on" : "off"}"
-                @click=${() => this._togglePower()}
-                ?disabled="${!powerEntity}"
-                title="${powerLabel}"
-                aria-label="${localize(this.hass, "card.power")}"
-                aria-pressed="${isOn ? "true" : "false"}"
-              >
-                <ha-icon icon="mdi:power"></ha-icon>
-              </button>
+                <!-- Water Shortage Icon -->
+                ${waterShortageId
+                  ? html`
+                      <div
+                        class="icon-indicator"
+                        role=${waterShortage ? "img" : nothing}
+                        aria-label=${waterShortage
+                          ? localize(this.hass, "card.water_shortage")
+                          : nothing}
+                        aria-hidden=${waterShortage ? nothing : "true"}
+                        title=${waterShortage
+                          ? localize(this.hass, "card.water_shortage")
+                          : nothing}
+                      >
+                        <ha-icon
+                          icon="mdi:water-alert"
+                          class="water-shortage ${waterShortage
+                            ? "critical-icon-pulse"
+                            : "hidden"}"
+                        ></ha-icon>
+                      </div>
+                    `
+                  : ""}
+              </div>
 
-              <button
-                class="control-button reset-filter-button"
-                @click=${() => this._showResetConfirmation()}
-                ?disabled="${!relatedEntities.resetFilterButton}"
-                title="${localize(this.hass, "card.reset_filter")}"
-                aria-label="${localize(this.hass, "card.reset_filter")}"
-                aria-haspopup="dialog"
-              >
-                <ha-icon icon="mdi:air-filter"></ha-icon>
-              </button>
+              <!-- Center Percentage Value-->
+              <div class="gauge-center" aria-hidden="true">
+                <div class="gauge-value">
+                  ${filterLife === undefined ? "--" : `${Math.round(filterLife)}%`}
+                </div>
+              </div>
 
-              <select
-                class="pill-select mode-select"
-                .value="${mode}"
-                @change="${(e: Event) =>
-                  this._selectMode((e.target as HTMLSelectElement).value)}"
-                ?disabled="${!modeEntityId}"
-                title="${localize(this.hass, "card.operating_mode")}"
-                aria-label="${localize(this.hass, "card.operating_mode")}"
-              >
-                ${modeOptions.map(
-                  (option: string) => html`
-                    <option value="${option}" ?selected="${option === mode}">
-                      ${option}
-                    </option>
-                  `,
-                )}
-              </select>
+              <!-- Horizontal Line -->
+              <div class="separator-line"></div>
+
+              <!-- Additional Control Buttons -->
+              <div class="container-controls additional-controls">
+                <button
+                  class="control-button ${noDisturbOn ? "on" : "off"}"
+                  @click=${() => this._toggleSwitch(relatedEntities.noDisturb)}
+                  ?disabled="${!relatedEntities.noDisturb}"
+                  title="${localize(this.hass, "card.no_disturb_mode")}"
+                  aria-label="${localize(this.hass, "card.no_disturb_mode")}"
+                  aria-pressed="${noDisturbOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:bell-off"></ha-icon>
+                </button>
+
+                <button
+                  class="control-button ${lockOn ? "on" : "off"}"
+                  @click=${() =>
+                    this._toggleSwitch(relatedEntities.physicalControlLock)}
+                  ?disabled="${!relatedEntities.physicalControlLock}"
+                  title="${localize(this.hass, "card.physical_control_lock")}"
+                  aria-label="${localize(this.hass, "card.physical_control_lock")}"
+                  aria-pressed="${lockOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:lock"></ha-icon>
+                </button>
+
+                <select
+                  class="pill-select"
+                  .value="${waterInterval === undefined ? "" : String(waterInterval)}"
+                  @change="${(e: Event) =>
+                    this._setWaterInterval(
+                      Number((e.target as HTMLSelectElement).value),
+                    )}"
+                  ?disabled="${!waterIntervalId ||
+                  mode.toLowerCase() !== "interval"}"
+                  title="${localize(this.hass, "card.water_interval")}"
+                  aria-label="${localize(this.hass, "card.water_interval")}"
+                >
+                  ${waterInterval === undefined
+                    ? html`<option value="" disabled selected>--</option>`
+                    : nothing}
+                  ${waterIntervalOptions.map(
+                    (option) => html`
+                      <option
+                        value="${option}"
+                        ?selected="${option === waterInterval}"
+                      >
+                        ${option} min
+                      </option>
+                    `,
+                  )}
+                </select>
+              </div>
+
+              <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
+              <div class="container-controls gauge-controls">
+                <button
+                  class="control-button ${isOn ? "on" : "off"}"
+                  @click=${() => this._togglePower()}
+                  ?disabled="${!powerEntity}"
+                  title="${powerLabel}"
+                  aria-label="${localize(this.hass, "card.power")}"
+                  aria-pressed="${isOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:power"></ha-icon>
+                </button>
+
+                <button
+                  class="control-button reset-filter-button"
+                  @click=${() => this._showResetConfirmation()}
+                  ?disabled="${!relatedEntities.resetFilterButton}"
+                  title="${localize(this.hass, "card.reset_filter")}"
+                  aria-label="${localize(this.hass, "card.reset_filter")}"
+                  aria-haspopup="dialog"
+                >
+                  <ha-icon icon="mdi:air-filter"></ha-icon>
+                </button>
+
+                <select
+                  class="pill-select mode-select"
+                  .value="${mode}"
+                  @change="${(e: Event) =>
+                    this._selectMode((e.target as HTMLSelectElement).value)}"
+                  ?disabled="${!modeEntityId}"
+                  title="${localize(this.hass, "card.operating_mode")}"
+                  aria-label="${localize(this.hass, "card.operating_mode")}"
+                >
+                  ${modeOptions.map(
+                    (option: string) => html`
+                      <option value="${option}" ?selected="${option === mode}">
+                        ${option}
+                      </option>
+                    `,
+                  )}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -684,28 +702,22 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         margin-top: 8px;
       }
 
-      /* Gauge Container - */
+      /* Gauge: the SVG and the overlay share one grid cell */
       .gauge-container {
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
+        display: grid;
         margin: 0 auto;
-        width: min(100%, 320px);
-        height: 280px;
-        flex-shrink: 0;
-        container-type: size;
+        width: min(100%, 280px);
+        /* cqw units below scale with the gauge width */
+        container-type: inline-size;
       }
 
       .gauge-svg {
-        position: absolute;
+        grid-area: 1 / 1;
+        display: block;
         width: 100%;
-        max-width: 320px;
-        height: 100%;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        height: auto;
+        aspect-ratio: 1;
       }
 
       .gauge-background {
@@ -732,17 +744,24 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         animation: pulse 2s infinite;
       }
 
-      /* Status Icons Row - Positioned above percentage, between gauge and center */
+      .gauge-overlay {
+        grid-area: 1 / 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* Proportions of the 280 px design: icons at 16 %, value centred
+           at 43 %, controls in the opening of the arc */
+        padding-top: 16cqw;
+        min-width: 0;
+      }
+
+      /* Status Icons Row - above percentage, between gauge and center */
       .status-icons-row {
-        position: absolute;
-        top: 45px;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
         gap: 20px;
         align-items: center;
         justify-content: center;
-        z-index: 10;
+        min-height: 24px;
       }
 
       .icon-indicator {
@@ -786,19 +805,15 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Center Percentage Value */
       .gauge-center {
-        position: absolute;
-        top: 43%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
+        margin-top: 9.5cqw;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 5;
       }
 
       .gauge-value {
-        font-size: 42px;
+        font-size: clamp(24px, 15cqw, 42px);
+        line-height: 1.15;
         font-weight: 400;
         color: var(--primary-text-color);
         text-align: center;
@@ -806,33 +821,26 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Horizontal Separator Line */
       .separator-line {
-        position: absolute;
-        top: 154px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(200px, 60%);
+        flex-shrink: 0;
+        margin-top: 3.5cqw;
+        width: min(200px, 72%);
         height: 3px;
         background-color: var(--disabled-text-color);
         border-radius: 2px;
-        z-index: 5;
       }
 
       .container-controls {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-wrap: wrap;
         gap: 4px;
-        z-index: 10;
-        width: auto;
-        padding: 0 20px 0 20px;
+        max-width: 100%;
       }
 
       /* Additional Control Buttons (No Disturb, Physical Lock) */
       .additional-controls {
-        top: 170px;
+        margin-top: 4.5cqw;
       }
 
       .control-button {
@@ -875,11 +883,12 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Controls in Bottom Quarter */
       .gauge-controls {
-        top: 225px;
+        margin-top: 8cqw;
       }
 
       .pill-select {
-        width: 90px;
+        /* Narrower on a narrow gauge so the row stays inside the arc */
+        width: clamp(76px, 36cqw, 90px);
         height: 32px;
         padding: 0 8px;
         font-size: 14px;
