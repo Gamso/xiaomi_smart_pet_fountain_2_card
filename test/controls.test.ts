@@ -10,6 +10,15 @@ describe("buildIntervalOptions", () => {
     expect(buildIntervalOptions(0, 30, 5)).toEqual([10, 15, 20, 25, 30]);
   });
 
+  it("stays on the entity's step grid from 10 min up", () => {
+    // xiaomi_pet_fountain_2 MIoT 2.7 and 2.11
+    expect(buildIntervalOptions(0, 120, 15)).toEqual([
+      15, 30, 45, 60, 75, 90, 105, 120,
+    ]);
+    expect(buildIntervalOptions(10, 30, 5)).toEqual([10, 15, 20, 25, 30]);
+    expect(buildIntervalOptions(1, 20, 3)).toEqual([10, 13, 16, 19]);
+  });
+
   it("keeps the historical defaults when attributes are missing", () => {
     expect(buildIntervalOptions(undefined, undefined, undefined)).toEqual([
       10, 25, 40, 55, 70, 85, 100, 115,

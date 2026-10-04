@@ -15,7 +15,9 @@ function toNumber(value: unknown): number | undefined {
  * Options of the water interval list, from the min / max / step attributes of
  * the number entity. Never loops forever (step 0 or negative falls back to 1)
  * and never builds more than MAX_INTERVAL_OPTIONS options (the step grows
- * instead). The current value is always offered, even off the grid.
+ * instead). Options stay on the entity's grid (min + n * step) from
+ * MIN_INTERVAL up: 15, 30... for MIoT 2.7 (0-120, step 15). The current
+ * value is always offered, even off the grid.
  */
 export function buildIntervalOptions(
   min: unknown,
@@ -23,10 +25,19 @@ export function buildIntervalOptions(
   step: unknown,
   current?: number,
 ): number[] {
-  const low = Math.max(MIN_INTERVAL, toNumber(min) ?? 0);
   const high = toNumber(max) ?? DEFAULT_MAX;
   let increment = toNumber(step) ?? DEFAULT_STEP;
   if (!(increment > 0)) increment = 1;
+  const minValue = toNumber(min);
+  const low =
+    minValue === undefined || minValue >= MIN_INTERVAL
+      ? Math.max(MIN_INTERVAL, minValue ?? 0)
+      : Math.round(
+          (minValue +
+            Math.ceil((MIN_INTERVAL - minValue) / increment - 1e-9) *
+              increment) *
+            1e6,
+        ) / 1e6;
 
   const count = Math.floor((high - low) / increment) + 1;
   if (count > MAX_INTERVAL_OPTIONS) {
