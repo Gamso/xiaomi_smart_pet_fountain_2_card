@@ -5,12 +5,18 @@ export interface HomeAssistant {
   locale?: { language?: string };
   language?: string;
   callService: (domain: string, service: string, serviceData?: any) => Promise<unknown>;
+  /** Translated state of an entity, or of another state of it (2023.9+) */
+  formatEntityState?: (stateObj: HassEntity, state?: string) => string;
   [key: string]: any;
 }
 
 export interface HassEntityRegistryEntry {
   entity_id: string;
   device_id?: string | null;
+  /** Integration (domain) that created the entity */
+  platform?: string;
+  /** Translation key of the entity, stable across renames */
+  translation_key?: string;
   [key: string]: any;
 }
 
