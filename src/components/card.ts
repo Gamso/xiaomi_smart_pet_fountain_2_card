@@ -1,8 +1,14 @@
-import { LitElement, html, css, TemplateResult } from "lit";
+import { LitElement, html, svg, css, nothing, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
-import { extractBaseName, findRelatedEntities } from "../utils";
+import {
+  extractBaseName,
+  findRelatedEntities,
+  numericState,
+  knownState,
+  percentState,
+} from "../utils";
 import {
   getChargingIcon,
   getBatteryTooltip,
@@ -142,17 +148,16 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const batteryLevelEntity = batteryLevelId
       ? this.hass.states[batteryLevelId]
       : null;
-    const batteryLevel = batteryLevelEntity
-      ? parseFloat(batteryLevelEntity.state) || 0
-      : 0;
+    // Unknown (entity missing, unavailable, unknown) stays undefined: never 0
+    const batteryLevel = numericState(batteryLevelEntity);
 
     const chargingStateId = relatedEntities.chargingState;
     const chargingStateEntity = chargingStateId
       ? this.hass.states[chargingStateId]
       : null;
-    const chargingState = chargingStateEntity
-      ? chargingStateEntity.state
-      : "no charge";
+    const chargingState = knownState(chargingStateEntity);
+    // Hide the indicator when the fountain exposes neither battery entity
+    const showBattery = !!(batteryLevelId || chargingStateId);
 
     // Get water shortage status
     const waterShortageId = relatedEntities.waterShortage;
@@ -168,18 +173,14 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const filterLifeEntity = filterLifeId
       ? this.hass.states[filterLifeId]
       : null;
-    const filterLife = filterLifeEntity
-      ? parseFloat(filterLifeEntity.state) || 0
-      : 0;
+    const filterLife = percentState(filterLifeEntity);
 
     // Get filter left time
     const filterLeftTimeId = relatedEntities.filterLeftTime;
     const filterLeftTimeEntity = filterLeftTimeId
       ? this.hass.states[filterLeftTimeId]
       : null;
-    const filterLeftTime = filterLeftTimeEntity
-      ? filterLeftTimeEntity.state
-      : null;
+    const filterLeftTime = numericState(filterLeftTimeEntity);
 
     // Get water interval
     const waterIntervalId = relatedEntities.outWaterInterval;
@@ -206,13 +207,13 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const isOn = powerEntity.state === "on";
 
     const arcLength = 85 * 2 * Math.PI * (250 / 360);
-    const progressLength = (filterLife / 100) * arcLength;
+    const progressLength = ((filterLife ?? 0) / 100) * arcLength;
 
     // Build tooltip for filter life gauge
     let tooltipText = "";
-    if (filterLeftTime) {
+    if (filterLeftTime !== undefined) {
       tooltipText = localize(this.hass, "card.days_left", {
-        days: filterLeftTime,
+        days: Math.round(filterLeftTime),
       });
     }
 
@@ -235,8 +236,10 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                 stroke-width="12"
                 stroke-linecap="round"
               />
-              <!-- Progress arc (3/4 circle) -->
-              <path
+              <!-- Progress arc (3/4 circle), hidden while the level is unknown -->
+              ${filterLife === undefined
+                ? nothing
+                : svg`<path
                 class="gauge-progress ${isOn ? "on" : "off"} ${filterLife === 0
                   ? "critical"
                   : ""}"
@@ -249,23 +252,30 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                   : progressLength + " " + arcLength}"
                 stroke-dashoffset="0"
                 style="transition: stroke-dasharray 0.3s ease, stroke 0.3s ease;"
-              />
+              />`}
             </svg>
 
             <!-- Status Icons Row (above percentage) -->
             <div class="status-icons-row">
               <!-- Battery/Charging Icon -->
-              <div class="icon-indicator">
-                <ha-icon
-                  icon="${getChargingIcon(chargingState, batteryLevel)}"
-                  class="${getBatteryIconClass(chargingState, batteryLevel)}"
-                  title="${getBatteryTooltip(
-                    this.hass,
-                    chargingState,
-                    batteryLevel,
-                  )}"
-                ></ha-icon>
-              </div>
+              ${showBattery
+                ? html`
+                    <div class="icon-indicator">
+                      <ha-icon
+                        icon="${getChargingIcon(chargingState, batteryLevel)}"
+                        class="${getBatteryIconClass(
+                          chargingState,
+                          batteryLevel,
+                        )}"
+                        title="${getBatteryTooltip(
+                          this.hass,
+                          chargingState,
+                          batteryLevel,
+                        )}"
+                      ></ha-icon>
+                    </div>
+                  `
+                : nothing}
 
               <!-- Water Shortage Icon -->
               ${waterShortageId
@@ -285,7 +295,9 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
             <!-- Center Percentage Value-->
             <div class="gauge-center">
-              <div class="gauge-value">${filterLife}%</div>
+              <div class="gauge-value">
+                ${filterLife === undefined ? "--" : `${Math.round(filterLife)}%`}
+              </div>
             </div>
 
             <!-- Horizontal Line -->
