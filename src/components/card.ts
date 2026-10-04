@@ -505,6 +505,8 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               </div>
             </div>
           </div>
+
+          ${this._renderKeepMode(relatedEntities, modeEntity)}
         </div>
 
         <!-- Reset Confirmation Dialog: native modal <dialog>, so it is
@@ -540,6 +542,73 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         </dialog>
       </ha-card>
     `;
+  }
+
+  /**
+   * Mode keeping of xiaomi_pet_fountain_2 (keep_mode switch and last
+   * restoration sensor): one discreet line, only when the switch exists.
+   */
+  private _renderKeepMode(
+    related: ReturnType<typeof resolveEntities>["entities"],
+    modeEntity: HassEntity | undefined,
+  ): TemplateResult | typeof nothing {
+    const hass = this.hass;
+    const keep = hass?.states[related.keepMode ?? ""];
+    const keepState = knownState(keep);
+    if (!hass || !keep || keepState === undefined) return nothing;
+
+    const preferred = keep.attributes?.preferred_mode;
+    const status =
+      keepState !== "on"
+        ? localize(hass, "card.keep_mode_off")
+        : typeof preferred === "string" && preferred
+          ? localize(hass, "card.keep_mode_on", {
+              mode: this._modeLabel(modeEntity, preferred),
+            })
+          : localize(hass, "card.keep_mode_any");
+
+    const restore = hass.states[related.lastModeRestore ?? ""];
+    const time = this._formatTimestamp(restore);
+    const failed = restore?.attributes?.result === "failed";
+    const last = time
+      ? localize(hass, "card.last_restore", { time }) +
+        (failed ? ` (${localize(hass, "card.restore_failed")})` : "")
+      : "";
+
+    return html`
+      <div class="keep-mode">
+        <div class="keep-mode-status ${keepState === "on" ? "on" : "off"}">
+          <ha-icon icon="mdi:backup-restore"></ha-icon>
+          <span>${status}</span>
+        </div>
+        ${last
+          ? html`<div class="keep-mode-last ${failed ? "failed" : ""}">
+              ${last}
+            </div>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  /** Localized date and time of a timestamp sensor, or "" when unknown */
+  private _formatTimestamp(entity: HassEntity | undefined): string {
+    const state = knownState(entity);
+    if (!entity || state === undefined) return "";
+    const formatted =
+      typeof this.hass?.formatEntityState === "function"
+        ? this.hass.formatEntityState(entity)
+        : undefined;
+    if (formatted && formatted !== state) return formatted;
+    const date = new Date(state);
+    if (Number.isNaN(date.getTime())) return "";
+    try {
+      return date.toLocaleString(this.hass?.locale?.language, {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+    } catch {
+      return date.toLocaleString();
+    }
   }
 
   /** Card title: the `name` option, or the product name by default */
@@ -1012,6 +1081,33 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       .mode-select {
         text-transform: capitalize;
+      }
+
+      /* Mode keeping (xiaomi_pet_fountain_2): discreet, under the gauge */
+      .keep-mode {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--secondary-text-color);
+        text-align: center;
+      }
+
+      .keep-mode-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .keep-mode-status ha-icon {
+        --mdc-icon-size: 16px;
+      }
+
+      .keep-mode-status.off {
+        opacity: 0.7;
+      }
+
+      .keep-mode-last.failed {
+        color: var(--error-color);
       }
 
       /* Reset Confirmation Dialog */

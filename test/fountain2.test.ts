@@ -37,6 +37,8 @@ const EXPECTED = {
   resetFilterButton: `button.${P2}_reset_filter`,
   pumpBlocked: `binary_sensor.${P2}_pump_blocked`,
   fault: `binary_sensor.${P2}_fault`,
+  keepMode: `switch.${P2}_keep_mode`,
+  lastModeRestore: `sensor.${P2}_last_mode_restoration`,
 };
 
 describe("xiaomi_pet_fountain_2 resolution", () => {

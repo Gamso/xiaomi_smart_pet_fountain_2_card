@@ -14,4 +14,6 @@ export interface RelatedEntities {
   // Only created by the xiaomi_pet_fountain_2 integration
   pumpBlocked?: string;
   fault?: string;
+  keepMode?: string;
+  lastModeRestore?: string;
 }
