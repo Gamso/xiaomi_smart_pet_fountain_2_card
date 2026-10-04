@@ -163,11 +163,12 @@ describe("mode select", () => {
     }
   });
 
-  it("shows a placeholder while the mode is unavailable", async () => {
+  it("shows a disabled placeholder while the mode is unavailable", async () => {
     const el = await mountCard(
       { entity: `switch.${P2}_power` },
       makeFountain2Hass({ [MODE]: "unavailable" }),
     );
     expect(modeSelect(el).selectedOptions[0].textContent!.trim()).toBe("--");
+    expect(modeSelect(el).disabled).toBe(true);
   });
 });
