@@ -28,6 +28,11 @@
     "water_interval": "Water interval",
     "reset_filter": "Reset filter life",
     "operating_mode": "Operating mode",
+    "modes": {
+      "auto": "Auto",
+      "interval": "Interval",
+      "constant": "Constant"
+    },
     "battery": "Battery",
     "charging": "Charging",
     "charge_full": "On AC power",

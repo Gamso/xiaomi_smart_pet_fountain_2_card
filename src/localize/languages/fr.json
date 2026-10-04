@@ -28,6 +28,11 @@
     "water_interval": "Intervalle d'eau",
     "reset_filter": "Réinitialiser la durée de vie du filtre",
     "operating_mode": "Mode de fonctionnement",
+    "modes": {
+      "auto": "Auto",
+      "interval": "Intervalle",
+      "constant": "Continu"
+    },
     "battery": "Batterie",
     "charging": "En charge",
     "charge_full": "Sur secteur",
