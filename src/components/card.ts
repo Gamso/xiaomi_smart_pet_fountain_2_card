@@ -54,7 +54,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   }
 
   static async getStubConfig(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
   ): Promise<XiaomiSmartPetFountainCardConfig> {
     // Return a default configuration for card preview in dashboard editor
     return {
@@ -204,8 +204,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     }
 
     const isOn = powerEntity.state === "on";
-    const name =
-      this.config.name || entity.attributes.friendly_name || "Pet Fountain";
 
     const arcLength = 85 * 2 * Math.PI * (250 / 360);
     const progressLength = (filterLife / 100) * arcLength;
