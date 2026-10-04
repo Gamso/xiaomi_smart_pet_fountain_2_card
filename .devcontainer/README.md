@@ -89,7 +89,7 @@ The devcontainer creates 16 test entities simulating the Xiaomi Smart Pet Founta
 
 1. Click **three dots** → **Edit Dashboard**
 2. Click **+ Add Card**
-3. Scroll to bottom and select: **Custom: Xiaomi Smart Pet Fountain Card**
+3. Scroll to bottom and select: **Xiaomi Smart Pet Fountain 2 Card**
 4. Select entity: `select.xiaomi_iv02_b820_mode`
 5. Click **Save**
 
@@ -104,7 +104,7 @@ The card displays:
 
 - Power status (on/off)
 - Operating mode (auto/interval/constant)
-- Water level indicator
+- Water shortage indicator
 - Filter life percentage
 - Battery level
 - Control buttons (power, mode, reset filter, no disturb, physical lock)
