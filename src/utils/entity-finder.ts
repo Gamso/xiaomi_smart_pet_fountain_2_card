@@ -146,6 +146,13 @@ export const FOUNTAIN2_ROLES: Record<EntityRole, Fountain2RoleDefinition> = {
   resetFilterButton: { domain: "button", key: "reset_filter", suffix: "_reset_filter" },
   pumpBlocked: { domain: "binary_sensor", key: "pump_blocked", suffix: "_pump_blocked" },
   fault: { domain: "binary_sensor", key: "fault", suffix: "_fault" },
+  // Mode keeping of the integration
+  keepMode: { domain: "switch", key: "keep_mode", suffix: "_keep_mode" },
+  lastModeRestore: {
+    domain: "sensor",
+    key: "last_mode_restore",
+    suffix: "_last_mode_restoration",
+  },
 };
 
 const ROLES = Object.keys(FOUNTAIN2_ROLES) as EntityRole[];
