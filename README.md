@@ -20,9 +20,9 @@ A custom Home Assistant card to visualize and control the Xiaomi Smart Pet Fount
    - Click the three-dot menu in the top right
    - Select "Custom repositories"
    - Add this repository URL: `https://github.com/Gamso/xiaomi_smart_pet_fountain_2_card`
-   - Select category "Lovelace"
+   - Select category "Dashboard" (called "Lovelace" in older HACS versions)
    - Click "Add"
-   - Search for "Xiaomi Smart Pet Fountain Card"
+   - Search for "Xiaomi Smart Pet Fountain 2 Card"
    - Click "Install"
    - Restart Home Assistant
 
@@ -66,6 +66,49 @@ or with any related entity:
 type: custom:xiaomi-smart-pet-fountain-2-card
 entity: select.xiaomi_iv02_b820_mode
 ```
+
+When Home Assistant knows the device of the configured entity (entity
+registry), the card also finds the other entities of that device by their
+suffix, even if the device prefix was renamed.
+
+### Options
+
+| Option   | Type   | Default                       | Description                                             |
+| -------- | ------ | ----------------------------- | ------------------------------------------------------- |
+| `entity` | string | **required**                  | Any entity of the fountain, used for the auto-discovery |
+| `name`   | string | `Xiaomi Smart Pet Fountain 2` | Card title                                              |
+
+#### Entity overrides (optional)
+
+Each of these options replaces one auto-discovered entity, for renamed entities
+or another integration. They are also available in the visual editor, in the
+"Entities" section.
+
+| Option                         | Domain          | Replaces the entity ending with |
+| ------------------------------ | --------------- | ------------------------------- |
+| `power_entity`                 | `switch`        | `_pet_drinking_fountain`        |
+| `mode_entity`                  | `select`        | `_mode`                         |
+| `filter_life_entity`           | `sensor`        | `_filter_life_level`            |
+| `filter_left_time_entity`      | `sensor`        | `_filter_left_time`             |
+| `battery_entity`               | `sensor`        | `_battery_level`                |
+| `charging_state_entity`        | `sensor`        | `_charging_state`               |
+| `water_shortage_entity`        | `binary_sensor` | `_water_shortage_status`        |
+| `physical_control_lock_entity` | `switch`        | `_physical_control_locked`      |
+| `no_disturb_entity`            | `switch`        | `_no_disturb`                   |
+| `water_interval_entity`        | `number`        | `_out_water_interval`           |
+| `reset_filter_entity`          | `button`        | `_reset_filter_life`            |
+
+```yaml
+type: custom:xiaomi-smart-pet-fountain-2-card
+entity: switch.kitchen_fountain_pet_drinking_fountain
+name: Cat water
+battery_entity: sensor.kitchen_fountain_battery
+```
+
+When an entity the card needs can't be found, a banner lists the matching
+override options. Controls whose entity is missing are disabled; a missing or
+unavailable sensor is shown as unknown (`--`, battery with a question mark),
+never as 0 %.
 
 ## Using with Xiaomi Miot Integration
 
@@ -117,20 +160,29 @@ The Xiaomi Miot integration automatically creates the following entities for the
 
 ### Supported Attributes
 
-The card displays and controls the following attributes:
+The card displays and controls:
 
-- State (on/off)
-- Water level (water_level) - if available
-- Filter life (filter_life) - referenced via `sensor.xiaomi_iv02_b820_filter_life_level`
-- Operating mode (mode) - referenced via `select.xiaomi_iv02_b820_mode`
+- Power state (on/off) - `switch.xiaomi_iv02_b820_pet_drinking_fountain`
+- Water shortage indicator (shown only when water is lacking; the fountain
+  reports a shortage, not a water level) - `binary_sensor.xiaomi_iv02_b820_water_shortage_status`
+- Filter life gauge, with the days left as tooltip - `sensor.xiaomi_iv02_b820_filter_life_level`, `sensor.xiaomi_iv02_b820_filter_left_time`
+- Battery level and charging state - `sensor.xiaomi_iv02_b820_battery_level`, `sensor.xiaomi_iv02_b820_charging_state`
+- Operating mode (auto, interval, constant) - `select.xiaomi_iv02_b820_mode`
+- Water interval (enabled in interval mode) - `number.xiaomi_iv02_b820_out_water_interval`
+- No disturb and physical control lock - `switch.xiaomi_iv02_b820_no_disturb`, `switch.xiaomi_iv02_b820_physical_control_locked`
+- Filter life reset, after a confirmation - `button.xiaomi_iv02_b820_reset_filter_life`
 
 ### Used Services
 
 The card uses the following services:
 
-- `homeassistant.turn_on` / `homeassistant.turn_off` - To turn the fountain on/off
+- `homeassistant.turn_on` / `homeassistant.turn_off` - To turn the fountain, no disturb and the physical control lock on/off
+- `select.select_option` - To change the operating mode
 - `number.set_value` - To change water interval
 - `button.press` - To reset filter life
+
+A failed call (device offline, invalid value) is reported as a Home Assistant
+notification.
 
 ## Development
 
@@ -147,13 +199,14 @@ See [.devcontainer/README.md](.devcontainer/README.md) for more details.
 
 ### Prerequisites
 
-- Node.js (version 14 or higher)
+- Node.js 18 or higher to build (Rollup 4); Node.js 22.12 or higher (24 in
+  CI) to run the tests and the linter
 - npm
 
 ### Installing Dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 ### Build
@@ -162,11 +215,22 @@ npm install
 npm run build
 ```
 
-The compiled file will be generated in `dist/xiaomi-smart-pet-fountain-2-card.js`
+The compiled file will be generated in `dist/xiaomi-smart-pet-fountain-2-card.js`.
+It is committed: HACS installs it straight from the repository, so rebuild and
+commit it with any source change (the CI fails when `dist/` doesn't match the
+sources). The release build has no source map.
+
+### Checks
+
+```bash
+npm run typecheck   # TypeScript, sources and tests
+npm run lint        # ESLint
+npm test            # Vitest
+```
 
 ### Watch Mode
 
-For development with automatic reloading:
+For development with automatic reloading (emits a source map, git-ignored):
 
 ```bash
 npm run watch
