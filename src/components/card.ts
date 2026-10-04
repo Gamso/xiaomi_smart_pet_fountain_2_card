@@ -1,5 +1,5 @@
 import { LitElement, html, svg, css, nothing, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
 import {
@@ -54,7 +54,8 @@ const DEFAULT_TITLE = "Xiaomi Smart Pet Fountain 2";
 export class XiaomiSmartPetFountainCard extends LitElement {
   @property({ type: Object }) hass?: HomeAssistant;
   @property({ type: Object }) config?: XiaomiSmartPetFountainCardConfig;
-  @state() private _showResetDialog = false;
+  @query("dialog.reset-dialog") private _resetDialog?: HTMLDialogElement;
+  @query("button.reset-filter-button") private _resetButton?: HTMLButtonElement;
 
   // The editor is bundled with the card (static import above): no lazy load
   static getConfigElement(): HTMLElement {
@@ -207,6 +208,30 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         days: Math.round(filterLeftTime),
       });
     }
+    const filterLifeText =
+      filterLife === undefined
+        ? localize(this.hass, "card.unknown")
+        : `${Math.round(filterLife)}%`;
+    const gaugeLabel = [
+      `${localize(this.hass, "card.filter_life")}: ${filterLifeText}`,
+      tooltipText,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const noDisturbOn =
+      this.hass.states[relatedEntities.noDisturb || ""]?.state === "on";
+    const lockOn =
+      this.hass.states[relatedEntities.physicalControlLock || ""]?.state ===
+      "on";
+    const batteryText = getBatteryTooltip(
+      this.hass,
+      chargingState,
+      batteryLevel,
+    );
+    const powerLabel = isOn
+      ? localize(this.hass, "card.turn_off")
+      : localize(this.hass, "card.turn_on");
 
     return html`
       <ha-card>
@@ -226,7 +251,12 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
           <!-- Filter Life Circular Gauge -->
           <div class="gauge-container">
-            <svg class="gauge-svg" viewBox="0 0 200 200">
+            <svg
+              class="gauge-svg"
+              viewBox="0 0 200 200"
+              role="img"
+              aria-label="${gaugeLabel}"
+            >
               <title>${tooltipText}</title>
               <!-- Background arc (3/4 circle) -->
               <path
@@ -252,7 +282,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                   ? arcLength
                   : progressLength + " " + arcLength}"
                 stroke-dashoffset="0"
-                style="transition: stroke-dasharray 0.3s ease, stroke 0.3s ease;"
               />`}
             </svg>
 
@@ -261,15 +290,15 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               <!-- Battery/Charging Icon -->
               ${showBattery
                 ? html`
-                    <div class="icon-indicator">
+                    <div
+                      class="icon-indicator"
+                      role="img"
+                      aria-label="${batteryText}"
+                      title="${batteryText}"
+                    >
                       <ha-icon
                         icon="${getChargingIcon(chargingState, batteryLevel)}"
                         class="${getBatteryIconClass(
-                          chargingState,
-                          batteryLevel,
-                        )}"
-                        title="${getBatteryTooltip(
-                          this.hass,
                           chargingState,
                           batteryLevel,
                         )}"
@@ -281,13 +310,22 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               <!-- Water Shortage Icon -->
               ${waterShortageId
                 ? html`
-                    <div class="icon-indicator">
+                    <div
+                      class="icon-indicator"
+                      role=${waterShortage ? "img" : nothing}
+                      aria-label=${waterShortage
+                        ? localize(this.hass, "card.water_shortage")
+                        : nothing}
+                      aria-hidden=${waterShortage ? nothing : "true"}
+                      title=${waterShortage
+                        ? localize(this.hass, "card.water_shortage")
+                        : nothing}
+                    >
                       <ha-icon
                         icon="mdi:water-alert"
                         class="water-shortage ${waterShortage
                           ? "critical-icon-pulse"
                           : "hidden"}"
-                        title="${localize(this.hass, "card.water_shortage")}"
                       ></ha-icon>
                     </div>
                   `
@@ -295,7 +333,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
             </div>
 
             <!-- Center Percentage Value-->
-            <div class="gauge-center">
+            <div class="gauge-center" aria-hidden="true">
               <div class="gauge-value">
                 ${filterLife === undefined ? "--" : `${Math.round(filterLife)}%`}
               </div>
@@ -307,28 +345,24 @@ export class XiaomiSmartPetFountainCard extends LitElement {
             <!-- Additional Control Buttons -->
             <div class="container-controls additional-controls">
               <button
-                class="control-button ${this.hass.states[
-                  relatedEntities.noDisturb || ""
-                ]?.state === "on"
-                  ? "on"
-                  : "off"}"
+                class="control-button ${noDisturbOn ? "on" : "off"}"
                 @click=${() => this._toggleSwitch(relatedEntities.noDisturb)}
                 ?disabled="${!relatedEntities.noDisturb}"
                 title="${localize(this.hass, "card.no_disturb_mode")}"
+                aria-label="${localize(this.hass, "card.no_disturb_mode")}"
+                aria-pressed="${noDisturbOn ? "true" : "false"}"
               >
                 <ha-icon icon="mdi:bell-off"></ha-icon>
               </button>
 
               <button
-                class="control-button ${this.hass.states[
-                  relatedEntities.physicalControlLock || ""
-                ]?.state === "on"
-                  ? "on"
-                  : "off"}"
+                class="control-button ${lockOn ? "on" : "off"}"
                 @click=${() =>
                   this._toggleSwitch(relatedEntities.physicalControlLock)}
                 ?disabled="${!relatedEntities.physicalControlLock}"
                 title="${localize(this.hass, "card.physical_control_lock")}"
+                aria-label="${localize(this.hass, "card.physical_control_lock")}"
+                aria-pressed="${lockOn ? "true" : "false"}"
               >
                 <ha-icon icon="mdi:lock"></ha-icon>
               </button>
@@ -343,6 +377,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                 ?disabled="${!waterIntervalId ||
                 mode.toLowerCase() !== "interval"}"
                 title="${localize(this.hass, "card.water_interval")}"
+                aria-label="${localize(this.hass, "card.water_interval")}"
               >
                 ${waterInterval === undefined
                   ? html`<option value="" disabled selected>--</option>`
@@ -366,18 +401,20 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                 class="control-button ${isOn ? "on" : "off"}"
                 @click=${() => this._togglePower()}
                 ?disabled="${!powerEntity}"
-                title="${isOn
-                  ? localize(this.hass, "card.turn_off")
-                  : localize(this.hass, "card.turn_on")}"
+                title="${powerLabel}"
+                aria-label="${localize(this.hass, "card.power")}"
+                aria-pressed="${isOn ? "true" : "false"}"
               >
                 <ha-icon icon="mdi:power"></ha-icon>
               </button>
 
               <button
-                class="control-button"
+                class="control-button reset-filter-button"
                 @click=${() => this._showResetConfirmation()}
                 ?disabled="${!relatedEntities.resetFilterButton}"
                 title="${localize(this.hass, "card.reset_filter")}"
+                aria-label="${localize(this.hass, "card.reset_filter")}"
+                aria-haspopup="dialog"
               >
                 <ha-icon icon="mdi:air-filter"></ha-icon>
               </button>
@@ -389,6 +426,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                   this._selectMode((e.target as HTMLSelectElement).value)}"
                 ?disabled="${!modeEntityId}"
                 title="${localize(this.hass, "card.operating_mode")}"
+                aria-label="${localize(this.hass, "card.operating_mode")}"
               >
                 ${modeOptions.map(
                   (option: string) => html`
@@ -402,38 +440,37 @@ export class XiaomiSmartPetFountainCard extends LitElement {
           </div>
         </div>
 
-        <!-- Reset Confirmation Dialog -->
-        ${this._showResetDialog
-          ? html`
-              <div
-                class="dialog-overlay"
-                @click=${() => this._hideResetDialog()}
-              >
-                <div
-                  class="dialog-content"
-                  @click=${(e: Event) => e.stopPropagation()}
-                >
-                  <div class="dialog-message">
-                    ${localize(this.hass, "dialog.reset_filter_message")}
-                  </div>
-                  <div class="dialog-buttons">
-                    <button
-                      class="dialog-button cancel"
-                      @click=${() => this._hideResetDialog()}
-                    >
-                      ${localize(this.hass, "dialog.cancel")}
-                    </button>
-                    <button
-                      class="dialog-button confirm"
-                      @click=${() => this._confirmResetFilter()}
-                    >
-                      ${localize(this.hass, "dialog.confirm")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `
-          : ""}
+        <!-- Reset Confirmation Dialog: native modal <dialog>, so it is
+             rendered in the top layer, the page behind is inert with the
+             focus kept inside, Escape closes it and it has role "dialog". -->
+        <dialog
+          class="reset-dialog"
+          aria-labelledby="reset-dialog-message"
+          @click=${(e: Event) => {
+            // A click on the backdrop targets the <dialog> element itself
+            if (e.target === e.currentTarget) this._hideResetDialog();
+          }}
+          @close=${() => this._resetButton?.focus()}
+        >
+          <div class="dialog-message" id="reset-dialog-message">
+            ${localize(this.hass, "dialog.reset_filter_message")}
+          </div>
+          <div class="dialog-buttons">
+            <button
+              class="dialog-button cancel"
+              autofocus
+              @click=${() => this._hideResetDialog()}
+            >
+              ${localize(this.hass, "dialog.cancel")}
+            </button>
+            <button
+              class="dialog-button confirm"
+              @click=${() => this._confirmResetFilter()}
+            >
+              ${localize(this.hass, "dialog.confirm")}
+            </button>
+          </div>
+        </dialog>
       </ha-card>
     `;
   }
@@ -540,13 +577,14 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     });
   }
 
-  // _showResetDialog is a @state: assigning it already schedules a render
   private _showResetConfirmation(): void {
-    this._showResetDialog = true;
+    const dialog = this._resetDialog;
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
   }
 
   private _hideResetDialog(): void {
-    this._showResetDialog = false;
+    if (this._resetDialog?.open) this._resetDialog.close();
   }
 
   private _confirmResetFilter(): void {
@@ -672,6 +710,12 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       .gauge-background {
         opacity: 0.2;
+      }
+
+      .gauge-progress {
+        transition:
+          stroke-dasharray 0.3s ease,
+          stroke 0.3s ease;
       }
 
       .gauge-progress.on {
@@ -847,7 +891,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         cursor: pointer;
         transition: border-color 0.2s ease;
         margin: 0;
-        outline: none;
       }
 
       .pill-select:hover:not(:disabled) {
@@ -855,8 +898,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       }
 
       .pill-select:focus {
-        outline: none;
         border-color: var(--primary-color);
+      }
+
+      /* Keyboard focus: always visible */
+      .control-button:focus-visible,
+      .pill-select:focus-visible,
+      .dialog-button:focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
+
+      .control-button {
+        border-radius: 50%;
       }
 
       .pill-select:disabled {
@@ -869,27 +923,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       }
 
       /* Reset Confirmation Dialog */
-      .dialog-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
-        border-radius: inherit;
-      }
-
-      .dialog-content {
-        background: var(--card-background-color);
+      .reset-dialog {
+        border: none;
+        background: var(--card-background-color, #fff);
+        color: var(--primary-text-color);
         border-radius: 8px;
         padding: 24px;
-        min-width: 280px;
-        max-width: 400px;
+        width: min(400px, calc(100vw - 32px));
+        box-sizing: border-box;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .reset-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.5);
       }
 
       .dialog-message {
@@ -933,6 +979,26 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       .dialog-button.confirm:hover {
         opacity: 0.9;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gauge-progress.critical,
+        .icon-indicator ha-icon.charging,
+        .critical-icon-pulse {
+          animation: none;
+        }
+
+        .gauge-progress,
+        .control-button,
+        .pill-select,
+        .dialog-button {
+          transition: none;
+        }
+
+        .control-button:hover:not(:disabled),
+        .control-button:active:not(:disabled) {
+          transform: none;
+        }
       }
     `;
   }
