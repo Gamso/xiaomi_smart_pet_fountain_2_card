@@ -11,8 +11,6 @@ views:
       - type: custom:xiaomi-smart-pet-fountain-2-card
         entity: switch.xiaomi_iv02_b820_pet_drinking_fountain
         name: Xiaomi Smart Pet Fountain 2
-        show_name: true
-        show_state: true
 
       # Main fountain entities
       - type: entities

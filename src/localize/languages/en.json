@@ -6,6 +6,7 @@
   "editor": {
     "entity": "Entity (Required)",
     "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2",
+    "name": "Name (optional)",
     "entities_section": "Entities (optional, override the auto-discovery)",
     "power_entity": "Power switch",
     "mode_entity": "Operating mode",
