@@ -1,7 +1,11 @@
 node_modules/
 *.log
 .DS_Store
+# dist/xiaomi-smart-pet-fountain-2-card.js is versioned on purpose: HACS serves
+# it straight from the repository. Source maps are only emitted by
+# `npm run watch` for local debugging and must never be committed.
 dist/*.map
+coverage/
 
 # Home Assistant DevContainer files
 .devcontainer/config/.storage/

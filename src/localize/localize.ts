@@ -2,7 +2,6 @@ import * as en from './languages/en.json';
 import * as fr from './languages/fr.json';
 import { HomeAssistant } from '../types/hass';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const languages: any = {
   en: en,
   fr: fr,
