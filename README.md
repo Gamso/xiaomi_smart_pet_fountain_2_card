@@ -4,6 +4,16 @@
 
 A custom Home Assistant card to visualize and control the Xiaomi Smart Pet Fountain 2 (xiaomi.pet_waterer.iv02).
 
+It works with two integrations:
+
+- [**xiaomi_pet_fountain_2**](https://github.com/Gamso/ha-xiaomi-pet-fountain-2)
+  (recommended): local integration, no Xiaomi cloud, keeps the water mode
+  after power cuts;
+- [**Xiaomi Miot Auto**](https://github.com/al-one/hass-xiaomi-miot).
+
+The card detects the integration of the configured entity in the entity
+registry: xiaomi_pet_fountain_2 first, Xiaomi Miot Auto otherwise.
+
 ![Card Preview](assets/card_preview.png)
 
 ## Installation
@@ -42,7 +52,12 @@ A custom Home Assistant card to visualize and control the Xiaomi Smart Pet Fount
 
 The card now uses an **intelligent auto-discovery system**! You can provide **any entity** from your fountain (switch, sensor, select, etc.), and the card will automatically find all related entities.
 
-**How it works:**
+**With xiaomi_pet_fountain_2**, the card reads the entities of the same
+device in the entity registry and recognises each one by its translation key,
+so renamed entities are still found (see
+[Using with xiaomi_pet_fountain_2](#using-with-xiaomi_pet_fountain_2-recommended)).
+
+**With Xiaomi Miot Auto:**
 
 1. You provide an entity (e.g., `switch.xiaomi_iv02_b820_pet_drinking_fountain`)
 2. The card extracts the base name (e.g., `xiaomi_iv02_b820`)
@@ -54,6 +69,15 @@ The card now uses an **intelligent auto-discovery system**! You can provide **an
    - And all other entities!
 
 ### Minimal Configuration
+
+With xiaomi_pet_fountain_2:
+
+```yaml
+type: custom:xiaomi-smart-pet-fountain-2-card
+entity: switch.xiaomi_smart_pet_fountain_2_power
+```
+
+With Xiaomi Miot Auto:
 
 ```yaml
 type: custom:xiaomi-smart-pet-fountain-2-card
@@ -68,8 +92,8 @@ entity: select.xiaomi_iv02_b820_mode
 ```
 
 When Home Assistant knows the device of the configured entity (entity
-registry), the card also finds the other entities of that device by their
-suffix, even if the device prefix was renamed.
+registry), the card also finds the other Xiaomi Miot Auto entities of that
+device by their suffix, even if the device prefix was renamed.
 
 ### Options
 
@@ -81,22 +105,23 @@ suffix, even if the device prefix was renamed.
 #### Entity overrides (optional)
 
 Each of these options replaces one auto-discovered entity, for renamed entities
-or another integration. They are also available in the visual editor, in the
-"Entities" section.
+or another integration. They take priority over the auto-discovery with both
+integrations, and are also available in the visual editor, in the "Entities"
+section.
 
-| Option                         | Domain          | Replaces the entity ending with |
-| ------------------------------ | --------------- | ------------------------------- |
-| `power_entity`                 | `switch`        | `_pet_drinking_fountain`        |
-| `mode_entity`                  | `select`        | `_mode`                         |
-| `filter_life_entity`           | `sensor`        | `_filter_life_level`            |
-| `filter_left_time_entity`      | `sensor`        | `_filter_left_time`             |
-| `battery_entity`               | `sensor`        | `_battery_level`                |
-| `charging_state_entity`        | `sensor`        | `_charging_state`               |
-| `water_shortage_entity`        | `binary_sensor` | `_water_shortage_status`        |
-| `physical_control_lock_entity` | `switch`        | `_physical_control_locked`      |
-| `no_disturb_entity`            | `switch`        | `_no_disturb`                   |
-| `water_interval_entity`        | `number`        | `_out_water_interval`           |
-| `reset_filter_entity`          | `button`        | `_reset_filter_life`            |
+| Option                         | Domain          | Xiaomi Miot Auto entity ending with | xiaomi_pet_fountain_2 translation key |
+| ------------------------------ | --------------- | ----------------------------------- | ------------------------------------- |
+| `power_entity`                 | `switch`        | `_pet_drinking_fountain`            | `power`                               |
+| `mode_entity`                  | `select`        | `_mode`                             | `mode`                                |
+| `filter_life_entity`           | `sensor`        | `_filter_life_level`                | `filter_life`                         |
+| `filter_left_time_entity`      | `sensor`        | `_filter_left_time`                 | `filter_left_time`                    |
+| `battery_entity`               | `sensor`        | `_battery_level`                    | none (battery device class)           |
+| `charging_state_entity`        | `sensor`        | `_charging_state`                   | `charging_state`                      |
+| `water_shortage_entity`        | `binary_sensor` | `_water_shortage_status`            | `water_shortage`                      |
+| `physical_control_lock_entity` | `switch`        | `_physical_control_locked`          | `child_lock`                          |
+| `no_disturb_entity`            | `switch`        | `_no_disturb`                       | `no_disturb`                          |
+| `water_interval_entity`        | `number`        | `_out_water_interval`               | `out_water_interval`                  |
+| `reset_filter_entity`          | `button`        | `_reset_filter_life`                | `reset_filter`                        |
 
 ```yaml
 type: custom:xiaomi-smart-pet-fountain-2-card
@@ -109,6 +134,67 @@ When an entity the card needs can't be found, a banner lists the matching
 override options. Controls whose entity is missing are disabled; a missing or
 unavailable sensor is shown as unknown (`--`, battery with a question mark),
 never as 0 %.
+
+## Using with xiaomi_pet_fountain_2 (recommended)
+
+[xiaomi_pet_fountain_2](https://github.com/Gamso/ha-xiaomi-pet-fountain-2) is a
+local integration for this fountain (miIO/MIoT on your network, no Xiaomi
+cloud). Install it from HACS (custom repository, type Integration), then pick
+any of its entities in the card.
+
+### Entities used by the card
+
+Entity IDs below are for a device named *Xiaomi Smart Pet Fountain 2*. The
+card does not depend on them: it finds each entity of the device by its
+translation key (the battery sensor, which has none, by its `battery` device
+class), then by the default entity_id suffix.
+
+| Card element                             | Entity                                                         | Translation key        |
+| ---------------------------------------- | -------------------------------------------------------------- | ---------------------- |
+| Power button                             | `switch.xiaomi_smart_pet_fountain_2_power`                     | `power`                |
+| Mode list (`auto`, `interval`, `constant`) | `select.xiaomi_smart_pet_fountain_2_mode`                    | `mode`                 |
+| Filter gauge                             | `sensor.xiaomi_smart_pet_fountain_2_filter_life`               | `filter_life`          |
+| Days left (gauge tooltip)                | `sensor.xiaomi_smart_pet_fountain_2_filter_time_left`          | `filter_left_time`     |
+| Battery icon                             | `sensor.xiaomi_smart_pet_fountain_2_battery`                   | none                   |
+| Charging state (`no_charge`, `charging`, `charge_full`) | `sensor.xiaomi_smart_pet_fountain_2_charging_state` | `charging_state`  |
+| Water shortage icon                      | `binary_sensor.xiaomi_smart_pet_fountain_2_water_shortage`     | `water_shortage`       |
+| Pump blocked icon                        | `binary_sensor.xiaomi_smart_pet_fountain_2_pump_blocked`       | `pump_blocked`         |
+| Fault icon                               | `binary_sensor.xiaomi_smart_pet_fountain_2_fault`              | `fault`                |
+| Child lock button                        | `switch.xiaomi_smart_pet_fountain_2_child_lock`                | `child_lock`           |
+| Do not disturb button                    | `switch.xiaomi_smart_pet_fountain_2_do_not_disturb`            | `no_disturb`           |
+| Water interval list                      | `number.xiaomi_smart_pet_fountain_2_water_interval`            | `out_water_interval`   |
+| Filter reset (`button.press`)            | `button.xiaomi_smart_pet_fountain_2_reset_filter`              | `reset_filter`         |
+| Mode keeping line                        | `switch.xiaomi_smart_pet_fountain_2_keep_mode`                 | `keep_mode`            |
+| Last restoration                         | `sensor.xiaomi_smart_pet_fountain_2_last_mode_restoration`     | `last_mode_restore`    |
+
+**Water interval:** the integration exposes two interval properties, MIoT 2.7
+(`number.…_water_interval`, 0-120 min, step 15, spec v1 and v2) and 2.11
+(`number.…_water_interval_5_min_steps`, 10-120 min, step 5, spec v2). The card
+uses 2.7, the property it also drives with Xiaomi Miot Auto
+(`_out_water_interval`) and the one every iv02 firmware has. Which one the
+firmware applies in interval mode is not confirmed yet; to use 2.11 instead:
+
+```yaml
+type: custom:xiaomi-smart-pet-fountain-2-card
+entity: switch.xiaomi_smart_pet_fountain_2_power
+water_interval_entity: number.xiaomi_smart_pet_fountain_2_water_interval_5_min_steps
+```
+
+The interval list offers the values of the entity's grid from 10 min up
+(15, 30... 120 for 2.7; 10, 15... 120 for 2.11).
+
+**States:** the integration reports lowercase keys (`constant`, `no_charge`,
+`charge_full`); Xiaomi Miot Auto reports `Constant`, `no charge`,
+`charge full`. The card accepts both. Mode names are shown translated by Home
+Assistant when it can (`hass.formatEntityState`), else by the card, and the
+mode is sent exactly as the select entity lists it.
+
+**Mode keeping:** when the integration's *Keep mode* switch exists, a small
+line under the gauge shows the kept mode (or that it is not kept) and the time
+of the last restoration, in red when it failed.
+
+**Faults:** the pump blocked and fault icons appear next to the water shortage
+one only while those binary sensors are on.
 
 ## Using with Xiaomi Miot Integration
 
