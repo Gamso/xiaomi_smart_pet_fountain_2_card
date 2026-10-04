@@ -7,6 +7,7 @@ import {
   numericState,
   knownState,
   percentState,
+  buildIntervalOptions,
 } from "../utils";
 import {
   getChargingIcon,
@@ -193,22 +194,16 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     const waterIntervalEntity = waterIntervalId
       ? this.hass.states[waterIntervalId]
       : null;
-    const waterInterval = waterIntervalEntity
-      ? parseFloat(waterIntervalEntity.state) || 10
-      : 10;
-    const waterIntervalMin = waterIntervalEntity?.attributes?.min ?? 0;
-    const waterIntervalMax = waterIntervalEntity?.attributes?.max ?? 120;
-    const waterIntervalStep = waterIntervalEntity?.attributes?.step ?? 15;
+    // Real value, 0 included; undefined while unknown
+    const waterInterval = numericState(waterIntervalEntity);
 
-    // Generate water interval options (from min to max by step)
-    const waterIntervalOptions: number[] = [];
-    for (
-      let i = Math.max(10, waterIntervalMin);
-      i <= waterIntervalMax;
-      i += waterIntervalStep
-    ) {
-      waterIntervalOptions.push(i);
-    }
+    // Water interval options (from min to max by step, bounded)
+    const waterIntervalOptions = buildIntervalOptions(
+      waterIntervalEntity?.attributes?.min,
+      waterIntervalEntity?.attributes?.max,
+      waterIntervalEntity?.attributes?.step,
+      waterInterval,
+    );
 
     const isOn = powerEntity?.state === "on";
 
@@ -350,15 +345,18 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
               <select
                 class="pill-select"
-                .value="${waterInterval}"
+                .value="${waterInterval === undefined ? "" : String(waterInterval)}"
                 @change="${(e: Event) =>
                   this._setWaterInterval(
-                    parseInt((e.target as HTMLSelectElement).value),
+                    Number((e.target as HTMLSelectElement).value),
                   )}"
                 ?disabled="${!waterIntervalId ||
                 mode.toLowerCase() !== "interval"}"
                 title="${localize(this.hass, "card.water_interval")}"
               >
+                ${waterInterval === undefined
+                  ? html`<option value="" disabled selected>--</option>`
+                  : nothing}
                 ${waterIntervalOptions.map(
                   (option) => html`
                     <option
@@ -459,6 +457,39 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     return resolveEntities(this.hass, this.config).entities;
   }
 
+  /**
+   * Call a service and report a failure (device offline, validation error,
+   * missing permission) as a Home Assistant toast instead of an unhandled
+   * promise rejection. The card re-renders so the selects snap back to the
+   * entity's real state.
+   */
+  private async _callService(
+    domain: string,
+    service: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    if (!this.hass) return;
+    try {
+      await this.hass.callService(domain, service, data);
+    } catch (err) {
+      console.error(`${domain}.${service} failed`, err);
+      const error =
+        err instanceof Error
+          ? err.message
+          : ((err as { message?: string })?.message ?? String(err));
+      this.dispatchEvent(
+        new CustomEvent("hass-notification", {
+          bubbles: true,
+          composed: true,
+          detail: {
+            message: localize(this.hass, "card.service_error", { error }),
+          },
+        }),
+      );
+      this.requestUpdate();
+    }
+  }
+
   private _togglePower(): void {
     if (!this.config || !this.hass) return;
 
@@ -477,7 +508,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
     const service = powerEntity.state === "on" ? "turn_off" : "turn_on";
 
-    this.hass.callService("homeassistant", service, {
+    this._callService("homeassistant", service, {
       entity_id: powerSwitchId,
     });
   }
@@ -495,7 +526,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("select", "select_option", {
+    this._callService("select", "select_option", {
       entity_id: modeEntityId,
       option: selectedMode,
     });
@@ -514,7 +545,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("button", "press", {
+    this._callService("button", "press", {
       entity_id: resetButtonId,
     });
   }
@@ -548,7 +579,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
     const service = entity.state === "on" ? "turn_off" : "turn_on";
 
-    this.hass.callService("homeassistant", service, {
+    this._callService("homeassistant", service, {
       entity_id: entityId,
     });
   }
@@ -566,7 +597,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("number", "set_value", {
+    this._callService("number", "set_value", {
       entity_id: waterIntervalId,
       value: value,
     });

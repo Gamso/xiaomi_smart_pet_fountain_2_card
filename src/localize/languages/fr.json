@@ -36,7 +36,8 @@
     "entity_not_found": "Entité non trouvée",
     "unknown": "Inconnu",
     "missing_entities": "Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",
-    "days_left": "${days} jours restants"
+    "days_left": "${days} jours restants",
+    "service_error": "Échec de l'action : ${error}"
   },
   "dialog": {
     "reset_filter_message": "Voulez-vous réinitialiser la durée d'utilisation du filtre ?",
