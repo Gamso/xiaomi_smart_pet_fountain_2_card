@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant } from '../types/hass';
 import { XiaomiSmartPetFountainCardConfig } from '../types/config';
 import { setupCustomlocalize } from '../localize';
+import { ENTITY_OVERRIDE_KEYS, overrideDomain } from '../utils/entity-finder';
 
 // Load Home Assistant components needed for the editor
 const loadHaComponents = () => {
@@ -15,7 +16,7 @@ const loadHaComponents = () => {
 };
 
 // Define the form schema
-const computeSchema = () => [
+const computeSchema = (customLocalize: (key: string) => string) => [
   {
     name: 'entity',
     required: true,
@@ -24,6 +25,17 @@ const computeSchema = () => [
         include_domains: ['switch', 'sensor', 'select', 'number', 'binary_sensor', 'button'],
       },
     },
+  },
+  {
+    // Optional overrides of the auto-discovered entities
+    type: 'expandable',
+    name: 'entities',
+    flatten: true,
+    title: customLocalize('editor.entities_section'),
+    schema: ENTITY_OVERRIDE_KEYS.map((key) => ({
+      name: key,
+      selector: { entity: { domain: overrideDomain(key) } },
+    })),
   },
 ];
 
@@ -46,14 +58,15 @@ export class XiaomiSmartPetFountainCardEditor extends LitElement {
   private _computeLabel = (schema: any): string => {
     const customLocalize = setupCustomlocalize(this.hass);
 
-    if (schema.name === 'entity') {
-      return customLocalize('editor.entity');
-    }
-    if (schema.name === 'name') {
-      return customLocalize('editor.name');
-    }
+    const label = customLocalize(`editor.${schema.name}`);
+    return label === `editor.${schema.name}` ? schema.name : label;
+  };
 
-    return schema.name;
+  private _computeHelper = (schema: any): string | undefined => {
+    if (schema.name === 'entity') {
+      return setupCustomlocalize(this.hass)('editor.entity_helper');
+    }
+    return undefined;
   };
 
   protected render(): TemplateResult {
@@ -61,7 +74,7 @@ export class XiaomiSmartPetFountainCardEditor extends LitElement {
       return html``;
     }
 
-    const schema = computeSchema();
+    const schema = computeSchema(setupCustomlocalize(this.hass));
 
     return html`
       <ha-form
@@ -69,14 +82,20 @@ export class XiaomiSmartPetFountainCardEditor extends LitElement {
         .data=${this._config}
         .schema=${schema}
         .computeLabel=${this._computeLabel}
+        .computeHelper=${this._computeHelper}
         @value-changed=${this._valueChanged}
       ></ha-form>
     `;
   }
 
   private _valueChanged(ev: CustomEvent): void {
-    const config = ev.detail.value;
-    
+    // Drop the overrides left empty so the YAML stays minimal
+    const config = Object.fromEntries(
+      Object.entries(ev.detail.value as Record<string, unknown>).filter(
+        ([, value]) => value !== '' && value !== undefined && value !== null,
+      ),
+    );
+
     // Fire config-changed event
     const event = new CustomEvent('config-changed', {
       bubbles: true,

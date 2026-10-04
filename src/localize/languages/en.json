@@ -5,7 +5,19 @@
   },
   "editor": {
     "entity": "Entity (Required)",
-    "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2"
+    "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2",
+    "entities_section": "Entities (optional, override the auto-discovery)",
+    "power_entity": "Power switch",
+    "mode_entity": "Operating mode",
+    "filter_life_entity": "Filter life level",
+    "filter_left_time_entity": "Filter left time",
+    "battery_entity": "Battery level",
+    "charging_state_entity": "Charging state",
+    "water_shortage_entity": "Water shortage",
+    "physical_control_lock_entity": "Physical control lock",
+    "no_disturb_entity": "No disturb",
+    "water_interval_entity": "Water interval",
+    "reset_filter_entity": "Reset filter life button"
   },
   "card": {
     "turn_on": "Turn on",
@@ -22,6 +34,7 @@
     "water_shortage": "Water shortage !",
     "entity_not_found": "Entity not found",
     "unknown": "Unknown",
+    "missing_entities": "Entities not found: ${entities}. Set them in the card options.",
     "days_left": "${days} days left"
   },
   "dialog": {

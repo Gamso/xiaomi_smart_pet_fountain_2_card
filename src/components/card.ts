@@ -3,8 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
 import {
-  extractBaseName,
-  findRelatedEntities,
+  resolveEntities,
   numericState,
   knownState,
   percentState,
@@ -59,19 +58,23 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     return document.createElement("xiaomi-smart-pet-fountain-2-card-editor");
   }
 
-  static async getStubConfig(
-    _hass: HomeAssistant,
-  ): Promise<XiaomiSmartPetFountainCardConfig> {
-    // Return a default configuration for card preview in dashboard editor
+  static getStubConfig(
+    hass?: HomeAssistant,
+  ): XiaomiSmartPetFountainCardConfig {
+    // Default configuration for the card picker preview: the first fountain
+    // power switch of this Home Assistant, if any.
+    const fountain = Object.keys(hass?.states ?? {})
+      .sort()
+      .find((id) => /^switch\..+_pet_drinking_fountain$/.test(id));
     return {
       type: "custom:xiaomi-smart-pet-fountain-2-card",
-      entity: "switch.xiaomi_iv02_b820_pet_drinking_fountain",
+      entity: fountain ?? "",
     };
   }
 
   setConfig(config: XiaomiSmartPetFountainCardConfig): void {
-    if (!config.entity) {
-      throw new Error("You need to define an entity");
+    if (!config) {
+      throw new Error("Invalid configuration");
     }
     this.config = config;
   }
@@ -95,8 +98,15 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       `;
     }
 
+    const { entities: relatedEntities, missing } = resolveEntities(
+      this.hass,
+      this.config,
+    );
     const entity = this.hass.states[this.config.entity];
-    if (!entity) {
+    const anyEntityFound = Object.values(relatedEntities).some(
+      (id) => !!id && !!this.hass?.states[id],
+    );
+    if (!entity && !anyEntityFound) {
       // For preview mode, show a demo card instead of error
       return html`
         <ha-card>
@@ -122,17 +132,11 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       `;
     }
 
-    // Extract base name and find related entities
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
-
-    // Get power switch entity (either the main entity if it's a switch, or find it)
-    const powerSwitchId = this.config.entity.startsWith("switch.")
-      ? this.config.entity
-      : relatedEntities.powerSwitch;
+    // Power switch: never read on/off from another entity
+    const powerSwitchId = relatedEntities.powerSwitch;
     const powerEntity = powerSwitchId
       ? this.hass.states[powerSwitchId]
-      : entity;
+      : undefined;
 
     // Get mode from mode select entity
     const modeEntityId = relatedEntities.mode;
@@ -204,7 +208,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       waterIntervalOptions.push(i);
     }
 
-    const isOn = powerEntity.state === "on";
+    const isOn = powerEntity?.state === "on";
 
     const arcLength = 85 * 2 * Math.PI * (250 / 360);
     const progressLength = ((filterLife ?? 0) / 100) * arcLength;
@@ -222,6 +226,16 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         <div class="card-content">
           <!-- Card Title -->
           <div class="card-title">Xiaomi Smart Pet Fountain 2</div>
+
+          ${missing.length
+            ? html`
+                <div class="missing-banner" role="status">
+                  ${localize(this.hass, "card.missing_entities", {
+                    entities: missing.join(", "),
+                  })}
+                </div>
+              `
+            : nothing}
 
           <!-- Filter Life Circular Gauge -->
           <div class="gauge-container">
@@ -361,6 +375,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
               <button
                 class="control-button ${isOn ? "on" : "off"}"
                 @click=${() => this._togglePower()}
+                ?disabled="${!powerEntity}"
                 title="${isOn
                   ? localize(this.hass, "card.turn_off")
                   : localize(this.hass, "card.turn_on")}"
@@ -433,23 +448,26 @@ export class XiaomiSmartPetFountainCard extends LitElement {
     `;
   }
 
+  private _relatedEntities() {
+    return resolveEntities(this.hass, this.config).entities;
+  }
+
   private _togglePower(): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use power switch entity
-    const powerSwitchId = this.config.entity.startsWith("switch.")
-      ? this.config.entity
-      : relatedEntities.powerSwitch;
+    const powerSwitchId = relatedEntities.powerSwitch;
+    const powerEntity = powerSwitchId
+      ? this.hass.states[powerSwitchId]
+      : undefined;
 
-    if (!powerSwitchId) {
+    if (!powerSwitchId || !powerEntity) {
       console.error("Power switch entity not found");
       return;
     }
 
-    const powerEntity = this.hass.states[powerSwitchId];
     const service = powerEntity.state === "on" ? "turn_off" : "turn_on";
 
     this.hass.callService("homeassistant", service, {
@@ -460,8 +478,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   private _selectMode(selectedMode: string): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use mode select entity
     const modeEntityId = relatedEntities.mode;
@@ -480,8 +497,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   private _resetFilter(): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use reset filter button entity
     const resetButtonId = relatedEntities.resetFilterButton;
@@ -533,8 +549,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   private _setWaterInterval(value: number): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use water interval number entity
     const waterIntervalId = relatedEntities.outWaterInterval;
@@ -567,6 +582,17 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         text-align: center;
         margin-bottom: 16px;
         letter-spacing: 0.5px;
+      }
+
+      .missing-banner {
+        margin: 0 0 12px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: var(--primary-text-color);
+        background: rgba(var(--rgb-warning-color, 255, 166, 0), 0.15);
+        border-left: 4px solid var(--warning-color, #ffa600);
+        overflow-wrap: anywhere;
       }
 
       .card-header {

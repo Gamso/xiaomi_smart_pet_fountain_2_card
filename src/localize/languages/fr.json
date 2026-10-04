@@ -5,7 +5,19 @@
   },
   "editor": {
     "entity": "Entité (Obligatoire)",
-    "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2"
+    "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2",
+    "entities_section": "Entités (facultatif, remplace la découverte automatique)",
+    "power_entity": "Interrupteur marche/arrêt",
+    "mode_entity": "Mode de fonctionnement",
+    "filter_life_entity": "Durée de vie du filtre",
+    "filter_left_time_entity": "Jours de filtre restants",
+    "battery_entity": "Niveau de batterie",
+    "charging_state_entity": "État de charge",
+    "water_shortage_entity": "Manque d'eau",
+    "physical_control_lock_entity": "Verrouillage des commandes physiques",
+    "no_disturb_entity": "Ne pas déranger",
+    "water_interval_entity": "Intervalle d'eau",
+    "reset_filter_entity": "Bouton de réinitialisation du filtre"
   },
   "card": {
     "turn_on": "Allumer",
@@ -22,6 +34,7 @@
     "water_shortage": "Manque d'eau !",
     "entity_not_found": "Entité non trouvée",
     "unknown": "Inconnu",
+    "missing_entities": "Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",
     "days_left": "${days} jours restants"
   },
   "dialog": {
