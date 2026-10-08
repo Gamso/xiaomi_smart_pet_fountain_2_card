@@ -11,4 +11,9 @@ export interface RelatedEntities {
   outWaterInterval?: string;
   outWaterInterval2?: string;
   resetFilterButton?: string;
+  // Only created by the xiaomi_pet_fountain_2 integration
+  pumpBlocked?: string;
+  fault?: string;
+  keepMode?: string;
+  lastModeRestore?: string;
 }

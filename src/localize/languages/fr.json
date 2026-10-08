@@ -5,7 +5,20 @@
   },
   "editor": {
     "entity": "Entité (Obligatoire)",
-    "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2"
+    "entity_helper": "Sélectionnez n'importe quelle entité de votre Fontaine Xiaomi Smart Pet 2",
+    "name": "Nom (facultatif)",
+    "entities_section": "Entités (facultatif, remplace la découverte automatique)",
+    "power_entity": "Interrupteur marche/arrêt",
+    "mode_entity": "Mode de fonctionnement",
+    "filter_life_entity": "Durée de vie du filtre",
+    "filter_left_time_entity": "Jours de filtre restants",
+    "battery_entity": "Niveau de batterie",
+    "charging_state_entity": "État de charge",
+    "water_shortage_entity": "Manque d'eau",
+    "physical_control_lock_entity": "Verrouillage des commandes physiques",
+    "no_disturb_entity": "Ne pas déranger",
+    "water_interval_entity": "Intervalle d'eau",
+    "reset_filter_entity": "Bouton de réinitialisation du filtre"
   },
   "card": {
     "turn_on": "Allumer",
@@ -15,13 +28,32 @@
     "water_interval": "Intervalle d'eau",
     "reset_filter": "Réinitialiser la durée de vie du filtre",
     "operating_mode": "Mode de fonctionnement",
+    "modes": {
+      "auto": "Auto",
+      "interval": "Intervalle",
+      "constant": "Continu"
+    },
     "battery": "Batterie",
     "charging": "En charge",
     "charge_full": "Sur secteur",
     "no_charge": "Sur batterie",
     "water_shortage": "Manque d'eau !",
+    "pump_blocked": "Pompe bloquée",
+    "fault": "Défaut de la fontaine",
+    "keep_mode_on": "Mode conservé : ${mode}",
+    "keep_mode_any": "Mode conservé après les coupures",
+    "keep_mode_off": "Mode non conservé après les coupures",
+    "last_restore": "Dernière restauration : ${time}",
+    "restore_failed": "échec",
     "entity_not_found": "Entité non trouvée",
-    "days_left": "${days} jours restants"
+    "unknown": "Inconnu",
+    "missing_entities": "Entités introuvables : ${entities}. Renseignez-les dans les options de la carte.",
+    "days_left": "${days} jours restants",
+    "service_error": "Échec de l'action : ${error}",
+    "loading": "Chargement...",
+    "select_entity": "Sélectionnez une entité de votre Fontaine Xiaomi Smart Pet 2 dans les options de la carte.",
+    "filter_life": "Durée de vie du filtre",
+    "power": "Marche/arrêt"
   },
   "dialog": {
     "reset_filter_message": "Voulez-vous réinitialiser la durée d'utilisation du filtre ?",

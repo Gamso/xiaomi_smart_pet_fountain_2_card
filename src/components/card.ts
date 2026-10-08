@@ -1,14 +1,22 @@
-import { LitElement, html, css, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { HomeAssistant } from "../types/hass";
+import { LitElement, html, svg, css, nothing, TemplateResult } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import { HassEntity, HomeAssistant } from "../types/hass";
 import { XiaomiSmartPetFountainCardConfig } from "../types/config";
-import { extractBaseName, findRelatedEntities } from "../utils";
+import {
+  resolveEntities,
+  numericState,
+  knownState,
+  percentState,
+  buildIntervalOptions,
+  PET_FOUNTAIN_2_PLATFORM,
+  stateKey,
+} from "../utils";
 import {
   getChargingIcon,
   getBatteryTooltip,
   getBatteryIconClass,
 } from "../utils/battery-utils";
-import { localize } from "../localize";
+import { localize, setupCustomlocalize } from "../localize";
 import { version } from "../../package.json";
 import "./editor";
 
@@ -42,117 +50,141 @@ registerCustomCard({
   description: "A custom card for controlling Xiaomi Smart Pet Fountain 2",
 });
 
+const DEFAULT_TITLE = "Xiaomi Smart Pet Fountain 2";
+const DEFAULT_MODES = ["auto", "interval", "constant"];
+
 @customElement("xiaomi-smart-pet-fountain-2-card")
 export class XiaomiSmartPetFountainCard extends LitElement {
   @property({ type: Object }) hass?: HomeAssistant;
   @property({ type: Object }) config?: XiaomiSmartPetFountainCardConfig;
-  @state() private _showResetDialog = false;
+  @query("dialog.reset-dialog") private _resetDialog?: HTMLDialogElement;
+  @query("button.reset-filter-button") private _resetButton?: HTMLButtonElement;
 
-  static async getConfigElement(): Promise<HTMLElement> {
-    await import("./editor");
+  // The editor is bundled with the card (static import above): no lazy load
+  static getConfigElement(): HTMLElement {
     return document.createElement("xiaomi-smart-pet-fountain-2-card-editor");
   }
 
-  static async getStubConfig(
-    hass: HomeAssistant,
-  ): Promise<XiaomiSmartPetFountainCardConfig> {
-    // Return a default configuration for card preview in dashboard editor
+  static getStubConfig(
+    hass?: HomeAssistant,
+  ): XiaomiSmartPetFountainCardConfig {
+    // Default configuration for the card picker preview: the first fountain
+    // power switch of this Home Assistant, if any (xiaomi_pet_fountain_2
+    // first, then Xiaomi Miot Auto).
+    const states = hass?.states ?? {};
+    const local = Object.values(hass?.entities ?? {})
+      .filter(
+        (e) =>
+          e?.platform === PET_FOUNTAIN_2_PLATFORM &&
+          e.translation_key === "power" &&
+          !!states[e.entity_id],
+      )
+      .map((e) => e.entity_id)
+      .sort()[0];
+    const fountain =
+      local ??
+      Object.keys(states)
+        .sort()
+        .find((id) => /^switch\..+_pet_drinking_fountain$/.test(id));
     return {
       type: "custom:xiaomi-smart-pet-fountain-2-card",
-      entity: "switch.xiaomi_iv02_b820_pet_drinking_fountain",
+      entity: fountain ?? "",
     };
   }
 
   setConfig(config: XiaomiSmartPetFountainCardConfig): void {
-    if (!config.entity) {
-      throw new Error("You need to define an entity");
+    if (!config) {
+      throw new Error("Invalid configuration");
     }
     this.config = config;
   }
 
+  /**
+   * Height in 50 px units for the masonry view: the rendered height once laid
+   * out, otherwise an estimate (title + gauge ~ 350 px, banner ~ 50 px).
+   */
   getCardSize(): number {
-    return 4;
+    const height = this.offsetHeight;
+    if (height > 0) return Math.ceil(height / 50);
+    const missing = resolveEntities(this.hass, this.config).missing.length;
+    return missing ? 8 : 7;
+  }
+
+  /** Sections view: half width by default (the gauge is ~280 px wide), never
+   * narrower, height follows the content. */
+  getGridOptions(): { columns: number; min_columns: number; rows: "auto" } {
+    return { columns: 6, min_columns: 6, rows: "auto" };
   }
 
   protected render(): TemplateResult {
     if (!this.hass || !this.config) {
       return html`
         <ha-card>
-          <div class="card-content" style="padding: 16px;">
-            <div
-              style="text-align: center; color: var(--secondary-text-color);"
-            >
-              Loading...
-            </div>
+          <div class="card-content message">
+            <div class="message-detail">${localize(this.hass, "card.loading")}</div>
           </div>
         </ha-card>
       `;
     }
 
+    const { entities: relatedEntities, missing } = resolveEntities(
+      this.hass,
+      this.config,
+    );
     const entity = this.hass.states[this.config.entity];
-    if (!entity) {
-      // For preview mode, show a demo card instead of error
+    const anyEntityFound = Object.values(relatedEntities).some(
+      (id) => !!id && !!this.hass?.states[id],
+    );
+    if (!entity && !anyEntityFound) {
+      // No fountain entity at all (none configured, or a wrong entity_id)
       return html`
         <ha-card>
-          <div class="card-content" style="padding: 16px;">
-            <div style="text-align: center;">
-              <div
-                style="font-size: 16px; font-weight: 500; margin-bottom: 8px;"
-              >
-                Xiaomi Smart Pet Fountain 2
-              </div>
-              <div style="color: var(--secondary-text-color); font-size: 14px;">
-                ${localize(this.hass, "card.entity_not_found")}:
-                ${this.config.entity}
-              </div>
-              <div
-                style="color: var(--secondary-text-color); font-size: 12px; margin-top: 8px;"
-              >
-                Please select a valid entity in the configuration
-              </div>
+          <div class="card-content message">
+            <div class="message-title">${this._title()}</div>
+            ${this.config.entity
+              ? html`<div class="message-detail">
+                  ${localize(this.hass, "card.entity_not_found")}:
+                  ${this.config.entity}
+                </div>`
+              : nothing}
+            <div class="message-hint">
+              ${localize(this.hass, "card.select_entity")}
             </div>
           </div>
         </ha-card>
       `;
     }
 
-    // Extract base name and find related entities
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
-
-    // Get power switch entity (either the main entity if it's a switch, or find it)
-    const powerSwitchId = this.config.entity.startsWith("switch.")
-      ? this.config.entity
-      : relatedEntities.powerSwitch;
+    // Power switch: never read on/off from another entity
+    const powerSwitchId = relatedEntities.powerSwitch;
     const powerEntity = powerSwitchId
       ? this.hass.states[powerSwitchId]
-      : entity;
+      : undefined;
 
-    // Get mode from mode select entity
+    // Get mode from mode select entity. Options are the entity's own
+    // strings ("Constant" with Miot Auto, "constant" with
+    // xiaomi_pet_fountain_2), compared through stateKey().
     const modeEntityId = relatedEntities.mode;
-    const modeEntity = modeEntityId ? this.hass.states[modeEntityId] : null;
-    const mode = modeEntity ? modeEntity.state : "auto";
-    const modeOptions =
-      modeEntity && modeEntity.attributes.options
-        ? modeEntity.attributes.options
-        : ["auto", "interval", "constant"];
+    const modeEntity = modeEntityId ? this.hass.states[modeEntityId] : undefined;
+    const modeOptions = this._modeOptions(modeEntity);
+    const modeKey = stateKey(knownState(modeEntity)) ?? (modeEntity ? undefined : "auto");
+    const mode = modeOptions.find((option) => stateKey(option) === modeKey);
 
     // Get battery info
     const batteryLevelId = relatedEntities.batteryLevel;
     const batteryLevelEntity = batteryLevelId
       ? this.hass.states[batteryLevelId]
       : null;
-    const batteryLevel = batteryLevelEntity
-      ? parseFloat(batteryLevelEntity.state) || 0
-      : 0;
+    // Unknown (entity missing, unavailable, unknown) stays undefined: never 0
+    const batteryLevel = numericState(batteryLevelEntity);
 
     const chargingStateId = relatedEntities.chargingState;
     const chargingStateEntity = chargingStateId
       ? this.hass.states[chargingStateId]
       : null;
-    const chargingState = chargingStateEntity
-      ? chargingStateEntity.state
-      : "no charge";
+    const chargingState = knownState(chargingStateEntity);
+    // Hide the indicator when the fountain exposes neither battery entity
+    const showBattery = !!(batteryLevelId || chargingStateId);
 
     // Get water shortage status
     const waterShortageId = relatedEntities.waterShortage;
@@ -163,70 +195,111 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       ? waterShortageEntity.state === "on"
       : false;
 
+    // Faults (xiaomi_pet_fountain_2 only): shown only while on
+    const faults = [
+      {
+        on: this.hass.states[relatedEntities.pumpBlocked ?? ""]?.state === "on",
+        icon: "mdi:pump-off",
+        label: localize(this.hass, "card.pump_blocked"),
+      },
+      {
+        on: this.hass.states[relatedEntities.fault ?? ""]?.state === "on",
+        icon: "mdi:alert-circle",
+        label: localize(this.hass, "card.fault"),
+      },
+    ].filter((f) => f.on);
+
     // Get filter life
     const filterLifeId = relatedEntities.filterLifeLevel;
     const filterLifeEntity = filterLifeId
       ? this.hass.states[filterLifeId]
       : null;
-    const filterLife = filterLifeEntity
-      ? parseFloat(filterLifeEntity.state) || 0
-      : 0;
+    const filterLife = percentState(filterLifeEntity);
 
     // Get filter left time
     const filterLeftTimeId = relatedEntities.filterLeftTime;
     const filterLeftTimeEntity = filterLeftTimeId
       ? this.hass.states[filterLeftTimeId]
       : null;
-    const filterLeftTime = filterLeftTimeEntity
-      ? filterLeftTimeEntity.state
-      : null;
+    const filterLeftTime = numericState(filterLeftTimeEntity);
 
     // Get water interval
     const waterIntervalId = relatedEntities.outWaterInterval;
     const waterIntervalEntity = waterIntervalId
       ? this.hass.states[waterIntervalId]
       : null;
-    const waterInterval = waterIntervalEntity
-      ? parseFloat(waterIntervalEntity.state) || 10
-      : 10;
-    const waterIntervalMin = waterIntervalEntity?.attributes?.min ?? 0;
-    const waterIntervalMax = waterIntervalEntity?.attributes?.max ?? 120;
-    const waterIntervalStep = waterIntervalEntity?.attributes?.step ?? 15;
+    // Real value, 0 included; undefined while unknown
+    const waterInterval = numericState(waterIntervalEntity);
 
-    // Generate water interval options (from min to max by step)
-    const waterIntervalOptions: number[] = [];
-    for (
-      let i = Math.max(10, waterIntervalMin);
-      i <= waterIntervalMax;
-      i += waterIntervalStep
-    ) {
-      waterIntervalOptions.push(i);
-    }
+    // Water interval options (from min to max by step, bounded)
+    const waterIntervalOptions = buildIntervalOptions(
+      waterIntervalEntity?.attributes?.min,
+      waterIntervalEntity?.attributes?.max,
+      waterIntervalEntity?.attributes?.step,
+      waterInterval,
+    );
 
-    const isOn = powerEntity.state === "on";
-    const name =
-      this.config.name || entity.attributes.friendly_name || "Pet Fountain";
+    const isOn = powerEntity?.state === "on";
 
     const arcLength = 85 * 2 * Math.PI * (250 / 360);
-    const progressLength = (filterLife / 100) * arcLength;
+    const progressLength = ((filterLife ?? 0) / 100) * arcLength;
 
     // Build tooltip for filter life gauge
     let tooltipText = "";
-    if (filterLeftTime) {
+    if (filterLeftTime !== undefined) {
       tooltipText = localize(this.hass, "card.days_left", {
-        days: filterLeftTime,
+        days: Math.round(filterLeftTime),
       });
     }
+    const filterLifeText =
+      filterLife === undefined
+        ? localize(this.hass, "card.unknown")
+        : `${Math.round(filterLife)}%`;
+    const gaugeLabel = [
+      `${localize(this.hass, "card.filter_life")}: ${filterLifeText}`,
+      tooltipText,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const noDisturbOn =
+      this.hass.states[relatedEntities.noDisturb || ""]?.state === "on";
+    const lockOn =
+      this.hass.states[relatedEntities.physicalControlLock || ""]?.state ===
+      "on";
+    const batteryText = getBatteryTooltip(
+      this.hass,
+      chargingState,
+      batteryLevel,
+    );
+    const powerLabel = isOn
+      ? localize(this.hass, "card.turn_off")
+      : localize(this.hass, "card.turn_on");
 
     return html`
       <ha-card>
         <div class="card-content">
           <!-- Card Title -->
-          <div class="card-title">Xiaomi Smart Pet Fountain 2</div>
+          <div class="card-title">${this._title()}</div>
+
+          ${missing.length
+            ? html`
+                <div class="missing-banner" role="status">
+                  ${localize(this.hass, "card.missing_entities", {
+                    entities: missing.join(", "),
+                  })}
+                </div>
+              `
+            : nothing}
 
           <!-- Filter Life Circular Gauge -->
           <div class="gauge-container">
-            <svg class="gauge-svg" viewBox="0 0 200 200">
+            <svg
+              class="gauge-svg"
+              viewBox="0 0 200 200"
+              role="img"
+              aria-label="${gaugeLabel}"
+            >
               <title>${tooltipText}</title>
               <!-- Background arc (3/4 circle) -->
               <path
@@ -237,8 +310,10 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                 stroke-width="12"
                 stroke-linecap="round"
               />
-              <!-- Progress arc (3/4 circle) -->
-              <path
+              <!-- Progress arc (3/4 circle), hidden while the level is unknown -->
+              ${filterLife === undefined
+                ? nothing
+                : svg`<path
                 class="gauge-progress ${isOn ? "on" : "off"} ${filterLife === 0
                   ? "critical"
                   : ""}"
@@ -250,199 +325,380 @@ export class XiaomiSmartPetFountainCard extends LitElement {
                   ? arcLength
                   : progressLength + " " + arcLength}"
                 stroke-dashoffset="0"
-                style="transition: stroke-dasharray 0.3s ease, stroke 0.3s ease;"
-              />
+              />`}
             </svg>
 
-            <!-- Status Icons Row (above percentage) -->
-            <div class="status-icons-row">
-              <!-- Battery/Charging Icon -->
-              <div class="icon-indicator">
-                <ha-icon
-                  icon="${getChargingIcon(chargingState, batteryLevel)}"
-                  class="${getBatteryIconClass(chargingState, batteryLevel)}"
-                  title="${getBatteryTooltip(
-                    this.hass,
-                    chargingState,
-                    batteryLevel,
-                  )}"
-                ></ha-icon>
-              </div>
+            <!-- Content over the gauge: a vertical flow, not absolute pixel
+                 positions, so larger text pushes items down instead of
+                 overlapping them -->
+            <div class="gauge-overlay">
+              <!-- Status Icons Row (above percentage) -->
+              <div class="status-icons-row">
+                <!-- Battery/Charging Icon -->
+                ${showBattery
+                  ? html`
+                      <div
+                        class="icon-indicator"
+                        role="img"
+                        aria-label="${batteryText}"
+                        title="${batteryText}"
+                      >
+                        <ha-icon
+                          icon="${getChargingIcon(chargingState, batteryLevel)}"
+                          class="${getBatteryIconClass(
+                            chargingState,
+                            batteryLevel,
+                          )}"
+                        ></ha-icon>
+                      </div>
+                    `
+                  : nothing}
 
-              <!-- Water Shortage Icon -->
-              ${waterShortageId
-                ? html`
-                    <div class="icon-indicator">
+                <!-- Water Shortage Icon -->
+                ${waterShortageId
+                  ? html`
+                      <div
+                        class="icon-indicator"
+                        role=${waterShortage ? "img" : nothing}
+                        aria-label=${waterShortage
+                          ? localize(this.hass, "card.water_shortage")
+                          : nothing}
+                        aria-hidden=${waterShortage ? nothing : "true"}
+                        title=${waterShortage
+                          ? localize(this.hass, "card.water_shortage")
+                          : nothing}
+                      >
+                        <ha-icon
+                          icon="mdi:water-alert"
+                          class="water-shortage ${waterShortage
+                            ? "critical-icon-pulse"
+                            : "hidden"}"
+                        ></ha-icon>
+                      </div>
+                    `
+                  : ""}
+
+                <!-- Fault Icons (pump blocked, device fault) -->
+                ${faults.map(
+                  (f) => html`
+                    <div
+                      class="icon-indicator"
+                      role="img"
+                      aria-label="${f.label}"
+                      title="${f.label}"
+                    >
                       <ha-icon
-                        icon="mdi:water-alert"
-                        class="water-shortage ${waterShortage
-                          ? "critical-icon-pulse"
-                          : "hidden"}"
-                        title="${localize(this.hass, "card.water_shortage")}"
+                        icon="${f.icon}"
+                        class="fault critical-icon-pulse"
                       ></ha-icon>
                     </div>
-                  `
-                : ""}
-            </div>
-
-            <!-- Center Percentage Value-->
-            <div class="gauge-center">
-              <div class="gauge-value">${filterLife}%</div>
-            </div>
-
-            <!-- Horizontal Line -->
-            <div class="separator-line"></div>
-
-            <!-- Additional Control Buttons -->
-            <div class="container-controls additional-controls">
-              <button
-                class="control-button ${this.hass.states[
-                  relatedEntities.noDisturb || ""
-                ]?.state === "on"
-                  ? "on"
-                  : "off"}"
-                @click=${() => this._toggleSwitch(relatedEntities.noDisturb)}
-                ?disabled="${!relatedEntities.noDisturb}"
-                title="${localize(this.hass, "card.no_disturb_mode")}"
-              >
-                <ha-icon icon="mdi:bell-off"></ha-icon>
-              </button>
-
-              <button
-                class="control-button ${this.hass.states[
-                  relatedEntities.physicalControlLock || ""
-                ]?.state === "on"
-                  ? "on"
-                  : "off"}"
-                @click=${() =>
-                  this._toggleSwitch(relatedEntities.physicalControlLock)}
-                ?disabled="${!relatedEntities.physicalControlLock}"
-                title="${localize(this.hass, "card.physical_control_lock")}"
-              >
-                <ha-icon icon="mdi:lock"></ha-icon>
-              </button>
-
-              <select
-                class="pill-select"
-                .value="${waterInterval}"
-                @change="${(e: Event) =>
-                  this._setWaterInterval(
-                    parseInt((e.target as HTMLSelectElement).value),
-                  )}"
-                ?disabled="${!waterIntervalId ||
-                mode.toLowerCase() !== "interval"}"
-                title="${localize(this.hass, "card.water_interval")}"
-              >
-                ${waterIntervalOptions.map(
-                  (option) => html`
-                    <option
-                      value="${option}"
-                      ?selected="${option === waterInterval}"
-                    >
-                      ${option} min
-                    </option>
                   `,
                 )}
-              </select>
-            </div>
+              </div>
 
-            <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
-            <div class="container-controls gauge-controls">
-              <button
-                class="control-button ${isOn ? "on" : "off"}"
-                @click=${() => this._togglePower()}
-                title="${isOn
-                  ? localize(this.hass, "card.turn_off")
-                  : localize(this.hass, "card.turn_on")}"
-              >
-                <ha-icon icon="mdi:power"></ha-icon>
-              </button>
-
-              <button
-                class="control-button"
-                @click=${() => this._showResetConfirmation()}
-                ?disabled="${!relatedEntities.resetFilterButton}"
-                title="${localize(this.hass, "card.reset_filter")}"
-              >
-                <ha-icon icon="mdi:air-filter"></ha-icon>
-              </button>
-
-              <select
-                class="pill-select mode-select"
-                .value="${mode}"
-                @change="${(e: Event) =>
-                  this._selectMode((e.target as HTMLSelectElement).value)}"
-                ?disabled="${!modeEntityId}"
-                title="${localize(this.hass, "card.operating_mode")}"
-              >
-                ${modeOptions.map(
-                  (option: string) => html`
-                    <option value="${option}" ?selected="${option === mode}">
-                      ${option}
-                    </option>
-                  `,
-                )}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Reset Confirmation Dialog -->
-        ${this._showResetDialog
-          ? html`
-              <div
-                class="dialog-overlay"
-                @click=${() => this._hideResetDialog()}
-              >
-                <div
-                  class="dialog-content"
-                  @click=${(e: Event) => e.stopPropagation()}
-                >
-                  <div class="dialog-message">
-                    ${localize(this.hass, "dialog.reset_filter_message")}
-                  </div>
-                  <div class="dialog-buttons">
-                    <button
-                      class="dialog-button cancel"
-                      @click=${() => this._hideResetDialog()}
-                    >
-                      ${localize(this.hass, "dialog.cancel")}
-                    </button>
-                    <button
-                      class="dialog-button confirm"
-                      @click=${() => this._confirmResetFilter()}
-                    >
-                      ${localize(this.hass, "dialog.confirm")}
-                    </button>
-                  </div>
+              <!-- Center Percentage Value-->
+              <div class="gauge-center" aria-hidden="true">
+                <div class="gauge-value">
+                  ${filterLife === undefined ? "--" : `${Math.round(filterLife)}%`}
                 </div>
               </div>
-            `
-          : ""}
+
+              <!-- Horizontal Line -->
+              <div class="separator-line"></div>
+
+              <!-- Additional Control Buttons -->
+              <div class="container-controls additional-controls">
+                <button
+                  class="control-button ${noDisturbOn ? "on" : "off"}"
+                  @click=${() => this._toggleSwitch(relatedEntities.noDisturb)}
+                  ?disabled="${!relatedEntities.noDisturb}"
+                  title="${localize(this.hass, "card.no_disturb_mode")}"
+                  aria-label="${localize(this.hass, "card.no_disturb_mode")}"
+                  aria-pressed="${noDisturbOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:bell-off"></ha-icon>
+                </button>
+
+                <button
+                  class="control-button ${lockOn ? "on" : "off"}"
+                  @click=${() =>
+                    this._toggleSwitch(relatedEntities.physicalControlLock)}
+                  ?disabled="${!relatedEntities.physicalControlLock}"
+                  title="${localize(this.hass, "card.physical_control_lock")}"
+                  aria-label="${localize(this.hass, "card.physical_control_lock")}"
+                  aria-pressed="${lockOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:lock"></ha-icon>
+                </button>
+
+                <select
+                  class="pill-select"
+                  .value="${waterInterval === undefined ? "" : String(waterInterval)}"
+                  @change="${(e: Event) =>
+                    this._setWaterInterval(
+                      Number((e.target as HTMLSelectElement).value),
+                    )}"
+                  ?disabled="${!waterIntervalId || modeKey !== "interval"}"
+                  title="${localize(this.hass, "card.water_interval")}"
+                  aria-label="${localize(this.hass, "card.water_interval")}"
+                >
+                  ${waterInterval === undefined
+                    ? html`<option value="" disabled selected>--</option>`
+                    : nothing}
+                  ${waterIntervalOptions.map(
+                    (option) => html`
+                      <option
+                        value="${option}"
+                        ?selected="${option === waterInterval}"
+                      >
+                        ${option} min
+                      </option>
+                    `,
+                  )}
+                </select>
+              </div>
+
+              <!-- Controls in Bottom Quarter (Power Button + Mode Selector) -->
+              <div class="container-controls gauge-controls">
+                <button
+                  class="control-button ${isOn ? "on" : "off"}"
+                  @click=${() => this._togglePower()}
+                  ?disabled="${!powerEntity}"
+                  title="${powerLabel}"
+                  aria-label="${localize(this.hass, "card.power")}"
+                  aria-pressed="${isOn ? "true" : "false"}"
+                >
+                  <ha-icon icon="mdi:power"></ha-icon>
+                </button>
+
+                <button
+                  class="control-button reset-filter-button"
+                  @click=${() => this._showResetConfirmation()}
+                  ?disabled="${!relatedEntities.resetFilterButton}"
+                  title="${localize(this.hass, "card.reset_filter")}"
+                  aria-label="${localize(this.hass, "card.reset_filter")}"
+                  aria-haspopup="dialog"
+                >
+                  <ha-icon icon="mdi:air-filter"></ha-icon>
+                </button>
+
+                <select
+                  class="pill-select mode-select"
+                  .value="${mode ?? ""}"
+                  @change="${(e: Event) =>
+                    this._selectMode((e.target as HTMLSelectElement).value)}"
+                  ?disabled="${!modeEntityId || mode === undefined}"
+                  title="${localize(this.hass, "card.operating_mode")}"
+                  aria-label="${localize(this.hass, "card.operating_mode")}"
+                >
+                  ${mode === undefined
+                    ? html`<option value="" disabled selected>--</option>`
+                    : nothing}
+                  ${modeOptions.map(
+                    (option: string) => html`
+                      <option value="${option}" ?selected="${option === mode}">
+                        ${this._modeLabel(modeEntity, option)}
+                      </option>
+                    `,
+                  )}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          ${this._renderKeepMode(relatedEntities, modeEntity)}
+        </div>
+
+        <!-- Reset Confirmation Dialog: native modal <dialog>, so it is
+             rendered in the top layer, the page behind is inert with the
+             focus kept inside, Escape closes it and it has role "dialog". -->
+        <dialog
+          class="reset-dialog"
+          aria-labelledby="reset-dialog-message"
+          @click=${(e: Event) => {
+            // A click on the backdrop targets the <dialog> element itself
+            if (e.target === e.currentTarget) this._hideResetDialog();
+          }}
+          @close=${() => this._resetButton?.focus()}
+        >
+          <div class="dialog-message" id="reset-dialog-message">
+            ${localize(this.hass, "dialog.reset_filter_message")}
+          </div>
+          <div class="dialog-buttons">
+            <button
+              class="dialog-button cancel"
+              autofocus
+              @click=${() => this._hideResetDialog()}
+            >
+              ${localize(this.hass, "dialog.cancel")}
+            </button>
+            <button
+              class="dialog-button confirm"
+              @click=${() => this._confirmResetFilter()}
+            >
+              ${localize(this.hass, "dialog.confirm")}
+            </button>
+          </div>
+        </dialog>
       </ha-card>
     `;
+  }
+
+  /**
+   * Mode keeping of xiaomi_pet_fountain_2 (keep_mode switch and last
+   * restoration sensor): one discreet line, only when the switch exists.
+   */
+  private _renderKeepMode(
+    related: ReturnType<typeof resolveEntities>["entities"],
+    modeEntity: HassEntity | undefined,
+  ): TemplateResult | typeof nothing {
+    const hass = this.hass;
+    const keep = hass?.states[related.keepMode ?? ""];
+    const keepState = knownState(keep);
+    if (!hass || !keep || keepState === undefined) return nothing;
+
+    const preferred = keep.attributes?.preferred_mode;
+    const status =
+      keepState !== "on"
+        ? localize(hass, "card.keep_mode_off")
+        : typeof preferred === "string" && preferred
+          ? localize(hass, "card.keep_mode_on", {
+              mode: this._modeLabel(modeEntity, preferred),
+            })
+          : localize(hass, "card.keep_mode_any");
+
+    const restore = hass.states[related.lastModeRestore ?? ""];
+    const time = this._formatTimestamp(restore);
+    const failed = restore?.attributes?.result === "failed";
+    const last = time
+      ? localize(hass, "card.last_restore", { time }) +
+        (failed ? ` (${localize(hass, "card.restore_failed")})` : "")
+      : "";
+
+    return html`
+      <div class="keep-mode">
+        <div class="keep-mode-status ${keepState === "on" ? "on" : "off"}">
+          <ha-icon icon="mdi:backup-restore"></ha-icon>
+          <span>${status}</span>
+        </div>
+        ${last
+          ? html`<div class="keep-mode-last ${failed ? "failed" : ""}">
+              ${last}
+            </div>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  /** Localized date and time of a timestamp sensor, or "" when unknown */
+  private _formatTimestamp(entity: HassEntity | undefined): string {
+    const state = knownState(entity);
+    if (!entity || state === undefined) return "";
+    const formatted =
+      typeof this.hass?.formatEntityState === "function"
+        ? this.hass.formatEntityState(entity)
+        : undefined;
+    if (formatted && formatted !== state) return formatted;
+    const date = new Date(state);
+    if (Number.isNaN(date.getTime())) return "";
+    try {
+      return date.toLocaleString(this.hass?.locale?.language, {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+    } catch {
+      return date.toLocaleString();
+    }
+  }
+
+  /** Card title: the `name` option, or the product name by default */
+  private _title(): string {
+    return this.config?.name?.trim() || DEFAULT_TITLE;
+  }
+
+  private _relatedEntities() {
+    return resolveEntities(this.hass, this.config).entities;
+  }
+
+  /** Options of the mode select entity, exactly as it expects them */
+  private _modeOptions(modeEntity: HassEntity | undefined): string[] {
+    const options = modeEntity?.attributes?.options;
+    return Array.isArray(options) && options.length
+      ? options.map(String)
+      : DEFAULT_MODES;
+  }
+
+  /**
+   * Displayed name of a mode: the entity's translated state when Home
+   * Assistant has one (hass.formatEntityState), else the card's
+   * translation, never the raw option.
+   */
+  private _modeLabel(
+    modeEntity: HassEntity | undefined,
+    option: string,
+  ): string {
+    const formatted =
+      modeEntity && typeof this.hass?.formatEntityState === "function"
+        ? this.hass.formatEntityState(modeEntity, option)
+        : undefined;
+    if (formatted && formatted !== option) return formatted;
+    const key = `card.modes.${stateKey(option)}`;
+    const own = setupCustomlocalize(this.hass)(key);
+    return own !== key ? own : formatted || option;
+  }
+
+  /**
+   * Call a service and report a failure (device offline, validation error,
+   * missing permission) as a Home Assistant toast instead of an unhandled
+   * promise rejection. The card re-renders so the selects snap back to the
+   * entity's real state.
+   */
+  private async _callService(
+    domain: string,
+    service: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    if (!this.hass) return;
+    try {
+      await this.hass.callService(domain, service, data);
+    } catch (err) {
+      console.error(`${domain}.${service} failed`, err);
+      const error =
+        err instanceof Error
+          ? err.message
+          : ((err as { message?: string })?.message ?? String(err));
+      this.dispatchEvent(
+        new CustomEvent("hass-notification", {
+          bubbles: true,
+          composed: true,
+          detail: {
+            message: localize(this.hass, "card.service_error", { error }),
+          },
+        }),
+      );
+      this.requestUpdate();
+    }
   }
 
   private _togglePower(): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use power switch entity
-    const powerSwitchId = this.config.entity.startsWith("switch.")
-      ? this.config.entity
-      : relatedEntities.powerSwitch;
+    const powerSwitchId = relatedEntities.powerSwitch;
+    const powerEntity = powerSwitchId
+      ? this.hass.states[powerSwitchId]
+      : undefined;
 
-    if (!powerSwitchId) {
+    if (!powerSwitchId || !powerEntity) {
       console.error("Power switch entity not found");
       return;
     }
 
-    const powerEntity = this.hass.states[powerSwitchId];
     const service = powerEntity.state === "on" ? "turn_off" : "turn_on";
 
-    this.hass.callService("homeassistant", service, {
+    this._callService("homeassistant", service, {
       entity_id: powerSwitchId,
     });
   }
@@ -450,8 +706,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   private _selectMode(selectedMode: string): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use mode select entity
     const modeEntityId = relatedEntities.mode;
@@ -461,17 +716,23 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("select", "select_option", {
+    // Send the option string the entity lists (its own casing)
+    const key = stateKey(selectedMode);
+    const option =
+      this._modeOptions(this.hass.states[modeEntityId]).find(
+        (o) => stateKey(o) === key,
+      ) ?? selectedMode;
+
+    this._callService("select", "select_option", {
       entity_id: modeEntityId,
-      option: selectedMode,
+      option,
     });
   }
 
   private _resetFilter(): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use reset filter button entity
     const resetButtonId = relatedEntities.resetFilterButton;
@@ -481,19 +742,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("button", "press", {
+    this._callService("button", "press", {
       entity_id: resetButtonId,
     });
   }
 
   private _showResetConfirmation(): void {
-    this._showResetDialog = true;
-    this.requestUpdate();
+    const dialog = this._resetDialog;
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
   }
 
   private _hideResetDialog(): void {
-    this._showResetDialog = false;
-    this.requestUpdate();
+    if (this._resetDialog?.open) this._resetDialog.close();
   }
 
   private _confirmResetFilter(): void {
@@ -515,7 +776,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
     const service = entity.state === "on" ? "turn_off" : "turn_on";
 
-    this.hass.callService("homeassistant", service, {
+    this._callService("homeassistant", service, {
       entity_id: entityId,
     });
   }
@@ -523,8 +784,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
   private _setWaterInterval(value: number): void {
     if (!this.config || !this.hass) return;
 
-    const baseName = extractBaseName(this.config.entity);
-    const relatedEntities = findRelatedEntities(this.hass, baseName);
+    const relatedEntities = this._relatedEntities();
 
     // Use water interval number entity
     const waterIntervalId = relatedEntities.outWaterInterval;
@@ -534,7 +794,7 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       return;
     }
 
-    this.hass.callService("number", "set_value", {
+    this._callService("number", "set_value", {
       entity_id: waterIntervalId,
       value: value,
     });
@@ -559,44 +819,67 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         letter-spacing: 0.5px;
       }
 
-      .card-header {
-        font-size: 24px;
-        font-weight: bold;
-        padding-bottom: 16px;
+      .missing-banner {
+        margin: 0 0 12px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        color: var(--primary-text-color);
+        background: rgba(var(--rgb-warning-color, 255, 166, 0), 0.15);
+        border-left: 4px solid var(--warning-color, #ffa600);
+        overflow-wrap: anywhere;
       }
 
-      .warning {
-        display: block;
-        color: red;
+      .message {
         padding: 16px;
+        text-align: center;
       }
 
-      /* Gauge Container - */
+      .message-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--primary-text-color);
+      }
+
+      .message-detail {
+        color: var(--secondary-text-color);
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+
+      .message-hint {
+        color: var(--secondary-text-color);
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      /* Gauge: the SVG and the overlay share one grid cell */
       .gauge-container {
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
+        display: grid;
         margin: 0 auto;
-        width: min(100%, 320px);
-        height: 280px;
-        flex-shrink: 0;
-        container-type: size;
+        width: min(100%, 280px);
+        /* cqw units below scale with the gauge width */
+        container-type: inline-size;
       }
 
       .gauge-svg {
-        position: absolute;
+        grid-area: 1 / 1;
+        display: block;
         width: 100%;
-        max-width: 320px;
-        height: 100%;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        height: auto;
+        aspect-ratio: 1;
       }
 
       .gauge-background {
         opacity: 0.2;
+      }
+
+      .gauge-progress {
+        transition:
+          stroke-dasharray 0.3s ease,
+          stroke 0.3s ease;
       }
 
       .gauge-progress.on {
@@ -613,17 +896,24 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         animation: pulse 2s infinite;
       }
 
-      /* Status Icons Row - Positioned above percentage, between gauge and center */
+      .gauge-overlay {
+        grid-area: 1 / 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* Proportions of the 280 px design: icons at 16 %, value centred
+           at 43 %, controls in the opening of the arc */
+        padding-top: 16cqw;
+        min-width: 0;
+      }
+
+      /* Status Icons Row - above percentage, between gauge and center */
       .status-icons-row {
-        position: absolute;
-        top: 45px;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
         gap: 20px;
         align-items: center;
         justify-content: center;
-        z-index: 10;
+        min-height: 24px;
       }
 
       .icon-indicator {
@@ -636,14 +926,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       .icon-indicator ha-icon {
         font-size: 24px;
-      }
-
-      .icon-indicator ha-icon.active {
-        color: var(--primary-color);
-      }
-
-      .icon-indicator ha-icon.inactive {
-        color: var(--disabled-text-color);
       }
 
       .icon-indicator ha-icon.charging {
@@ -673,28 +955,17 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         }
       }
 
-      .icon-label {
-        font-size: 11px;
-        color: var(--secondary-text-color);
-        text-align: center;
-        white-space: nowrap;
-      }
-
       /* Center Percentage Value */
       .gauge-center {
-        position: absolute;
-        top: 43%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
+        margin-top: 9.5cqw;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 5;
       }
 
       .gauge-value {
-        font-size: 42px;
+        font-size: clamp(24px, 15cqw, 42px);
+        line-height: 1.15;
         font-weight: 400;
         color: var(--primary-text-color);
         text-align: center;
@@ -702,33 +973,26 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Horizontal Separator Line */
       .separator-line {
-        position: absolute;
-        top: 154px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(200px, 60%);
+        flex-shrink: 0;
+        margin-top: 3.5cqw;
+        width: min(200px, 72%);
         height: 3px;
         background-color: var(--disabled-text-color);
         border-radius: 2px;
-        z-index: 5;
       }
 
       .container-controls {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-wrap: wrap;
         gap: 4px;
-        z-index: 10;
-        width: auto;
-        padding: 0 20px 0 20px;
+        max-width: 100%;
       }
 
       /* Additional Control Buttons (No Disturb, Physical Lock) */
       .additional-controls {
-        top: 170px;
+        margin-top: 4.5cqw;
       }
 
       .control-button {
@@ -771,11 +1035,12 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       /* Controls in Bottom Quarter */
       .gauge-controls {
-        top: 225px;
+        margin-top: 8cqw;
       }
 
       .pill-select {
-        width: 90px;
+        /* Narrower on a narrow gauge so the row stays inside the arc */
+        width: clamp(76px, 36cqw, 90px);
         height: 32px;
         padding: 0 8px;
         font-size: 14px;
@@ -787,7 +1052,6 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         cursor: pointer;
         transition: border-color 0.2s ease;
         margin: 0;
-        outline: none;
       }
 
       .pill-select:hover:not(:disabled) {
@@ -795,8 +1059,19 @@ export class XiaomiSmartPetFountainCard extends LitElement {
       }
 
       .pill-select:focus {
-        outline: none;
         border-color: var(--primary-color);
+      }
+
+      /* Keyboard focus: always visible */
+      .control-button:focus-visible,
+      .pill-select:focus-visible,
+      .dialog-button:focus-visible {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+      }
+
+      .control-button {
+        border-radius: 50%;
       }
 
       .pill-select:disabled {
@@ -804,32 +1079,53 @@ export class XiaomiSmartPetFountainCard extends LitElement {
         opacity: 0.5;
       }
 
+      /* Room for the translated mode names ("Constant", "Intervalle") */
       .mode-select {
+        width: clamp(76px, 38cqw, 104px);
         text-transform: capitalize;
       }
 
-      /* Reset Confirmation Dialog */
-      .dialog-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
-        border-radius: inherit;
+      /* Mode keeping (xiaomi_pet_fountain_2): discreet, under the gauge */
+      .keep-mode {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--secondary-text-color);
+        text-align: center;
       }
 
-      .dialog-content {
-        background: var(--card-background-color);
+      .keep-mode-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .keep-mode-status ha-icon {
+        --mdc-icon-size: 16px;
+      }
+
+      .keep-mode-status.off {
+        opacity: 0.7;
+      }
+
+      .keep-mode-last.failed {
+        color: var(--error-color);
+      }
+
+      /* Reset Confirmation Dialog */
+      .reset-dialog {
+        border: none;
+        background: var(--card-background-color, #fff);
+        color: var(--primary-text-color);
         border-radius: 8px;
         padding: 24px;
-        min-width: 280px;
-        max-width: 400px;
+        width: min(400px, calc(100vw - 32px));
+        box-sizing: border-box;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .reset-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.5);
       }
 
       .dialog-message {
@@ -873,6 +1169,26 @@ export class XiaomiSmartPetFountainCard extends LitElement {
 
       .dialog-button.confirm:hover {
         opacity: 0.9;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gauge-progress.critical,
+        .icon-indicator ha-icon.charging,
+        .critical-icon-pulse {
+          animation: none;
+        }
+
+        .gauge-progress,
+        .control-button,
+        .pill-select,
+        .dialog-button {
+          transition: none;
+        }
+
+        .control-button:hover:not(:disabled),
+        .control-button:active:not(:disabled) {
+          transform: none;
+        }
       }
     `;
   }

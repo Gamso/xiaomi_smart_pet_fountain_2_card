@@ -7,12 +7,15 @@ views:
     path: home
     icon: mdi:home
     cards:
-      # Xiaomi Smart Pet Fountain card
+      # Xiaomi Smart Pet Fountain card, xiaomi_pet_fountain_2 (simulated)
+      - type: custom:xiaomi-smart-pet-fountain-2-card
+        entity: switch.xiaomi_smart_pet_fountain_2_power
+        name: xiaomi_pet_fountain_2
+
+      # Xiaomi Smart Pet Fountain card, Xiaomi Miot Auto (template entities)
       - type: custom:xiaomi-smart-pet-fountain-2-card
         entity: switch.xiaomi_iv02_b820_pet_drinking_fountain
-        name: Xiaomi Smart Pet Fountain 2
-        show_name: true
-        show_state: true
+        name: Xiaomi Miot Auto
 
       # Main fountain entities
       - type: entities

@@ -5,7 +5,20 @@
   },
   "editor": {
     "entity": "Entity (Required)",
-    "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2"
+    "entity_helper": "Select any entity from your Xiaomi Smart Pet Fountain 2",
+    "name": "Name (optional)",
+    "entities_section": "Entities (optional, override the auto-discovery)",
+    "power_entity": "Power switch",
+    "mode_entity": "Operating mode",
+    "filter_life_entity": "Filter life level",
+    "filter_left_time_entity": "Filter left time",
+    "battery_entity": "Battery level",
+    "charging_state_entity": "Charging state",
+    "water_shortage_entity": "Water shortage",
+    "physical_control_lock_entity": "Physical control lock",
+    "no_disturb_entity": "No disturb",
+    "water_interval_entity": "Water interval",
+    "reset_filter_entity": "Reset filter life button"
   },
   "card": {
     "turn_on": "Turn on",
@@ -15,13 +28,32 @@
     "water_interval": "Water interval",
     "reset_filter": "Reset filter life",
     "operating_mode": "Operating mode",
+    "modes": {
+      "auto": "Auto",
+      "interval": "Interval",
+      "constant": "Constant"
+    },
     "battery": "Battery",
     "charging": "Charging",
     "charge_full": "On AC power",
     "no_charge": "On battery",
     "water_shortage": "Water shortage !",
+    "pump_blocked": "Pump blocked",
+    "fault": "Device fault",
+    "keep_mode_on": "Kept mode: ${mode}",
+    "keep_mode_any": "Mode kept after power cuts",
+    "keep_mode_off": "Mode not kept after power cuts",
+    "last_restore": "Last restoration: ${time}",
+    "restore_failed": "failed",
     "entity_not_found": "Entity not found",
-    "days_left": "${days} days left"
+    "unknown": "Unknown",
+    "missing_entities": "Entities not found: ${entities}. Set them in the card options.",
+    "days_left": "${days} days left",
+    "service_error": "Action failed: ${error}",
+    "loading": "Loading...",
+    "select_entity": "Select an entity of your Xiaomi Smart Pet Fountain 2 in the card options.",
+    "filter_life": "Filter life",
+    "power": "Power"
   },
   "dialog": {
     "reset_filter_message": "Do you want to reset the filter life?",
